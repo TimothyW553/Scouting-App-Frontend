@@ -11,6 +11,7 @@ import Form from './components/form/Form'
 import Teams from './components/teams/Teams'
 import InitTeams from './components/configs/InitTeams'
 import '../node_modules/bootstrap-css-only/css/bootstrap.min.css';
+import ProjectList from './components/projects/ProjectList';
 
 class App extends Component {
   render() {
@@ -19,7 +20,7 @@ class App extends Component {
         <div className="App">
           <Navbar />
           <Switch>
-            <Route exact path='/'component={Dashboard} />
+            <Route exact path='/home'component={Dashboard} />
             <Route path='/project/:id' component={ProjectDetails} />
             <Route path='/signin' component={SignIn} />
             <Route path='/signup' component={SignUp} />
