@@ -13,15 +13,7 @@ const fetchAndLog = async() => {
   });
   const json_temp = await response.json();
   for(let i = 0; i < json_temp.length; i++) {
-    json.push({
-      TeamNumber: json_temp[i].team_number,
-      CycleTime: i,
-      Points: i+1,
-      Mistakes: i+2,
-      ScoreDist: i+3,
-      ClimbTime: i+4,
-      Overall: i+5
-    });
+    json.push(json_temp[i].team_number);
   }
   console.log(json);
 }
@@ -32,9 +24,19 @@ function teamList() {
   )
 }
 
+
+fetchAndLog();
 class Teams extends Component {
+  constructor(props){
+    super(props);
+  }
   render() {
-    fetchAndLog();
+    let BUTTONS=[];
+    for(let i = 0; i < json.length; i++) {
+      BUTTONS.push(json[i]);
+    }
+    console.log(BUTTONS);
+    let i=0, j=0;
     return (
       <div className="card text-center">
         <div className="card-header">
@@ -42,12 +44,13 @@ class Teams extends Component {
         </div>
         <div className="card-body">
           <div className="btn-group" role="group" aria-label="Basic example">
-            <button type="button" className="btn btn-secondary">Left</button>
+            {BUTTONS.map(buttos=>(<button onClick={()=>console.log()} source={BUTTONS}key={BUTTONS}>{BUTTONS[i++]}</button>))}
           </div> 
         </div>
       </div>
     );
   }
+
 }
 
 export default Teams;
