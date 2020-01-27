@@ -33,7 +33,14 @@ function teamList() {
 }
 
 class Teams extends Component {
+  constructor(props){
+    super(props);
+  }
+
   render() {
+    const BUTTONS=["610","1114","2056","188","1241"];
+    let i=0;
+    let j=0;
     fetchAndLog();
     return (
       <div className="card text-center">
@@ -42,12 +49,13 @@ class Teams extends Component {
         </div>
         <div className="card-body">
           <div className="btn-group" role="group" aria-label="Basic example">
-            <button type="button" className="btn btn-secondary">Left</button>
+            {BUTTONS.map(buttos=>(<button onClick={()=>console.log()} source={BUTTONS}key={BUTTONS}>{BUTTONS[i++]}</button>))}
           </div> 
         </div>
       </div>
     );
   }
+
 }
 
 export default Teams;
