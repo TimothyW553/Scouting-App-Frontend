@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { createProject } from '../../store/actions/projectActions'
 import { Redirect } from 'react-router-dom'
-// import Checkbox from './Checkbox'
+import { createMatchForm } from '../../store/actions/matchFormActions';
 
 const imageurl = "https://i.ibb.co/FbLRpF2/field.jpg";
 
@@ -50,7 +49,7 @@ class Form extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     // console.log(this.state);
-    this.props.createProject(this.state);
+    this.props.createMatchForm(this.state);
     this.props.history.push('/');
   }
   printState() {
@@ -71,13 +70,15 @@ class Form extends Component {
               New Match
             </div>
             <div className="card-body">
-              <div className="input-field">
-                <p style={{fontWeight: 'bold', fontSize: 25}}>Enter the current match number:</p>
-                <input type="text" id="match_num" onChange={this.handleChange} placeholder="Match number"/>
-              </div>
-              <div className="input-field">
-                <button className="btn pink lighten-1">Create</button>
-              </div>
+              <form className="white" onSubmit={this.handleSubmit}>
+                <div className="input-field">
+                  <p style={{fontWeight: 'bold', fontSize: 25}}>Enter the current match number:</p>
+                  <input type="text" id="match_num" onChange={this.handleChange} placeholder="Match number"/>
+                </div>
+                <div className="input-field">
+                  <button className="btn pink lighten-1">Create</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -94,7 +95,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    createProject: (project) => dispatch(createProject(project))
+    createMatchForm: (project) => dispatch(createMatchForm(project))
   }
 }
 
