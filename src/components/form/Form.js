@@ -53,12 +53,34 @@ class Form extends Component {
     this.props.createProject(this.state);
     this.props.history.push('/');
   }
+  printState() {
+    console.log(this.state);
+  }
+
   render() {
     const { auth } = this.props;
     if (!auth.uid) return <Redirect to='/signin' /> 
     return (
-      <div>
-        {image_button}
+      <div className="card text-center">
+        <div className="card-header" style={{fontWeight: 'bold'}}>
+          Scouting Match Form
+        </div>
+        <div className="card-body">
+          <div className="card text-left">
+            <div className="card-header">
+              New Match
+            </div>
+            <div className="card-body">
+              <div className="input-field">
+                <p style={{fontWeight: 'bold', fontSize: 25}}>Enter the current match number:</p>
+                <input type="text" id="match_num" onChange={this.handleChange} placeholder="Match number"/>
+              </div>
+              <div className="input-field">
+                <button className="btn pink lighten-1">Create</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
