@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux"
 import { Redirect } from "react-router-dom";
+import CHARTS from './CHART';
 
 // {} -> dict
 // [] -> array
@@ -13,15 +14,7 @@ const fetchAndLog = async() => {
   });
   const json_temp = await response.json();
   for(let i = 0; i < json_temp.length; i++) {
-    json.push({
-      TeamNumber: json_temp[i].team_number,
-      CycleTime: i,
-      Points: i+1,
-      Mistakes: i+2,
-      ScoreDist: i+3,
-      ClimbTime: i+4,
-      Overall: i+5
-    });
+    json.push(json_temp[i].team_number);
   }
   console.log(json);
 }
@@ -32,16 +25,30 @@ function teamList() {
   )
 }
 
+
+fetchAndLog();
 class Teams extends Component {
   constructor(props){
     super(props);
-  }
+    this.state={
+      chartVisible:false
+    }
+  }    
 
   render() {
-    const BUTTONS=["610","1114","2056","188","1241"];
-    let i=0;
-    let j=0;
-    fetchAndLog();
+
+    let BUTTONS=[];
+
+    for(let i = 0; i <19; i++) {
+      BUTTONS.push(json[i]);
+    }
+    let BUTTONS1=[];
+    for(let i = 19; i <json.length; i++) {
+      BUTTONS1.push(json[i]);
+    }
+
+
+    let i=0, j=0, k=0, l=0;
     return (
       <div className="card text-center">
         <div className="card-header">
@@ -49,13 +56,26 @@ class Teams extends Component {
         </div>
         <div className="card-body">
           <div className="btn-group" role="group" aria-label="Basic example">
-            {BUTTONS.map(buttos=>(<button onClick={()=>console.log()} source={BUTTONS}key={BUTTONS}>{BUTTONS[i++]}</button>))}
+            {BUTTONS.map((currElement)=>(<button onClick={()=>console.log("team: " +currElement)} key={BUTTONS[k++]}>{BUTTONS[i++]}</button>))}
+
           </div> 
+          <div>            
+            {BUTTONS1.map((currElement)=>(<button onClick={()=>console.log("team: " +currElement)} key={BUTTONS1[l++]}>{BUTTONS1[j++]}</button>))}
+            </div>
+        </div>
+        <div>
+          <button onClick={()=> this.onClicked()}>
+            click me to do something
+          </button>{this.state.chartVisible?<CHARTS/>:null}
         </div>
       </div>
     );
-  }
 
+  }
+  onClicked(){
+    this.setState(prevState=>({chartVisible:!prevState.chartVisible}));
+
+  }
 }
 
 export default Teams;
