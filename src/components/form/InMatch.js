@@ -71,6 +71,7 @@ class Form extends Component {
   showInMatch = (e) => {
     e.preventDefault();
     this.setState({inMatchView: true})
+    console.log(this.state);
   }
 
   handleChange = (e) => {
@@ -119,8 +120,7 @@ class Form extends Component {
         </div>
       </div> : null
 
-    let inMatchForm = (this.state.inMatchView) ? 
-      image_button : null
+    let inMatchForm = (this.state.inMatchView) ? image_button : null
 
     let start = (this.state.time === 0) ? <button onClick={this.startTimer}>start</button> : null
     let stop = (this.state.isOn) ? <button onClick={this.stopTimer}>stop</button> : null
