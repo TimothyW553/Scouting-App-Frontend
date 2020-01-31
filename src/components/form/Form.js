@@ -4,23 +4,6 @@ import { Redirect } from 'react-router-dom'
 import InMatch from './InMatch'
 import { createMatchForm } from '../../store/actions/matchFormActions';
 
-const imageurl = "https://i.ibb.co/FbLRpF2/field.jpg";
-
-const image_button = (
-  <button onClick={clicky}>
-    <img src={imageurl} width="620" height="360" id="clickyimg"></img>
-  </button>
-);
-
-function clicky(event) {
-  let x = event.clientX;
-  let y = event.clientY;
-  console.log(
-    x - document.getElementById("clickyimg").getBoundingClientRect().left,
-    y - document.getElementById("clickyimg").getBoundingClientRect().top
-  )
-}
-
 class Form extends Component {
   state = {
     match_num: 0,
