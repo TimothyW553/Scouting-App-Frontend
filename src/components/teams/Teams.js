@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux"
 import { Redirect } from "react-router-dom";
-import CHARTS from './CHART';
+//import CHARTS from './CHART';
 
 // {} -> dict
 // [] -> array
 let json = [];
+
 const fetchAndLog = async() => {
   const response = await fetch(`https://www.thebluealliance.com/api/v3/event/2020onosh/teams`, {
     headers: {
@@ -25,15 +26,16 @@ function teamList() {
   )
 }
 
-
 fetchAndLog();
 class Teams extends Component {
   constructor(props){
     super(props);
     this.state={
-      chartVisible:false
+//      chartVisible:[{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},]
+      chartVisible:[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,],
     }
   }    
+
 
   render() {
 
@@ -48,7 +50,7 @@ class Teams extends Component {
     }
 
 
-    let i=0, j=0, k=0, l=0;
+    let i=0, j=0, k=0, l=0, o=0;
     return (
       <div className="card text-center">
         <div className="card-header">
@@ -56,26 +58,31 @@ class Teams extends Component {
         </div>
         <div className="card-body">
           <div className="btn-group" role="group" aria-label="Basic example">
-            {BUTTONS.map((currElement)=>(<button onClick={()=>console.log("team: " +currElement)} key={BUTTONS[k++]}>{BUTTONS[i++]}</button>))}
+    {BUTTONS.map((currElement, index)=>(<button onClick={()=> this.onClicked(currElement, index)} key={BUTTONS[k++]}>{BUTTONS[i++]}{this.state.chartVisible[index]?this.charts(currElement):null}</button>))}
 
           </div> 
           <div>            
             {BUTTONS1.map((currElement)=>(<button onClick={()=>console.log("team: " +currElement)} key={BUTTONS1[l++]}>{BUTTONS1[j++]}</button>))}
             </div>
         </div>
-        <div>
+        {/* <div>
           <button onClick={()=> this.onClicked()}>
             click me to do something
-          </button>{this.state.chartVisible?<CHARTS/>:null}
-        </div>
+          </button>{this.state.chartVisible?CHARTS():null}
+        </div> */}
       </div>
     );
 
   }
-  onClicked(){
-    this.setState(prevState=>({chartVisible:!prevState.chartVisible}));
-
+  onClicked(element,indexofele){
+    this.setState(prevState=>(this.state.chartVisible[indexofele]=!this.state.chartVisible[indexofele]));
+    console.log("team: "+element);
   }
-}
+  charts(x){
+    return(
+      <div>Info about the team: {x}</div>
+    );
+  }
 
+}
 export default Teams;
