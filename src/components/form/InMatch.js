@@ -6,9 +6,7 @@ import { createMatchForm } from '../../store/actions/matchFormActions';
 const imageurl = "https://i.ibb.co/FbLRpF2/field.jpg";
 
 const image_button = (
-  <button onClick={clicky}>
-    <img src={imageurl} width="736" height="400" id="clickyimg"></img>
-  </button>
+    <img src={imageurl} width="736" height="400" onClick={clicky} id="clickyimg"></img>
 );
 
 function clicky(event) {
