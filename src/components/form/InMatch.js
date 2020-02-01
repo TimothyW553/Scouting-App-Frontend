@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { createMatchForm } from '../../store/actions/matchFormActions'
-import ReactStopwatch from 'react-stopwatch'
 import './style.css'
 
 const red_field = './red-field.jpg';
