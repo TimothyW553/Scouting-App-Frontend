@@ -165,8 +165,8 @@ class Form extends Component {
     let inMatchForm = (this.state.inMatchView) ? matchField : null
 
     let scoreboard = (this.state.inMatchView) ? (
-      <div className="scoreboard">
-        <div className="players">
+      <span className="scoreboard">
+        <span className="players">
           {this.state.players.map(function (player, index) {
             return (
               <Player
@@ -176,9 +176,22 @@ class Form extends Component {
                 
             );
           }.bind(this))}
-        </div>
-      </div>
+        </span>
+      </span>
     ) : null
+
+    let sideboi = 
+      <table className="sideBoiTable">
+        <tr>
+          <td>
+          {scoreboard}
+          </td>
+          <td>
+          {inMatchForm}
+          </td>
+        </tr>
+      </table>
+    
 
     let start = (this.state.time === 0) ? <button onClick={this.startTimer}>start</button> : null
     let stop = (this.state.isOn) ? <button onClick={this.stopTimer}>stop</button> : null
@@ -192,8 +205,9 @@ class Form extends Component {
         </div>
         <span className="card-body">
           {newMatchForm}
-          {inMatchForm}
-          {scoreboard}
+          {/* {inMatchForm}
+          {scoreboard} */}
+          {sideboi}
         </span>
       </div>
     )

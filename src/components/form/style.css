@@ -1,4 +1,9 @@
 
+.sideBoiTable {
+    border: 1; 
+    width: 1;
+  }
+
 .player {
     display: flex;
     font-size: 1.2em;
@@ -6,6 +11,8 @@
     border-bottom: solid 7px #FFFFFF;
     width: 190px;
   }
+
+  
   
     .player-score {
       width: 190px;
