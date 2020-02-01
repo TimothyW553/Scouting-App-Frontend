@@ -4,7 +4,8 @@ import { Redirect } from 'react-router-dom'
 import { createMatchForm } from '../../store/actions/matchFormActions';
 import './style.css'
 
-const imageurl = "https://i.ibb.co/FbLRpF2/field.jpg";
+const red_field = './red-field.jpg';
+const blue_field = './blue-field.jpg';
 
 let PLAYERS = [
   {
@@ -160,7 +161,7 @@ class Form extends Component {
         </div>
       </div> : null
 
-    let matchField = <img src={imageurl} width="736" height="400" onClick={this.clicky} id="clickyimg"></img>
+    let matchField = <img src={require(`${red_field}`)} width="728" height="450" onClick={this.clicky} id="clickyimg"></img>
     
     let inMatchForm = (this.state.inMatchView) ? matchField : null
 
@@ -173,25 +174,41 @@ class Form extends Component {
                 onScoreChange={function (delta) { this.onScoreChange(index, delta) }.bind(this)}
                 score={player.score} key = {index}
                 />
-                
             );
           }.bind(this))}
         </span>
       </span>
     ) : null
 
-    let sideboi = 
-      <table className="sideBoiTable">
-        <tr>
-          <td>
-          {scoreboard}
-          </td>
-          <td>
-          {inMatchForm}
-          </td>
-        </tr>
-      </table>
+    let field_input = (this.state.inMatchView) ? 
+      <div className="card text-left">
+        <div className="card-header">
+          In Match Form
+        </div>
+        <div className="card-body">
+          <table className="FieldInput">
+            <tr>
+              <td>
+              {scoreboard}
+              </td>
+              <td>
+              {inMatchForm}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div> : null
+      
     
+    let team_select = (this.state.inMatchView) ? (
+      <div className="card text-left">
+        <div className="card-header">
+          Team Select
+        </div>
+        <div className="card-body">
+
+        </div>
+      </div> ): null
 
     let start = (this.state.time === 0) ? <button onClick={this.startTimer}>start</button> : null
     let stop = (this.state.isOn) ? <button onClick={this.stopTimer}>stop</button> : null
@@ -205,9 +222,8 @@ class Form extends Component {
         </div>
         <span className="card-body">
           {newMatchForm}
-          {/* {inMatchForm}
-          {scoreboard} */}
-          {sideboi}
+          {team_select}
+          {field_input}
         </span>
       </div>
     )
