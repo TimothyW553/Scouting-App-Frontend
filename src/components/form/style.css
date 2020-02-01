@@ -1,10 +1,42 @@
+.preload {
+  border: none;
+  font-weight: bold;
+  font-size: 18px;
+  color: #272727;
+  display: flex;
+  width: 120px;
+  padding: 25px 20px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.preload.increment {
+  background: #66BB6A;
+}
+
+.preload.increment:hover {
+  background: #549d59;
+  cursor: pointer;
+}
+
+.preload.decrement {
+  background: #ef5350;
+}
+
+.preload.decrement:hover {
+  background: #c44442;
+  cursor: pointer;
+}
 
 .FieldInput {
   border: 1; 
   width: 1;
 }
 
-.player {
+.shot {
   display: flex;
   font-size: 1.2em;
   letter-spacing: 2px;
@@ -14,7 +46,7 @@
 
   
   
-.player-score {
+.shot-score {
   width: 190px;
   background: blue;
 }
@@ -36,30 +68,30 @@
   user-select: none;
 }
   
-    .counter-action.increment {
-      background: #66BB6A;
-    }
+.counter-action.increment {
+  background: #66BB6A;
+}
+
+.counter-action.increment:hover {
+  background: #549d59;
+  cursor: pointer;
+}
+
+.counter-action.decrement {
+  background: #ef5350;
+}
   
-    .counter-action.increment:hover {
-      background: #549d59;
-      cursor: pointer;
-    }
+.counter-action.decrement:hover {
+  background: #c44442;
+  cursor: pointer;
+}
   
-    .counter-action.decrement {
-      background: #ef5350;
-    }
-  
-    .counter-action.decrement:hover {
-      background: #c44442;
-      cursor: pointer;
-    }
-  
-    .counter-score {
-      flex-grow: 1;
-      background: #2b2b2b;
-      color: #FAFAFA;
-      text-align: center;
-      font-family: monospace;
-      padding: 1px;
-      font-size: 2em;
-    }
+.counter-score {
+  flex-grow: 1;
+  background: #2b2b2b;
+  color: #FAFAFA;
+  text-align: center;
+  font-family: monospace;
+  padding: 1px;
+  font-size: 2em;
+}
