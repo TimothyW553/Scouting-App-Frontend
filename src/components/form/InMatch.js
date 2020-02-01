@@ -2,21 +2,49 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { createMatchForm } from '../../store/actions/matchFormActions';
+import './style.css'
 
 const imageurl = "https://i.ibb.co/FbLRpF2/field.jpg";
 
-const image_button = (
-    <img src={imageurl} width="736" height="400" onClick={clicky} id="clickyimg"></img>
-);
+let PLAYERS = [
+  {
+    name: "high",
+    score: 0,
+    id: 1  
+  },
+  {
+    name: "low",
+    score: 0,
+    id: 2
+  },
+  {
+    name: "miss",
+    score: 0,
+    id: 3
+  }
+];
 
-function clicky(event) {
-  let x = event.clientX;
-  let y = event.clientY;
-  console.log(
-    x - document.getElementById("clickyimg").getBoundingClientRect().left,
-    y - document.getElementById("clickyimg").getBoundingClientRect().top
-  )
+function Counter(props) {
+  return (
+    <div className="counter">
+      <button className="counter-action decrement" onClick={function () { props.onChange(-1); }}> - </button>
+      <div className="counter-score"> {props.score} </div>
+      <button className="counter-action increment" onClick={function () { props.onChange(+1); }}> + </button>
+    </div>
+  );
 }
+
+function Player(props) {
+  return (
+    <div className="player">
+      <div className="player-score">
+        <Counter score={props.score} onChange={props.onScoreChange}/>
+      </div>
+    </div>
+  );
+};
+
+
 class Form extends Component {
   constructor(props) {
     super(props);
@@ -35,17 +63,23 @@ class Form extends Component {
       stage3_activate: false,
       trench: false,
       preloads: 0,
-      shooting_pos: [{"x": 0.0, "y": 0.0}],
+      shooting_pos: [],
       time: 0,
       isOn: false,
       start: 0,
-      inMatchView: false
+      inMatchView: false,
+      players: PLAYERS
     }
     this.startTimer = this.startTimer.bind(this);
     this.stopTimer = this.stopTimer.bind(this);
     this.resetTimer = this.resetTimer.bind(this);
   }
 
+  onScoreChange(index, delta) {
+    this.state.players[index].score += delta;
+    this.setState(this.state);
+  }
+  
   startTimer() {
     this.setState({
       isOn: true,
@@ -92,9 +126,17 @@ class Form extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    // console.log(this.state);
     this.props.createMatchForm(this.state);
     this.props.history.push('/');
+  }
+
+  clicky = (e) => {
+    let x = e.clientX;
+    let y = e.clientY;
+    x = Number(x - document.getElementById("clickyimg").getBoundingClientRect().left).toFixed(0);
+    y = Number(y - document.getElementById("clickyimg").getBoundingClientRect().top).toFixed(0)
+    this.state.shooting_pos.push({"x": Number(x), "y": Number(y)})
+    console.log(this.state)
   }
 
   render() {
@@ -118,7 +160,25 @@ class Form extends Component {
         </div>
       </div> : null
 
-    let inMatchForm = (this.state.inMatchView) ? image_button : null
+    let matchField = <img src={imageurl} width="736" height="400" onClick={this.clicky} id="clickyimg"></img>
+    
+    let inMatchForm = (this.state.inMatchView) ? matchField : null
+
+    let scoreboard = (this.state.inMatchView) ? (
+      <div className="scoreboard">
+        <div className="players">
+          {this.state.players.map(function (player, index) {
+            return (
+              <Player
+                onScoreChange={function (delta) { this.onScoreChange(index, delta) }.bind(this)}
+                score={player.score} key = {index}
+                />
+                
+            );
+          }.bind(this))}
+        </div>
+      </div>
+    ) : null
 
     let start = (this.state.time === 0) ? <button onClick={this.startTimer}>start</button> : null
     let stop = (this.state.isOn) ? <button onClick={this.stopTimer}>stop</button> : null
@@ -130,10 +190,11 @@ class Form extends Component {
         <div className="card-header" style={{fontWeight: 'bold'}}>
           Scouting Match Form
         </div>
-        <div className="card-body">
+        <span className="card-body">
           {newMatchForm}
           {inMatchForm}
-        </div>
+          {scoreboard}
+        </span>
       </div>
     )
   }
