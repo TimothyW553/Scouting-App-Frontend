@@ -14,7 +14,7 @@ function Counter(props) {
       <button
         className="counter-action decrement"
         onClick={function() {
-          props.onChange(-1);
+          props.onChange(props.score > 0 ? -1 : 0);
         }}
       >
         {" "}
@@ -64,7 +64,8 @@ class Form extends Component {
       isOn: false,
       start: 0,
       inMatchView: 0,
-      circle_size: 50,
+      circle_size: 150,
+      circle_show: false,
       shots: [
         {
           type: "high",
@@ -193,6 +194,10 @@ class Form extends Component {
     this.props.history.push("/");
   };
 
+  togglecircledisplay = () => {
+    this.setState({ circle_show: !this.state.circle_show });
+  };
+
   clicky = e => {
     let x = e.clientX;
     let y = e.clientY;
@@ -202,14 +207,25 @@ class Form extends Component {
     y = Number(
       y - document.getElementById("clickyimg").getBoundingClientRect().top
     ).toFixed(0);
-    let shooting_pos_copy = [...this.state.shooting_pos];
-    shooting_pos_copy.push({
-      x: Number(x),
-      y: Number(y),
-      index: this.state.shooting_pos.length
-    });
-    this.setState({ shooting_pos: shooting_pos_copy });
-    console.log(this.state);
+    if (
+      x >= 0 &&
+      y >= 0 &&
+      x <=
+        document.getElementById("clickyimg").getBoundingClientRect().right -
+          document.getElementById("clickyimg").getBoundingClientRect().left &&
+      y <=
+        document.getElementById("clickyimg").getBoundingClientRect().bottom -
+          document.getElementById("clickyimg").getBoundingClientRect().top
+    ) {
+      let shooting_pos_copy = [...this.state.shooting_pos];
+      shooting_pos_copy.push({
+        x: Number(x),
+        y: Number(y),
+        index: this.state.shooting_pos.length
+      });
+      this.setState({ shooting_pos: shooting_pos_copy });
+      console.log(this.state);
+    }
   };
 
   incrementPreload = e => {
@@ -299,9 +315,15 @@ class Form extends Component {
 
     let inMatchForm = this.state.inMatchView === 2 ? matchField : null;
 
+    let showncircle = this.state.circle_show ? this.Circle(this.state) : null;
+
     let shot_history = this.state.shooting_pos.map(li => {
       return <li key={li.index}>{"(" + li.x + ", " + li.y + ")"}</li>;
     });
+
+    let toggle_circle_button_text = this.state.circle_show
+      ? "Hide map."
+      : "Show map.";
 
     let scoreboard =
       this.state.inMatchView === 2 ? (
@@ -331,17 +353,32 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td>{scoreboard}</td>
-                <td>{inMatchForm}</td>
+                <td width="610px">{inMatchForm}</td>
                 <td>
-                  <ul>
-                    <li key="-1">Clicks: </li>
+                  <button
+                    id="togglecircle"
+                    onClick={() => {
+                      this.togglecircledisplay();
+                    }}
+                  >
+                    {toggle_circle_button_text}
+                  </button>
+                </td>
+                <td>
+                  <p>
+                    {" "}
+                    &emsp; &emsp; &nbsp;
+                    {this.state.shooting_pos.length + " Clicks: "}
+                  </p>
+                  <ol style={{ maxHeight: "400px", overflow: "auto" }}>
+                    {/* <li key="-1">Clicks: </li> */}
                     {shot_history}
-                  </ul>
+                  </ol>
                 </td>
               </tr>
             </tbody>
           </table>
-          {this.Circle(this.state)}       
+          {showncircle}   
           <div className="input-field">
             <button className="btn pink lighten-1" onSubmit={this.showEndMatch}>
               Next
