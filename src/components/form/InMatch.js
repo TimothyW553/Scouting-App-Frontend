@@ -66,7 +66,9 @@ class Form extends Component {
       start: 0,
       inMatchView: 0,
       circle_size: 150,
-      circle_show: false,
+      circle_show: true,
+      timer_running: null,
+      timer: [0, 0],
       shots: [
         {
           type: "high",
@@ -297,7 +299,12 @@ class Form extends Component {
             </button>
           </div>
           <div className="input-field">
-            <button className="btn pink lighten-1" onSubmit={this.showInMatch}>
+            <button
+              className="btn pink lighten-1"
+              onSubmit={() => {
+                this.showInMatch();
+              }}
+            >
               Next
             </button>
           </div>
@@ -323,8 +330,8 @@ class Form extends Component {
     });
 
     let toggle_circle_button_text = this.state.circle_show
-      ? "Hide map."
-      : "Show map.";
+      ? "Hide map"
+      : "Show map";
 
     let scoreboard =
       this.state.inMatchView === 2 ? (
@@ -353,7 +360,34 @@ class Form extends Component {
           <table className="FieldInput">
             <tbody>
               <tr>
-                <td>{scoreboard}</td>
+                <td>
+                  {scoreboard}{" "}
+                  <button
+                    onClick={() => {
+                      this.setState({
+                        timer: [
+                          this.state.timer_running === null
+                            ? this.state.timer[0]
+                            : this.state.timer[0] +
+                              new Date().getTime() -
+                              this.state.timer_running,
+                          this.state.timer[1]
+                        ]
+                      });
+                      if (this.state.timer_running != null) {
+                        this.setState({ timer_running: null });
+                      } else {
+                        this.setState({ timer_running: new Date().getTime() });
+                      }
+                    }}
+                  >
+                    {(this.state.timer_running === null ? "Start" : "Stop") +
+                      " timer: " +
+                      this.state.timer[0] / 1000 +
+                      "s"}
+                  </button>
+                  {/* start timer */}
+                </td>
                 <td width="500px">{inMatchForm}</td>
                 <td>
                   <button
@@ -362,7 +396,7 @@ class Form extends Component {
                       this.togglecircledisplay();
                     }}
                   >
-                    {toggle_circle_button_text}
+                    {/* {toggle_circle_button_text} */}
                   </button>
                 </td>
                 {/* <td>
