@@ -55,7 +55,6 @@ class Form extends Component {
       balls_scored: 0,
       floor_pickup: false,
       station_pickup: false,
-      defense_time: 0.0,
       stage2_activate: false,
       stage3_activate: false,
       trench: false,
@@ -87,9 +86,9 @@ class Form extends Component {
         }
       ]
     };
-    this.startTimer = this.startTimer.bind(this);
-    this.stopTimer = this.stopTimer.bind(this);
-    this.resetTimer = this.resetTimer.bind(this);
+    // this.startTimer = this.startTimer.bind(this);
+    // this.stopTimer = this.stopTimer.bind(this);
+    // this.resetTimer = this.resetTimer.bind(this);
   }
 
   Circle(props) {
@@ -129,30 +128,6 @@ class Form extends Component {
   onScoreChange(index, delta) {
     this.state.shots[index].score += delta;
     this.setState(this.state);
-  }
-
-  startTimer() {
-    this.setState({
-      isOn: true,
-      timer: this.state.time,
-      start: Date.now() - this.state.time
-    });
-    this.timer = setInterval(
-      () =>
-        this.setState({
-          time: Date.now() - this.state.start
-        }),
-      1
-    );
-  }
-
-  stopTimer() {
-    this.setState({ isOn: false });
-    clearInterval(this.timer);
-  }
-
-  resetTimer() {
-    this.setState({ time: 0, isOn: false });
   }
 
   showPreMatch = e => {
@@ -329,9 +304,8 @@ class Form extends Component {
       return <li key={li.index}>{"(" + li.x + ", " + li.y + ")"}</li>;
     });
 
-    let toggle_circle_button_text = this.state.circle_show
-      ? "Hide map"
-      : "Show map";
+    let toggle_circle_button_text =
+      (this.state.circle_show ? "Hide" : "Show") + " map";
 
     let scoreboard =
       this.state.inMatchView === 2 ? (
@@ -363,6 +337,7 @@ class Form extends Component {
                 <td>
                   {scoreboard}{" "}
                   <button
+                    className="btn btn-danger"
                     onClick={() => {
                       this.setState({
                         timer: [
@@ -391,12 +366,13 @@ class Form extends Component {
                 <td width="500px">{inMatchForm}</td>
                 <td>
                   <button
+                    className="btn btn-danger"
                     id="togglecircle"
                     onClick={() => {
                       this.togglecircledisplay();
                     }}
                   >
-                    {/* {toggle_circle_button_text} */}
+                    {toggle_circle_button_text}
                   </button>
                 </td>
                 {/* <td>
@@ -414,37 +390,11 @@ class Form extends Component {
           </table>
           {showncircle}   
           <div className="input-field">
-            <button className="btn pink lighten-1" onSubmit={this.showEndMatch}>
+            <button className="btn pink lighten-1" onSubmit={this.handleSubmit}>
               Next
             </button>
           </div>
         </div>
-      ) : null;
-
-    let endform = this.state.inMatchView === 3 ? <div></div> : null;
-
-    let team_select =
-      this.state.inMatchView === 2 ? (
-        <div className="card text-left">
-          <div className="card-header">Team Select</div>
-          <div className="card-body"></div>
-        </div>
-      ) : null;
-
-    let start =
-      this.state.time === 0 ? (
-        <button onClick={this.startTimer}>start</button>
-      ) : null;
-    let stop = this.state.isOn ? (
-      <button onClick={this.stopTimer}>stop</button>
-    ) : null;
-    let reset =
-      this.state.time !== 0 && !this.state.isOn ? (
-        <button onClick={this.resetTimer}>reset</button>
-      ) : null;
-    let resume =
-      this.state.time !== 0 && !this.state.isOn ? (
-        <button onClick={this.startTimer}>resume</button>
       ) : null;
 
     return (
