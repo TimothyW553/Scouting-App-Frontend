@@ -299,10 +299,6 @@ class Form extends Component {
 
     let inMatchForm = this.state.inMatchView === 2 ? matchField : null;
 
-    let shot_history = this.state.shooting_pos.map(li => {
-      return <li key={li.index}>{"(" + li.x + ", " + li.y + ")"}</li>;
-    });
-
     let scoreboard =
       this.state.inMatchView === 2 ? (
         <span className="scoreboard">
@@ -332,12 +328,6 @@ class Form extends Component {
               <tr>
                 <td>{scoreboard}</td>
                 <td>{inMatchForm}</td>
-                <td>
-                  <ul>
-                    <li key="-1">Clicks: </li>
-                    {shot_history}
-                  </ul>
-                </td>
               </tr>
             </tbody>
           </table>
