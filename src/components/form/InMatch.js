@@ -289,8 +289,8 @@ class Form extends Component {
     let matchField = (
       <img
         src={require(`${red_field}`)}
-        width={76 * field_size}
-        height={47 * field_size}
+        width={76*1.3 * field_size}
+        height={47*1.3* field_size}
         onClick={this.clicky}
         id="clickyimg"
       ></img>
@@ -301,16 +301,9 @@ class Form extends Component {
         <form className="white" onSubmit={this.handleSubmit}>
           <div className="input-field">
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
-              Number of Preloads
+              End of Match Form
             </p>
-            <button
-              type="number"
-              id="balls_scored"
-              onClick={this.incrementPreload}
-              className="preload increment"
-            >
-              Preloads: {this.state.balls_scored}
-            </button>
+
           </div>
           <div className="input-field">
             <button className="btn pink lighten-1">
@@ -324,9 +317,6 @@ class Form extends Component {
     let inMatchForm = this.state.inMatchView === 2 ? matchField : null;
 
     let showncircle = this.state.circle_show ? this.Circle(this.state) : null;
-
-    let toggle_circle_button_text =
-      (this.state.circle_show ? "Hide" : "Show") + " map";
 
     let scoreboard =
       this.state.inMatchView === 2 ? (
@@ -382,20 +372,8 @@ class Form extends Component {
                       this.state.timer[0] / 1000 +
                       "s"}
                   </button>
-                  {/* start timer */}
                 </td>
                 <td width="500px">{inMatchForm}</td>
-                <td>
-                  <button
-                    className="btn btn-danger"
-                    id="togglecircle"
-                    onClick={() => {
-                      this.togglecircledisplay();
-                    }}
-                  >
-                    {toggle_circle_button_text}
-                  </button>
-                </td>
               </tr>
             </tbody>
           </table>
