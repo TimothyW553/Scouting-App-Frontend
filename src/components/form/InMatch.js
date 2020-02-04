@@ -351,8 +351,23 @@ class Form extends Component {
                       });
                       if (this.state.timer_running != null) {
                         this.setState({ timer_running: null });
+                        clearInterval(this.timer);
                       } else {
                         this.setState({ timer_running: new Date().getTime() });
+                        this.timer = setInterval(
+                          () => {
+                            const date = new Date().getTime();
+                            this.setState({
+                              timer: [
+                                this.state.timer[0] +
+                                  date -
+                                  this.state.timer_running,
+                                this.state.timer[1]
+                              ],
+                              timer_running: date
+                            })},
+                          1
+                        );
                       }
                     }}
                   >
