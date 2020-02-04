@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 import { createMatchForm } from "../../store/actions/matchFormActions";
+import { Redirect, withRouter } from "react-router-dom";
 import "./style.css";
 
 const red_field = "./red-field.jpg";
@@ -161,16 +161,16 @@ class Form extends Component {
     console.log(this.state);
   };
 
-  handleNext = e => {
+  handleNext = (e) => {
     e.preventDefault();
     console.log(this.state);
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault();
     this.props.createMatchForm(this.state);
-    this.props.history.push("/");
-  };
+    this.props.history.push('/');
+  }
 
   togglecircledisplay = () => {
     this.setState({ circle_show: !this.state.circle_show });
@@ -297,18 +297,33 @@ class Form extends Component {
     );
 
     let endMatchForm = this.state.inMatchView === 3 ? (
-      <div>
-        hello
+      <div className="container">
+        <form className="white" onSubmit={this.handleSubmit}>
+          <div className="input-field">
+            <p style={{ fontWeight: "bold", fontSize: 25 }}>
+              Number of Preloads
+            </p>
+            <button
+              type="number"
+              id="balls_scored"
+              onClick={this.incrementPreload}
+              className="preload increment"
+            >
+              Preloads: {this.state.balls_scored}
+            </button>
+          </div>
+          <div className="input-field">
+            <button className="btn pink lighten-1">
+              Next
+            </button>
+          </div>
+        </form>
       </div>
     ) : null;
 
     let inMatchForm = this.state.inMatchView === 2 ? matchField : null;
 
     let showncircle = this.state.circle_show ? this.Circle(this.state) : null;
-
-    let shot_history = this.state.shooting_pos.map(li => {
-      return <li key={li.index}>{"(" + li.x + ", " + li.y + ")"}</li>;
-    });
 
     let toggle_circle_button_text =
       (this.state.circle_show ? "Hide" : "Show") + " map";
@@ -420,4 +435,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Form);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));
