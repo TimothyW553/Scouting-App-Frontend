@@ -9,17 +9,6 @@ const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
 const field_size = 8;
 
-// x = [[], [], [], [], []];
-// for (i = 0; i < 10; i++) {
-//   for (I = 0; I < 5; I++) {
-//     var y = x;
-//     x[I] = y;
-//   }
-// }
-// console.log(x);
-
-// while (true) {handleSubmit(x)}
-
 function Counter(props) {
   return (
     <div className="counter">
@@ -53,53 +42,6 @@ function Shot(props) {
         <Counter score={props.score} onChange={props.onScoreChange} />
       </div>
     </div>
-  );
-}
-
-function Circle(props, doclick) {
-  let circle = index => {
-    return (
-      <img
-        key={props.shooting_pos[index].index}
-        src={require(`${circleimg}`)}
-        width={props.circle_size}
-        height={props.circle_size}
-        onClick={doclick}
-        style={{
-          position: "absolute",
-          left:
-            props.shooting_pos[index].x +
-            document.getElementById("clickyimg").getBoundingClientRect().left -
-            props.circle_size / 2 +
-            "px",
-          top:
-            props.shooting_pos[index].y +
-            document.getElementById("clickyimg").getBoundingClientRect().top -
-            props.circle_size / 2 +
-            "px"
-        }}
-      ></img>
-    );
-  };
-  let circles = props.shooting_pos.map(index => {
-    return circle(index.index);
-  });
-  return <React.Fragment>{circles}</React.Fragment>;
-}
-
-function Timer(props, doclick) {
-  return (
-    <button
-      className="btn btn-danger"
-      onClick={() => {
-        doclick();
-      }}
-    >
-      {(props.timer_running === null ? "Start" : "Stop") +
-        " timer: " +
-        props.timer[0] / 1000 +
-        "s"}
-    </button>
   );
 }
 
@@ -147,6 +89,40 @@ class Form extends Component {
     // this.startTimer = this.startTimer.bind(this);
     // this.stopTimer = this.stopTimer.bind(this);
     // this.resetTimer = this.resetTimer.bind(this);
+  }
+
+  Circle(props) {
+    let circle = index => {
+      return (
+        <img
+          key={props.shooting_pos[index].index}
+          src={require(`${circleimg}`)}
+          width={props.circle_size}
+          height={props.circle_size}
+          onClick={() => {
+            this.clicky(window.event);
+          }}
+          style={{
+            position: "absolute",
+            left:
+              props.shooting_pos[index].x +
+              document.getElementById("clickyimg").getBoundingClientRect()
+                .left -
+              props.circle_size / 2 +
+              "px",
+            top:
+              props.shooting_pos[index].y +
+              document.getElementById("clickyimg").getBoundingClientRect().top -
+              props.circle_size / 2 +
+              "px"
+          }}
+        ></img>
+      );
+    };
+    let circles = props.shooting_pos.map(index => {
+      return circle(index.index);
+    });
+    return <React.Fragment>{circles}</React.Fragment>;
   }
 
   onScoreChange(index, delta) {
@@ -250,24 +226,6 @@ class Form extends Component {
     });
   };
 
-  handleButtonClick = () => {
-    this.setState({
-      timer: [
-        this.state.timer_running === null
-          ? this.state.timer[0]
-          : this.state.timer[0] +
-            new Date().getTime() -
-            this.state.timer_running,
-        this.state.timer[1]
-      ]
-    });
-    if (this.state.timer_running != null) {
-      this.setState({ timer_running: null });
-    } else {
-      this.setState({ timer_running: new Date().getTime() });
-    }
-  };
-
   render() {
     const { auth } = this.props;
     if (!auth.uid) return <Redirect to="/signin" />;
@@ -331,8 +289,8 @@ class Form extends Component {
     let matchField = (
       <img
         src={require(`${red_field}`)}
-        width={76 * field_size}
-        height={47 * field_size}
+        width={76*1.3 * field_size}
+        height={47*1.3* field_size}
         onClick={this.clicky}
         id="clickyimg"
       ></img>
@@ -343,16 +301,9 @@ class Form extends Component {
         <form className="white" onSubmit={this.handleSubmit}>
           <div className="input-field">
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
-              Number of Preloads
+              End of Match Form
             </p>
-            <button
-              type="number"
-              id="balls_scored"
-              onClick={this.incrementPreload}
-              className="preload increment"
-            >
-              Preloads: {this.state.balls_scored}
-            </button>
+
           </div>
           <div className="input-field">
             <button className="btn pink lighten-1">
@@ -365,12 +316,7 @@ class Form extends Component {
 
     let inMatchForm = this.state.inMatchView === 2 ? matchField : null;
 
-    let showncircle = this.state.circle_show
-      ? Circle(this.state, this.clicky)
-      : null;
-
-    let toggle_circle_button_text =
-      (this.state.circle_show ? "Hide" : "Show") + " map";
+    let showncircle = this.state.circle_show ? this.Circle(this.state) : null;
 
     let scoreboard =
       this.state.inMatchView === 2 ? (
@@ -400,20 +346,34 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td>
-                  {scoreboard} {Timer(this.state, this.handleButtonClick)}
-                </td>
-                <td width="500px">{inMatchForm}</td>
-                <td>
+                  {scoreboard}{" "}
                   <button
                     className="btn btn-danger"
-                    id="togglecircle"
                     onClick={() => {
-                      this.togglecircledisplay();
+                      this.setState({
+                        timer: [
+                          this.state.timer_running === null
+                            ? this.state.timer[0]
+                            : this.state.timer[0] +
+                              new Date().getTime() -
+                              this.state.timer_running,
+                          this.state.timer[1]
+                        ]
+                      });
+                      if (this.state.timer_running != null) {
+                        this.setState({ timer_running: null });
+                      } else {
+                        this.setState({ timer_running: new Date().getTime() });
+                      }
                     }}
                   >
-                    {toggle_circle_button_text}
+                    {(this.state.timer_running === null ? "Start" : "Stop") +
+                      " timer: " +
+                      this.state.timer[0] / 1000 +
+                      "s"}
                   </button>
                 </td>
+                <td width="500px">{inMatchForm}</td>
               </tr>
             </tbody>
           </table>
