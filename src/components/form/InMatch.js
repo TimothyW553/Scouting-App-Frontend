@@ -296,6 +296,12 @@ class Form extends Component {
       ></img>
     );
 
+    let endMatchForm = this.state.inMatchView === 3 ? (
+      <div>
+        hello
+      </div>
+    ) : null;
+
     let inMatchForm = this.state.inMatchView === 2 ? matchField : null;
 
     let showncircle = this.state.circle_show ? this.Circle(this.state) : null;
@@ -375,22 +381,12 @@ class Form extends Component {
                     {toggle_circle_button_text}
                   </button>
                 </td>
-                {/* <td>
-                  <p>
-                    {" "}
-                    &emsp; &emsp; &nbsp;
-                    {this.state.shooting_pos.length + " Clicks: "}
-                  </p>
-                  <ol style={{ maxHeight: "400px", overflow: "auto" }}>
-                    {shot_history}
-                  </ol>
-                </td> */}
               </tr>
             </tbody>
           </table>
           {showncircle}   
           <div className="input-field">
-            <button className="btn pink lighten-1" onSubmit={this.handleSubmit}>
+            <button className="btn pink lighten-1" onClick={this.showEndMatch}>
               Next
             </button>
           </div>
@@ -405,6 +401,7 @@ class Form extends Component {
           {prematch}
           {/* {team_select} */}
           {field_input}
+          {endMatchForm}
         </span>
       </div>
     );
