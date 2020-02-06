@@ -9,6 +9,8 @@ const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
 const field_size = 8;
 
+let starting_time;
+
 function Counter(props) {
   return (
     <div className="counter">
@@ -122,10 +124,10 @@ class Form extends Component {
     return <React.Fragment>{circles}</React.Fragment>;
   }
 
-  onScoreChange(index, delta) {
+  onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
     if((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
-      this.state.cycle_time.push(new Date().getTime());
+      this.state.cycle_time.push((new Date().getTime() - starting_time)/1000);
     }
     this.setState(this.state);
   }
@@ -139,6 +141,7 @@ class Form extends Component {
   showInMatch = e => {
     e.preventDefault();
     this.setState({ inMatchView: 2, preloads: this.state.balls_scored });
+    starting_time = new Date().getTime();
     console.log(this.state);
   };
 
@@ -277,7 +280,7 @@ class Form extends Component {
             <button
               className="btn pink lighten-1"
               onSubmit={() => {
-                this.showInMatch();
+                this.getCurrentTime();
               }}
             >
               Next
