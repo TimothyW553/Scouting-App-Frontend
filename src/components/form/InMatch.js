@@ -126,11 +126,11 @@ class Form extends Component {
 
   onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
-    if((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
-      this.state.cycle_time.push((new Date().getTime() - starting_time)/1000);
+    if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
+      this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
     }
     this.setState(this.state);
-  }
+  };
 
   showPreMatch = e => {
     e.preventDefault();
@@ -164,16 +164,16 @@ class Form extends Component {
     console.log(this.state);
   };
 
-  handleNext = (e) => {
+  handleNext = e => {
     e.preventDefault();
     console.log(this.state);
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     this.props.createMatchForm(this.state);
-    this.props.history.push('/');
-  }
+    this.props.history.push("/");
+  };
 
   togglecircledisplay = () => {
     this.setState({ circle_show: !this.state.circle_show });
@@ -292,30 +292,28 @@ class Form extends Component {
     let matchField = (
       <img
         src={require(`${red_field}`)}
-        width={76*1.3 * field_size}
-        height={47*1.3* field_size}
+        width={76 * 1.3 * field_size}
+        height={47 * 1.3 * field_size}
         onClick={this.clicky}
         id="clickyimg"
       ></img>
     );
 
-    let endMatchForm = this.state.inMatchView === 3 ? (
-      <div className="container">
-        <form className="white" onSubmit={this.handleSubmit}>
-          <div className="input-field">
-            <p style={{ fontWeight: "bold", fontSize: 25 }}>
-              End of Match Form
-            </p>
-
-          </div>
-          <div className="input-field">
-            <button className="btn pink lighten-1">
-              Next
-            </button>
-          </div>
-        </form>
-      </div>
-    ) : null;
+    let endMatchForm =
+      this.state.inMatchView === 3 ? (
+        <div className="container">
+          <form className="white" onSubmit={this.handleSubmit}>
+            <div className="input-field">
+              <p style={{ fontWeight: "bold", fontSize: 25 }}>
+                End of Match Form
+              </p>
+            </div>
+            <div className="input-field">
+              <button className="btn pink lighten-1">Next</button>
+            </div>
+          </form>
+        </div>
+      ) : null;
 
     let inMatchForm = this.state.inMatchView === 2 ? matchField : null;
 
@@ -352,6 +350,7 @@ class Form extends Component {
                   {scoreboard}{" "}
                   <button
                     className="btn btn-danger"
+                    style={{ minHeight: "50px" }}
                     onClick={() => {
                       this.setState({
                         timer: [
@@ -368,21 +367,19 @@ class Form extends Component {
                         clearInterval(this.timer);
                       } else {
                         this.setState({ timer_running: new Date().getTime() });
-                        this.timer = setInterval(
-                          () => {
-                            const date = new Date().getTime();
-                            this.setState({
-                              timer: [
-                                this.state.timer[0] +
-                                  date -
-                                  this.state.timer_running,
-                                this.state.timer[1]
-                              ],
-                              timer_running: date
-                            })},
-                          1
-                        );
-                      } 
+                        this.timer = setInterval(() => {
+                          const date = new Date().getTime();
+                          this.setState({
+                            timer: [
+                              this.state.timer[0] +
+                                date -
+                                this.state.timer_running,
+                              this.state.timer[1]
+                            ],
+                            timer_running: date
+                          });
+                        }, 1);
+                      }
                     }}
                   >
                     {(this.state.timer_running === null ? "Start" : "Stop") +
@@ -431,4 +428,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Form)
+);
