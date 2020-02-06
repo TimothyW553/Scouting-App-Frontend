@@ -58,11 +58,12 @@ fetchAndLog();
 class Teams extends Component {
   constructor(props){
     super(props);
+    this.charts=this.charts.bind(this);
     this.state={
 //      chartVisible:[{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},]
       chartVisible:[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,],
       o:0,
-      p:0
+      p:0,
     }
   }    
 
@@ -81,6 +82,8 @@ class Teams extends Component {
 
 
     let i=0, j=0, k=0, l=0;
+    let teamN=0;
+
     return (
       <div className="card text-center">
         <div className="card-header">
@@ -95,27 +98,28 @@ class Teams extends Component {
             {BUTTONS1.map((currElement1, index1)=>(<button onClick={()=>this.onClicked(currElement1, index1+19)} key={BUTTONS1[l++]}>{BUTTONS1[j++]}{this.state.chartVisible[index1+19]?this.charts(currElement1+19):null}</button>))}
             </div> */}
             {/* <div>state: {(this.state.chartVisible[this.state.p]?this.charts(this.state.o):null)}</div> */}
-          <div className="align-baseline" role="group">{this.state.chartVisible.map((element, index)=>(<td style={{ color:"red"}}>{this.state.chartVisible[index]?this.charts(this.state.o):null}</td>))}</div>
+          <div className="align-baseline" role="group">{this.state.chartVisible.map((currElement, index)=>(<td  style={{ color:"red"}}>{this.state.chartVisible[index]?this.charts(BUTTONS[index]):null}</td>))}</div>
         </div>
       </div>
 
     );
 
   }
+  
   onClicked(element,indexofele){
 
-    this.setState(prevState=>(this.state.chartVisible[indexofele]=!this.state.chartVisible[indexofele]));
+    this.setState(()=>(this.state.chartVisible[indexofele]=!this.state.chartVisible[indexofele]));
     console.log("team: "+element);
-    this.state.o=element;
+    this.setState({o:element});
     this.state.p=indexofele;
-    const teamNum=element;
-    const teamInd=indexofele;
 
 
   }
   charts(x){
     return(
-      <div>Info about the team: {x}
+
+      <div>Info about the team: {x}{console.log(x)}
+      
               <BarChart
         width={300}
         height={300}
