@@ -50,7 +50,7 @@ class Form extends Component {
     super(props);
     this.state = {
       team_num: 0,
-      cycle_time: [0.0],
+      cycle_time: [],
       climb_time: 0.0,
       balls_scored: 0,
       floor_pickup: false,
@@ -64,7 +64,7 @@ class Form extends Component {
       isOn: false,
       start: 0,
       inMatchView: 0,
-      circle_size: 150,
+      circle_size: 50,
       circle_show: true,
       timer_running: null,
       timer: [0, 0],
@@ -86,9 +86,6 @@ class Form extends Component {
         }
       ]
     };
-    // this.startTimer = this.startTimer.bind(this);
-    // this.stopTimer = this.stopTimer.bind(this);
-    // this.resetTimer = this.resetTimer.bind(this);
   }
 
   Circle(props) {
@@ -127,6 +124,9 @@ class Form extends Component {
 
   onScoreChange(index, delta) {
     this.state.shots[index].score += delta;
+    if((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
+      this.state.cycle_time.push(new Date().getTime());
+    }
     this.setState(this.state);
   }
 
@@ -362,9 +362,24 @@ class Form extends Component {
                       });
                       if (this.state.timer_running != null) {
                         this.setState({ timer_running: null });
+                        clearInterval(this.timer);
                       } else {
                         this.setState({ timer_running: new Date().getTime() });
-                      }
+                        this.timer = setInterval(
+                          () => {
+                            const date = new Date().getTime();
+                            this.setState({
+                              timer: [
+                                this.state.timer[0] +
+                                  date -
+                                  this.state.timer_running,
+                                this.state.timer[1]
+                              ],
+                              timer_running: date
+                            })},
+                          1
+                        );
+                      } 
                     }}
                   >
                     {(this.state.timer_running === null ? "Start" : "Stop") +
