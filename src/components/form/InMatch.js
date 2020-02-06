@@ -7,7 +7,7 @@ import "./style.css";
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 7;
+const field_size = 8;
 
 let starting_time;
 
@@ -402,6 +402,7 @@ class Form extends Component {
                   {scoreboard}{" "}
                   <button
                     className="btn btn-danger"
+                    style={{ minHeight: "60px", minWidth: "150px" }}
                     onClick={() => {
                       this.setState({
                         timer: [
@@ -435,7 +436,7 @@ class Form extends Component {
                   >
                     {(this.state.timer_running === null ? "Start" : "Stop") +
                       " timer: " +
-                      this.state.timer[0] / 1000 +
+                      (this.state.timer[0] / 1000).toFixed(3) +
                       "s"}
                   </button>
                 </td>
