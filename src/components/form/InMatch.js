@@ -350,7 +350,7 @@ class Form extends Component {
                   {scoreboard}{" "}
                   <button
                     className="btn btn-danger"
-                    style={{ minHeight: "50px" }}
+                    style={{ minHeight: "60px", minWidth: "150px" }}
                     onClick={() => {
                       this.setState({
                         timer: [
@@ -384,7 +384,7 @@ class Form extends Component {
                   >
                     {(this.state.timer_running === null ? "Start" : "Stop") +
                       " timer: " +
-                      this.state.timer[0] / 1000 +
+                      (this.state.timer[0] / 1000).toFixed(3) +
                       "s"}
                   </button>
                 </td>
