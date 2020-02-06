@@ -30,7 +30,7 @@ class CreateProject extends Component {
     return (
       <div className="container">
         <form className="white" onSubmit={this.handleSubmit}>
-          <h5 className="grey-text text-darken-3">Expert Scouting Comments</h5>
+          <h5 className="grey-text text-darken-3">Pit Scouting Comments</h5>
           <div className="input-field">
             <input type="text" id="team_num" onChange={this.handleChange} />
             <label htmlFor="team_num">Team Number</label>

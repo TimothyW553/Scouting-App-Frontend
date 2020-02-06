@@ -1,64 +1,63 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { createProject } from '../../store/actions/projectActions'
 import { Redirect } from 'react-router-dom'
-// import Checkbox from './Checkbox'
-
-const imageurl = "https://i.ibb.co/FbLRpF2/field.jpg";
-
-const image_button = (
-  <button onClick={clicky}>
-    <img src={imageurl} width="620" height="360" id="clickyimg"></img>
-  </button>
-);
-
-function clicky(event) {
-  let x = event.clientX;
-  let y = event.clientY;
-  console.log(
-    x - document.getElementById("clickyimg").getBoundingClientRect().left,
-    y - document.getElementById("clickyimg").getBoundingClientRect().top
-  )
-}
+import InMatch from './InMatch'
+import { createMatchForm } from '../../store/actions/matchFormActions';
 
 class Form extends Component {
   state = {
-    match_num: '',
-    team_tum: '',
-    cycle_time: '',
-    climb_time: '',
-    balls_scored: '',
-    outer: '',
-    lower: '',
-    miss: '',
-    pickup: '',
-    max_pickup: '',
-    floor_pickup: '',
-    station_pickup: '',
-    defense_time: '',
-    stage2_activate: '',
-    stage3_activate: '',
-    trench: '',
-    preloads: '',
-    shooting_pos: ''
+    match_num: 0,
+    team_tum: 0,
+    cycle_time: [0.0],
+    climb_time: 0.0,
+    balls_scored: 0,
+    outer: 0,
+    lower: 0,
+    miss: 0,
+    pickup: 0,
+    max_pickup: 0,
+    floor_pickup: false,
+    station_pickup: false,
+    defense_time: 0.0,
+    stage2_activate: false,
+    stage3_activate: false,
+    trench: false,
+    preloads: 0,
+    shooting_pos: [{"x": 0.0, "y": 0.0}]
   }
+
   handleChange = (e) => {
-    this.setState({
-      [e.target.id]: e.target.value
-    })
+    if(isNaN(e.target.value)) {
+      this.setState({
+        [e.target.id]: e.target.value
+      })
+    } else {
+      this.setState({
+        [e.target.id]: Number(e.target.value)
+      })
+    }
   }
+
+  handleNext = (e) => {
+    e.preventDefault();
+    console.log(this.state);
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     // console.log(this.state);
-    this.props.createProject(this.state);
+    this.props.createMatchForm(this.state);
     this.props.history.push('/');
   }
+
+
+
   render() {
     const { auth } = this.props;
-    if (!auth.uid) return <Redirect to='/signin' /> 
+    if (!auth.uid) return <Redirect to='/signin' />
     return (
       <div>
-        {image_button}
+        <InMatch/>
       </div>
     )
   }
@@ -72,7 +71,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    createProject: (project) => dispatch(createProject(project))
+    createMatchForm: (project) => dispatch(createMatchForm(project))
   }
 }
 
