@@ -9,6 +9,8 @@ const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
 const field_size = 8;
 
+let starting_time;
+
 function Counter(props) {
   return (
     <div className="counter">
@@ -50,7 +52,7 @@ class Form extends Component {
     super(props);
     this.state = {
       team_num: 0,
-      cycle_time: [0.0],
+      cycle_time: [],
       climb_time: 0.0,
       balls_scored: 0,
       floor_pickup: false,
@@ -64,7 +66,7 @@ class Form extends Component {
       isOn: false,
       start: 0,
       inMatchView: 0,
-      circle_size: 150,
+      circle_size: 50,
       circle_show: true,
       timer_running: null,
       timer: [0, 0],
@@ -86,9 +88,6 @@ class Form extends Component {
         }
       ]
     };
-    // this.startTimer = this.startTimer.bind(this);
-    // this.stopTimer = this.stopTimer.bind(this);
-    // this.resetTimer = this.resetTimer.bind(this);
   }
 
   Circle(props) {
@@ -125,8 +124,11 @@ class Form extends Component {
     return <React.Fragment>{circles}</React.Fragment>;
   }
 
-  onScoreChange(index, delta) {
+  onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
+    if((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
+      this.state.cycle_time.push((new Date().getTime() - starting_time)/1000);
+    }
     this.setState(this.state);
   }
 
@@ -139,6 +141,7 @@ class Form extends Component {
   showInMatch = e => {
     e.preventDefault();
     this.setState({ inMatchView: 2, preloads: this.state.balls_scored });
+    starting_time = new Date().getTime();
     console.log(this.state);
   };
 
@@ -277,7 +280,7 @@ class Form extends Component {
             <button
               className="btn pink lighten-1"
               onSubmit={() => {
-                this.showInMatch();
+                this.getCurrentTime();
               }}
             >
               Next
@@ -362,9 +365,24 @@ class Form extends Component {
                       });
                       if (this.state.timer_running != null) {
                         this.setState({ timer_running: null });
+                        clearInterval(this.timer);
                       } else {
                         this.setState({ timer_running: new Date().getTime() });
-                      }
+                        this.timer = setInterval(
+                          () => {
+                            const date = new Date().getTime();
+                            this.setState({
+                              timer: [
+                                this.state.timer[0] +
+                                  date -
+                                  this.state.timer_running,
+                                this.state.timer[1]
+                              ],
+                              timer_running: date
+                            })},
+                          1
+                        );
+                      } 
                     }}
                   >
                     {(this.state.timer_running === null ? "Start" : "Stop") +
