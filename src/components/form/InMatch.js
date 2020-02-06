@@ -47,6 +47,42 @@ function Shot(props) {
   );
 }
 
+class Checkbox extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: this.props.type === Boolean ? false : null };
+  }
+  render() {
+    return (
+      <table>
+        <tbody>
+          <tr>
+            <th style={{ maxWidth: "0px" }}>
+              <button
+                onClick={() => {
+                  this.setState({ value: !this.state.value });
+                  console.log(!this.state.value);
+                  this.props.doClick({
+                    [this.props.statename]: !this.state.value
+                  });
+                }}
+                style={{ border: "1px solid black" }}
+              >
+                <div style={{ height: "20px", width: "10px" }}>
+                  {this.state.value ? "✓" : null}
+                </div>
+              </button>
+            </th>
+            <th>
+              <p>{this.props.name}</p>
+            </th>
+          </tr>
+        </tbody>
+      </table>
+    );
+  }
+}
+
 class Form extends Component {
   constructor(props) {
     super(props);
@@ -302,12 +338,28 @@ class Form extends Component {
     let endMatchForm =
       this.state.inMatchView === 3 ? (
         <div className="container">
+          <div className="input-field">
+            <p style={{ fontWeight: "bold", fontSize: 25 }}>
+              End of Match Form
+            </p>
+          </div>
+          <Checkbox
+            type={Boolean}
+            name="Floor Pickup"
+            doClick={state => {
+              this.setState(state);
+            }}
+            statename="floor_pickup"
+          ></Checkbox>
+          <Checkbox
+            type={Boolean}
+            name="Station Pickup"
+            doClick={state => {
+              this.setState(state);
+            }}
+            statename="station_pickup"
+          ></Checkbox>
           <form className="white" onSubmit={this.handleSubmit}>
-            <div className="input-field">
-              <p style={{ fontWeight: "bold", fontSize: 25 }}>
-                End of Match Form
-              </p>
-            </div>
             <div className="input-field">
               <button className="btn pink lighten-1">Next</button>
             </div>
@@ -428,9 +480,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Form)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));
