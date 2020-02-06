@@ -127,7 +127,7 @@ class Form extends Component {
   onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
     if((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
-      this.state.cycle_time.push((new Date().getTime() - starting_time)/1000);
+      this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
     }
     this.setState(this.state);
   }
