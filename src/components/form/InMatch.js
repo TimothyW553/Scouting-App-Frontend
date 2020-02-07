@@ -54,32 +54,28 @@ class Checkbox extends React.Component {
   }
   render() {
     return (
-      <table>
-        <tbody>
-          <tr>
-            <th style={{ width: "30px" }}>
-              <button
-                onClick={() => {
-                  this.setState({ value: !this.state.value });
-                  console.log(!this.state.value);
-                  this.props.doClick({
-                    [this.props.statename]: !this.state.value
-                  });
-                }}
-                //style={{ border: "1px solid black" }}
-              >
-                <div style={{ height: "20px", width: "10px" }}>
-                  {this.state.value ? "✓" : null}
-                </div>
-              </button>
-            </th>
-            <th>
-              <div style={{ height: "11px" }}></div>
-              <p>{this.props.name}</p>
-            </th>
-          </tr>
-        </tbody>
-      </table>
+      <tr>
+        <th style={{ width: "30px", paddingTop: "0px", paddingBottom: "0px" }}>
+          <button
+            onClick={() => {
+              this.setState({ value: !this.state.value });
+              console.log(!this.state.value);
+              this.props.doClick({
+                [this.props.statename]: !this.state.value
+              });
+            }}
+            style={{ border: "1px solid black" }}
+          >
+            <div style={{ height: "20px", width: "10px" }}>
+              {this.state.value ? "✓" : null}
+            </div>
+          </button>
+        </th>
+        <th style={{ width: "30px", paddingTop: "0px", paddingBottom: "0px" }}>
+          <div style={{ height: "11px" }}></div>
+          <p>{this.props.displayname}</p>
+        </th>
+      </tr>
     );
   }
 }
@@ -357,22 +353,51 @@ class Form extends Component {
               End of Match Form
             </p>
           </div>
-          <Checkbox
-            type={Boolean}
-            name="Floor Pickup"
-            doClick={state => {
-              this.setState(state);
-            }}
-            statename="floor_pickup"
-          ></Checkbox>
-          <Checkbox
-            type={Boolean}
-            name="Station Pickup"
-            doClick={state => {
-              this.setState(state);
-            }}
-            statename="station_pickup"
-          ></Checkbox>
+          <table>
+            <tbody>
+              <Checkbox
+                type={Boolean}
+                displayname="Floor Pickup"
+                doClick={state => {
+                  this.setState(state);
+                }}
+                statename="floor_pickup"
+              ></Checkbox>
+              <Checkbox
+                type={Boolean}
+                displayname="Station Pickup"
+                doClick={state => {
+                  this.setState(state);
+                }}
+                statename="station_pickup"
+              ></Checkbox>
+              <Checkbox
+                type={Boolean}
+                displayname="Stage 2 Activated"
+                doClick={state => {
+                  this.setState(state);
+                }}
+                statename="stage2_activate"
+              ></Checkbox>
+              <Checkbox
+                type={Boolean}
+                displayname="Stage 3 Activated"
+                doClick={state => {
+                  this.setState(state);
+                }}
+                statename="stage3_activate"
+              ></Checkbox>
+              <Checkbox
+                type={Boolean}
+                displayname="Can Go Through Trench"
+                doClick={state => {
+                  this.setState(state);
+                }}
+                statename="trench"
+              ></Checkbox>
+            </tbody>
+          </table>
+
           <form className="white" onSubmit={this.handleSubmit}>
             <div className="input-field">
               <button className="btn pink lighten-1" id="button4">
