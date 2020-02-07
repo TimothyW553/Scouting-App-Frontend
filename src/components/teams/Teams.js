@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux"
 import { Redirect } from "react-router-dom";
+
 import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
@@ -81,7 +82,7 @@ class Teams extends Component {
     // }
 
 
-    let i=0, j=0, k=0, l=0;
+    let i=0, j=0, k=0, l=0, m=0;
     let teamN=0;
 
     return (
@@ -98,7 +99,7 @@ class Teams extends Component {
             {BUTTONS1.map((currElement1, index1)=>(<button onClick={()=>this.onClicked(currElement1, index1+19)} key={BUTTONS1[l++]}>{BUTTONS1[j++]}{this.state.chartVisible[index1+19]?this.charts(currElement1+19):null}</button>))}
             </div> */}
             {/* <div>state: {(this.state.chartVisible[this.state.p]?this.charts(this.state.o):null)}</div> */}
-          <div className="align-baseline" role="group">{this.state.chartVisible.map((currElement, index)=>(<td  style={{ color:"red"}}>{this.state.chartVisible[index]?this.charts(BUTTONS[index]):null}</td>))}</div>
+          <table><thead><tr className="align-baseline" role="group">{this.state.chartVisible.map((currElement, index)=>(<td key={index} style={{ color:"red"}}>{this.state.chartVisible[index]?this.charts(BUTTONS[index]):null}</td>))}</tr></thead></table>
         </div>
       </div>
 
