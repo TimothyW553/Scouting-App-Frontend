@@ -57,38 +57,92 @@ function Shot(props) {
   );
 }
 
-class Checkbox extends React.Component {
+class Timer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      timer_running: null,
+      timer: [0, 0]
+    };
+  }
+  render() {
+    let that = this.props.this;
+    return (
+      <button
+        className="btn btn-danger"
+        style={{ height: "60px" }}
+        onClick={() => {
+          this.setState({
+            timer: [
+              this.state.timer_running === null
+                ? this.state.timer[0]
+                : this.state.timer[0] +
+                  new Date().getTime() -
+                  this.state.timer_running,
+              this.state.timer[1]
+            ]
+          });
+          if (this.state.timer_running !== null) {
+            this.setState({ timer_running: null });
+            clearInterval(this.timer);
+            let formtimercopy = [...that.state.timers];
+            formtimercopy[this.props.index] = this.state.timer;
+            that.setState({ timers: formtimercopy });
+          } else {
+            this.setState({ timer_running: new Date().getTime() });
+            this.timer = setInterval(() => {
+              const date = new Date().getTime();
+              this.setState({
+                timer: [
+                  this.state.timer[0] + date - this.state.timer_running,
+                  this.state.timer[1]
+                ],
+                timer_running: date
+              });
+            }, 1);
+          }
+        }}
+      >
+        {(this.state.timer_running === null
+          ? this.props.displayName
+          : "Stop Timer") +
+          ": " +
+          (this.state.timer[0] / 1000).toFixed(3) +
+          "s"}
+      </button>
+    );
+  }
+}
+
+class Checkbox extends Component {
   constructor(props) {
     super(props);
     this.state = { value: this.props.type === Boolean ? false : null };
   }
   render() {
     return (
-      <table>
-        <tbody>
-          <tr>
-            <th style={{ maxWidth: "0px" }}>
-              <button
-                onClick={() => {
-                  this.setState({ value: !this.state.value });
-                  console.log(!this.state.value);
-                  this.props.doClick({
-                    [this.props.statename]: !this.state.value
-                  });
-                }}
-                style={{ border: "1px solid black" }}
-              >
-                <div style={{ height: "20px", width: "10px" }}>
-                  {this.state.value ? "✓" : null}
-                </div>
-              </button>
-            </th>
-            <th>
-              <p>{this.props.name}</p>
-            </th>
-          </tr>
-        </tbody>
-      </table>
+      <tr>
+        <th style={{ width: "30px", paddingTop: "0px", paddingBottom: "0px" }}>
+          <button
+            onClick={() => {
+              this.setState({ value: !this.state.value });
+              console.log(!this.state.value);
+              this.props.doClick({
+                [this.props.statename]: !this.state.value
+              });
+            }}
+            style={{ border: "1px solid black" }}
+          >
+            <div style={{ height: "20px", width: "10px" }}>
+              {this.state.value ? "✓" : null}
+            </div>
+          </button>
+        </th>
+        <th style={{ width: "30px", paddingTop: "0px", paddingBottom: "0px" }}>
+          <div style={{ height: "11px" }}></div>
+          <p>{this.props.displayName}</p>
+        </th>
+      </tr>
     );
   }
 }
@@ -114,8 +168,7 @@ class Form extends Component {
       inMatchView: 0,
       circle_size: 50,
       circle_show: true,
-      timer_running: null,
-      timer: [0, 0],
+      timers: [0, 0, 0, 0, 0],
       shots: [
         {
           type: "high",
@@ -137,37 +190,43 @@ class Form extends Component {
   }
 
   Circle(props) {
-    let circle = index => {
-      return (
-        <img
-          key={props.shooting_pos[index].index}
-          src={require(`${circleimg}`)}
-          width={props.circle_size}
-          height={props.circle_size}
-          onClick={() => {
-            this.clicky(window.event);
-          }}
-          style={{
-            position: "absolute",
-            left:
-              props.shooting_pos[index].x +
-              document.getElementById("clickyimg").getBoundingClientRect()
-                .left -
-              props.circle_size / 2 +
-              "px",
-            top:
-              props.shooting_pos[index].y +
-              document.getElementById("clickyimg").getBoundingClientRect().top -
-              props.circle_size / 2 +
-              "px"
-          }}
-        ></img>
-      );
-    };
-    let circles = props.shooting_pos.map(index => {
-      return circle(index.index);
-    });
-    return <React.Fragment>{circles}</React.Fragment>;
+    try {
+      let circle = index => {
+        return (
+          <img
+            key={props.shooting_pos[index].index}
+            src={require(`${circleimg}`)}
+            width={props.circle_size}
+            height={props.circle_size}
+            onClick={() => {
+              this.clicky(window.event);
+            }}
+            style={{
+              position: "absolute",
+              left:
+                props.shooting_pos[index].x +
+                document.getElementById("clickyimg").getBoundingClientRect()
+                  .left -
+                props.circle_size / 2 +
+                "px",
+              top:
+                props.shooting_pos[index].y +
+                document.getElementById("clickyimg").getBoundingClientRect()
+                  .top -
+                props.circle_size / 2 +
+                "px"
+            }}
+          ></img>
+        );
+      };
+
+      let circles = props.shooting_pos.map(index => {
+        return circle(index.index);
+      });
+      return <React.Fragment>{circles}</React.Fragment>;
+    } catch {
+      return null;
+    }
   }
 
   onScoreChange = (index, delta) => {
@@ -193,6 +252,10 @@ class Form extends Component {
 
   showEndMatch = e => {
     e.preventDefault();
+    if (this.state.timer_running !== null) {
+      this.setState({ timer_running: null });
+      clearInterval(this.timer);
+    }
     this.setState({ inMatchView: 3 });
     console.log(this.state);
   };
@@ -293,7 +356,9 @@ class Form extends Component {
             />
           </div>
           <div className="input-field">
-            <button className="btn pink lighten-1">Next</button>
+            <button className="btn pink lighten-1" id="button1">
+              Next
+            </button>
           </div>
         </form>
       ) : null;
@@ -346,6 +411,7 @@ class Form extends Component {
               onSubmit={() => {
                 this.getCurrentTime();
               }}
+              id="button2"
             >
               Next
             </button>
@@ -363,6 +429,27 @@ class Form extends Component {
       ></img>
     );
 
+    let boolCheckMapList = [
+      ["Floor Pickup", "floor_pickup"],
+      ["Station Pickup", "station_pickup"],
+      ["Stage 2 Activated", "stage2_activate"],
+      ["Stage 3 Activated", "stage3_activate"],
+      ["Can Go Through Trench", "trench"]
+    ];
+
+    let boolCheckMap = boolCheckMapList.map(index => (
+      <Checkbox
+        key={index[0]}
+        type={Boolean}
+        displayName={index[0]}
+        doClick={state => {
+          this.setState(state);
+        }}
+        statename={index[1]}
+        key={index[1]}
+      />
+    ));
+
     let endMatchForm =
       this.state.inMatchView === 3 ? (
         <div className="container">
@@ -371,25 +458,15 @@ class Form extends Component {
               End of Match Form
             </p>
           </div>
-          <Checkbox
-            type={Boolean}
-            name="Floor Pickup"
-            doClick={state => {
-              this.setState(state);
-            }}
-            statename="floor_pickup"
-          ></Checkbox>
-          <Checkbox
-            type={Boolean}
-            name="Station Pickup"
-            doClick={state => {
-              this.setState(state);
-            }}
-            statename="station_pickup"
-          ></Checkbox>
+          <table>
+            <tbody>{boolCheckMap}</tbody>
+          </table>
+
           <form className="white" onSubmit={this.handleSubmit}>
             <div className="input-field">
-              <button className="btn pink lighten-1">Next</button>
+              <button className="btn pink lighten-1" id="button4">
+                Next
+              </button>
             </div>
           </form>
         </div>
@@ -427,54 +504,23 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td>
-                  {scoreboard}{" "}
-                  <button
-                    className="btn btn-danger"
-                    style={{ minHeight: "60px", minWidth: "150px" }}
-                    onClick={() => {
-                      this.setState({
-                        timer: [
-                          this.state.timer_running === null
-                            ? this.state.timer[0]
-                            : this.state.timer[0] +
-                              new Date().getTime() -
-                              this.state.timer_running,
-                          this.state.timer[1]
-                        ]
-                      });
-                      if (this.state.timer_running != null) {
-                        this.setState({ timer_running: null });
-                        clearInterval(this.timer);
-                      } else {
-                        this.setState({ timer_running: new Date().getTime() });
-                        this.timer = setInterval(() => {
-                          const date = new Date().getTime();
-                          this.setState({
-                            timer: [
-                              this.state.timer[0] +
-                                date -
-                                this.state.timer_running,
-                              this.state.timer[1]
-                            ],
-                            timer_running: date
-                          });
-                        }, 1);
-                      }
-                    }}
-                  >
-                    {(this.state.timer_running === null ? "Start" : "Stop") +
-                      " timer: " +
-                      (this.state.timer[0] / 1000).toFixed(3) +
-                      "s"}
-                  </button>
+                  <Timer this={this} index="0" displayName="Defence Timer" />
+                  <br /> <br />
+                  {scoreboard}
+                  <br />
+                  <Timer this={this} index="1" displayName="Climb Timer" />
                 </td>
                 <td width="500px">{inMatchForm}</td>
               </tr>
             </tbody>
           </table>
-          {showncircle}   
+          {showncircle}   
           <div className="input-field">
-            <button className="btn pink lighten-1" onClick={this.showEndMatch}>
+            <button
+              className="btn pink lighten-1"
+              onClick={this.showEndMatch}
+              id="button3"
+            >
               Next
             </button>
           </div>
@@ -495,6 +541,15 @@ class Form extends Component {
       </div>
     );
   }
+  componentDidMount() {
+    document.getElementById("button1").focus();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.inMatchView != this.state.inMatchView) {
+      document.getElementById("button" + (this.state.inMatchView + 1)).focus();
+    }
+  }
 }
 
 const mapStateToProps = state => {
@@ -509,9 +564,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Form)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));
