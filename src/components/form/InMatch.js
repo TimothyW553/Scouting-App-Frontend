@@ -47,7 +47,53 @@ function Shot(props) {
   );
 }
 
-class Checkbox extends React.Component {
+// class  extends Component {
+//   state = {  }
+//   render() {
+//     return (
+//     <button
+//       className="btn btn-danger"
+//       style={{ height: "60px" }}
+//       onClick={() => {
+//         this.setState({
+//           timer: [
+//             this.state.timer_running === null
+//               ? this.state.timer[0]
+//               : this.state.timer[0] +
+//                 new Date().getTime() -
+//                 this.state.timer_running,
+//             this.state.timer[1]
+//           ]
+//         });
+//         if (this.state.timer_running !== null) {
+//           this.setState({ timer_running: null });
+//           clearInterval(this.timer);
+//         } else {
+//           this.setState({ timer_running: new Date().getTime() });
+//           this.timer = setInterval(() => {
+//             const date = new Date().getTime();
+//             this.setState({
+//               timer: [
+//                 this.state.timer[0] +
+//                   date -
+//                   this.state.timer_running,
+//                 this.state.timer[1]
+//               ],
+//               timer_running: date
+//             });
+//           }, 1);
+//         }
+//       }}
+//     >
+//       {(this.state.timer_running === null ? "Start" : "Stop") +
+//         " timer: " +
+//         (this.state.timer[0] / 1000).toFixed(3) +
+//         "s"}
+//     </button> );
+//   }
+// }
+
+class Checkbox extends Component {
   constructor(props) {
     super(props);
     this.state = { value: this.props.type === Boolean ? false : null };
@@ -515,7 +561,7 @@ class Form extends Component {
     document.getElementById("button1").focus();
   }
 
-  componentDidUpdate(prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevState.inMatchView != this.state.inMatchView) {
       document.getElementById("button" + (this.state.inMatchView + 1)).focus();
     }
