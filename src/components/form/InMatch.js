@@ -401,7 +401,7 @@ class Form extends Component {
       ></img>
     );
 
-    boolCheckMap = () => {
+    let boolCheckMap = () => {
       let boolCheckMapList = [
         ["Floor Pickup", "floor_pickup"],
         ["Station Pickup", "station_pickup"],
@@ -409,7 +409,6 @@ class Form extends Component {
         ["Stage 3 Activated", "stage3_activate"],
         ["Can Go Through Trench", "trench"]
       ];
-
       return boolCheckMapList.map(index => (
         <Checkbox
           key={index[0]}
@@ -433,7 +432,7 @@ class Form extends Component {
             </p>
           </div>
           <table>
-            <tbody>{boolCheckMap}</tbody>
+            <tbody>{boolCheckMap()}</tbody>
           </table>
 
           <form className="white" onSubmit={this.handleSubmit}>
