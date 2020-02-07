@@ -7,7 +7,7 @@ import "./style.css";
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 8;
+const field_size = 7;
 
 let starting_time;
 
@@ -57,7 +57,7 @@ class Checkbox extends React.Component {
       <table>
         <tbody>
           <tr>
-            <th style={{ maxWidth: "0px" }}>
+            <th style={{ width: "30px" }}>
               <button
                 onClick={() => {
                   this.setState({ value: !this.state.value });
@@ -66,7 +66,7 @@ class Checkbox extends React.Component {
                     [this.props.statename]: !this.state.value
                   });
                 }}
-                style={{ border: "1px solid black" }}
+                //style={{ border: "1px solid black" }}
               >
                 <div style={{ height: "20px", width: "10px" }}>
                   {this.state.value ? "✓" : null}
@@ -74,6 +74,7 @@ class Checkbox extends React.Component {
               </button>
             </th>
             <th>
+              <div style={{ height: "11px" }}></div>
               <p>{this.props.name}</p>
             </th>
           </tr>
@@ -127,37 +128,43 @@ class Form extends Component {
   }
 
   Circle(props) {
-    let circle = index => {
-      return (
-        <img
-          key={props.shooting_pos[index].index}
-          src={require(`${circleimg}`)}
-          width={props.circle_size}
-          height={props.circle_size}
-          onClick={() => {
-            this.clicky(window.event);
-          }}
-          style={{
-            position: "absolute",
-            left:
-              props.shooting_pos[index].x +
-              document.getElementById("clickyimg").getBoundingClientRect()
-                .left -
-              props.circle_size / 2 +
-              "px",
-            top:
-              props.shooting_pos[index].y +
-              document.getElementById("clickyimg").getBoundingClientRect().top -
-              props.circle_size / 2 +
-              "px"
-          }}
-        ></img>
-      );
-    };
-    let circles = props.shooting_pos.map(index => {
-      return circle(index.index);
-    });
-    return <React.Fragment>{circles}</React.Fragment>;
+    try {
+      let circle = index => {
+        return (
+          <img
+            key={props.shooting_pos[index].index}
+            src={require(`${circleimg}`)}
+            width={props.circle_size}
+            height={props.circle_size}
+            onClick={() => {
+              this.clicky(window.event);
+            }}
+            style={{
+              position: "absolute",
+              left:
+                props.shooting_pos[index].x +
+                document.getElementById("clickyimg").getBoundingClientRect()
+                  .left -
+                props.circle_size / 2 +
+                "px",
+              top:
+                props.shooting_pos[index].y +
+                document.getElementById("clickyimg").getBoundingClientRect()
+                  .top -
+                props.circle_size / 2 +
+                "px"
+            }}
+          ></img>
+        );
+      };
+
+      let circles = props.shooting_pos.map(index => {
+        return circle(index.index);
+      });
+      return <React.Fragment>{circles}</React.Fragment>;
+    } catch {
+      return null;
+    }
   }
 
   onScoreChange = (index, delta) => {
@@ -183,6 +190,10 @@ class Form extends Component {
 
   showEndMatch = e => {
     e.preventDefault();
+    if (this.state.timer_running !== null) {
+      this.setState({ timer_running: null });
+      clearInterval(this.timer);
+    }
     this.setState({ inMatchView: 3 });
     console.log(this.state);
   };
@@ -283,7 +294,9 @@ class Form extends Component {
             />
           </div>
           <div className="input-field">
-            <button className="btn pink lighten-1">Next</button>
+            <button className="btn pink lighten-1" id="button1">
+              Next
+            </button>
           </div>
         </form>
       ) : null;
@@ -318,6 +331,7 @@ class Form extends Component {
               onSubmit={() => {
                 this.getCurrentTime();
               }}
+              id="button2"
             >
               Next
             </button>
@@ -361,7 +375,9 @@ class Form extends Component {
           ></Checkbox>
           <form className="white" onSubmit={this.handleSubmit}>
             <div className="input-field">
-              <button className="btn pink lighten-1">Next</button>
+              <button className="btn pink lighten-1" id="button4">
+                Next
+              </button>
             </div>
           </form>
         </div>
@@ -402,7 +418,7 @@ class Form extends Component {
                   {scoreboard}{" "}
                   <button
                     className="btn btn-danger"
-                    style={{ minHeight: "60px", minWidth: "150px" }}
+                    style={{ height: "60px" }}
                     onClick={() => {
                       this.setState({
                         timer: [
@@ -414,7 +430,7 @@ class Form extends Component {
                           this.state.timer[1]
                         ]
                       });
-                      if (this.state.timer_running != null) {
+                      if (this.state.timer_running !== null) {
                         this.setState({ timer_running: null });
                         clearInterval(this.timer);
                       } else {
@@ -446,7 +462,11 @@ class Form extends Component {
           </table>
           {showncircle}   
           <div className="input-field">
-            <button className="btn pink lighten-1" onClick={this.showEndMatch}>
+            <button
+              className="btn pink lighten-1"
+              onClick={this.showEndMatch}
+              id="button3"
+            >
               Next
             </button>
           </div>
@@ -465,6 +485,15 @@ class Form extends Component {
         </span>
       </div>
     );
+  }
+  componentDidMount() {
+    document.getElementById("button1").focus();
+  }
+
+  componentDidUpdate(prevState) {
+    if (prevState.inMatchView != this.state.inMatchView) {
+      document.getElementById("button" + (this.state.inMatchView + 1)).focus();
+    }
   }
 }
 
