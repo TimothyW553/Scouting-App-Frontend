@@ -7,7 +7,7 @@ import "./style.css";
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 8;
+const field_size = 7;
 
 let starting_time;
 
