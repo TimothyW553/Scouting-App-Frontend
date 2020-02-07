@@ -401,6 +401,25 @@ class Form extends Component {
       ></img>
     );
 
+    let boolCheckMapList = [
+      ["Floor Pickup", "floor_pickup"],
+      ["Station Pickup", "station_pickup"],
+      ["Stage 2 Activated", "stage2_activate"],
+      ["Stage 3 Activated", "stage3_activate"],
+      ["Can Go Through Trench", "trench"]
+    ];
+
+    let boolCheckMap = boolCheckMapList.map(index => (
+      <Checkbox
+        type={Boolean}
+        displayName={index[0]}
+        doClick={state => {
+          this.setState(state);
+        }}
+        statename={index[1]}
+      />
+    ));
+
     let endMatchForm =
       this.state.inMatchView === 3 ? (
         <div className="container">
@@ -410,48 +429,7 @@ class Form extends Component {
             </p>
           </div>
           <table>
-            <tbody>
-              <Checkbox
-                type={Boolean}
-                displayName="Floor Pickup"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="floor_pickup"
-              ></Checkbox>
-              <Checkbox
-                type={Boolean}
-                displayName="Station Pickup"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="station_pickup"
-              ></Checkbox>
-              <Checkbox
-                type={Boolean}
-                displayName="Stage 2 Activated"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="stage2_activate"
-              ></Checkbox>
-              <Checkbox
-                type={Boolean}
-                displayName="Stage 3 Activated"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="stage3_activate"
-              ></Checkbox>
-              <Checkbox
-                type={Boolean}
-                displayName="Can Go Through Trench"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="trench"
-              ></Checkbox>
-            </tbody>
+            <tbody>{boolCheckMap}</tbody>
           </table>
 
           <form className="white" onSubmit={this.handleSubmit}>
