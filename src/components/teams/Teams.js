@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
+
 import {
   BarChart,
   Bar,
@@ -111,11 +112,8 @@ class Teams extends Component {
     //   BUTTONS1.push(json[i]);
     // }
 
-    let i = 0,
-      j = 0,
-      k = 0,
-      l = 0;
-    let teamN = 0;
+    let i=0, j=0, k=0, l=0, m=0;
+    let teamN=0;
 
     return (
       <div className="card text-center">
