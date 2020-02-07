@@ -411,6 +411,7 @@ class Form extends Component {
 
     let boolCheckMap = boolCheckMapList.map(index => (
       <Checkbox
+        key={index[0]}
         type={Boolean}
         displayName={index[0]}
         doClick={state => {
