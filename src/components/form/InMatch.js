@@ -401,26 +401,28 @@ class Form extends Component {
       ></img>
     );
 
-    let boolCheckMapList = [
-      ["Floor Pickup", "floor_pickup"],
-      ["Station Pickup", "station_pickup"],
-      ["Stage 2 Activated", "stage2_activate"],
-      ["Stage 3 Activated", "stage3_activate"],
-      ["Can Go Through Trench", "trench"]
-    ];
+    boolCheckMap = () => {
+      let boolCheckMapList = [
+        ["Floor Pickup", "floor_pickup"],
+        ["Station Pickup", "station_pickup"],
+        ["Stage 2 Activated", "stage2_activate"],
+        ["Stage 3 Activated", "stage3_activate"],
+        ["Can Go Through Trench", "trench"]
+      ];
 
-    let boolCheckMap = boolCheckMapList.map(index => (
-      <Checkbox
-        key={index[0]}
-        type={Boolean}
-        displayName={index[0]}
-        doClick={state => {
-          this.setState(state);
-        }}
-        statename={index[1]}
-        key={index[1]}
-      />
-    ));
+      return boolCheckMapList.map(index => (
+        <Checkbox
+          key={index[0]}
+          type={Boolean}
+          displayName={index[0]}
+          doClick={state => {
+            this.setState(state);
+          }}
+          statename={index[1]}
+          key={index[1]}
+        />
+      ));
+    };
 
     let endMatchForm =
       this.state.inMatchView === 3 ? (
