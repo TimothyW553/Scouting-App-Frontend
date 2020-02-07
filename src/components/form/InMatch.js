@@ -418,6 +418,7 @@ class Form extends Component {
           this.setState(state);
         }}
         statename={index[1]}
+        key={index[1]}
       />
     ));
 
