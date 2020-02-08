@@ -11,12 +11,12 @@ const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
 const field_size = 7;
 const CompetingTeams_Array = [
-  { label: "Red 1: 610", value: 1 },
-  { label: "Red 2: 690", value: 2 },
-  { label: "Red 3: 420", value: 3 },
-  { label: "Blue 1: 1111", value: 4 },
-  { label: "Blue 2: 6969", value: 5 },
-  { label: "Blue 3: 4200", value: 6 }
+  { label: "R 1: 610", value: 1 },
+  { label: "R 2: 690", value: 2 },
+  { label: "R 3: 420", value: 3 },
+  { label: "B 1: 1111", value: 4 },
+  { label: "B 2: 6969", value: 5 },
+  { label: "B 3: 4200", value: 6 }
 ];
 
 let starting_time;
@@ -236,9 +236,9 @@ class Form extends Component {
   updateTeamChange = () => {
     try {
       this.setState({
-        teamSelected: document.getElementsByClassName(
-          "  css-1uccc91-singleValue"
-        )[0].innerText
+        teamSelected: +document
+          .getElementsByClassName("  css-1uccc91-singleValue")[0]
+          .innerText.slice(5)
       });
     } catch {}
   };
