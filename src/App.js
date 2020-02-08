@@ -21,7 +21,7 @@ class App extends Component {
           <Navbar />
           <Switch>
             <Route exact path='/home'component={Dashboard} />
-            <Route path='/project/:id' component={ProjectDetails} />
+            <Route path='/match_form/:id' component={ProjectDetails} />
             <Route path='/signin' component={SignIn} />
             <Route path='/signup' component={SignUp} />
             <Route path='/overall' component={TeamList} />

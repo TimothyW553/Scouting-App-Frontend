@@ -2,13 +2,13 @@ import React from 'react'
 import ProjectSummary from './ProjectSummary'
 import { Link } from 'react-router-dom'
 
-const ProjectList = ({projects}) => {
+const ProjectList = ({match_forms}) => {
   return (
     <div className="project-list section">
-      { projects && projects.map(project => {
+      { match_forms && match_forms.map(match_form => {
         return (
-          <Link to={'/project/' + project.id} key={project.id}>
-            <ProjectSummary project={project} />
+          <Link to={'/match_form/' + match_form.id} key={match_form.id}>
+            <ProjectSummary match_form={match_form} />
           </Link>
         )
       })}  

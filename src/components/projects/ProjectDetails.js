@@ -6,26 +6,32 @@ import { Redirect } from "react-router-dom";
 import moment from "moment";
 
 const ProjectDetails = props => {
-  const { project, auth } = props;
+  const { match_form, auth } = props;
   if (!auth.uid) return <Redirect to="/signin" />;
-  if (project) {
+  if (match_form) {
     return (
       <div className="container section project-details">
         <div className="card z-depth-0">
           <div className="card-content">
-            <span className="card-title">{project.team_num}</span>
-            <p>Drive Train Speed: {project.drive_speed}</p>
-            <p>Shooter Mechanism: {project.shooter_mech}</p>
-            <p>Climbing Mechanism: {project.climb_mech}</p>
-            <p>Spinner Mechanism: {project.spin_mech}</p>
-            <p>Type of Play: {project.type}</p>
-            <p>Additional Comments: {project.comments}</p>
+            <span className="card-title">{match_form.team_num}</span>
+            <p>Match Number: {match_form.match_num}</p>
+            <p>Defence Time: {match_form.defence_time / 1000}</p>
+            <p>Climb Time: {match_form.climb_time / 1000}</p>
+            <p>Balls scored: {match_form.balls_scored}</p>
+            <p>Climb Time: {match_form.climb_time / 1000}</p>
+            <p>Upper Scored: {match_form.shots[0].score}</p>
+            <p>Lower Scored: {match_form.shots[1].score}</p>
+            <p>Miss Scored: {match_form.shots[2].score}</p>
+            <p>Floor pickup: {match_form.floor_pickup}</p>
+            <p>Station pickup: {match_form.station_pickup}</p>
+            <p>Stage 2 Activate: {match_form.stage2_activate}</p>
+            <p>Stage 3 Activate: {match_form.station_pickup}</p>
           </div>
           <div className="card-action grey lighten-4 grey-text">
             <div>
-              Posted by {project.authorFirstName} {project.authorLastName}
+              Posted by {match_form.authorFirstName} {match_form.authorLastName}
             </div>
-            <div>{moment(project.createdAt.toDate()).calendar()}</div>
+            <div>{moment(match_form.createdAt.toDate()).calendar()}</div>
           </div>
         </div>
       </div>
@@ -42,10 +48,10 @@ const ProjectDetails = props => {
 const mapStateToProps = (state, ownProps) => {
   // console.log(state);
   const id = ownProps.match.params.id;
-  const projects = state.firestore.data.projects;
-  const project = projects ? projects[id] : null;
+  const match_forms = state.firestore.data.match_forms;
+  const match_form = match_forms ? match_forms[id] : null;
   return {
-    project: project,
+    match_form: match_form,
     auth: state.firebase.auth
   };
 };
@@ -54,7 +60,7 @@ export default compose(
   connect(mapStateToProps),
   firestoreConnect([
     {
-      collection: "projects"
+      collection: "match_forms"
     }
   ])
 )(ProjectDetails);
