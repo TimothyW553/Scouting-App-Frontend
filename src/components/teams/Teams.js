@@ -56,10 +56,7 @@ const data = [
     amt: 2100
   }
 ];
-//import CHARTS from './CHART';
 
-// {} -> dict
-// [] -> array
 let json = [];
 
 const fetchAndLog = async () => {
@@ -151,7 +148,7 @@ class Teams extends Component {
               <tr>
             {this.state.chartVisible.map((currElement, index) =>
               this.state.chartVisible[index] ? (
-                <td key={index} style={{ color: "red" }}>{this.charts(BUTTONS[index])}</td>
+                <td key={index} style={{ color: "red" }}>{this.charts(BUTTONS[index], index)}</td>
               ) : null
             )}
             </tr>
@@ -173,7 +170,7 @@ class Teams extends Component {
     this.setState({ o: element });
     this.state.p = indexofele;
   }
-  charts(x) {
+  charts(x,y) {
     return (
       <div>
         Info about the team: {x}
@@ -181,7 +178,8 @@ class Teams extends Component {
         <BarChart
           width={300}
           height={300}
-          data={data}
+          data={data}//this will be data={data[y]} as we will have different data for each team
+          //but right now we will just leave it as is because the connection to backend is not setup
           margin={{
             top: 0,
             right: 0,
