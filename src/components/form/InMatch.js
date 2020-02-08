@@ -156,6 +156,7 @@ class Form extends Component {
     this.state = {
       team_num: 0,
       cycle_time: [],
+      average: 0,
       climb_time: 0.0,
       defence_time: 0.0,
       balls_scored: 0,
@@ -252,6 +253,13 @@ class Form extends Component {
       this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
     }
     this.setState(this.state);
+    if (this.state.cycle_time.length != 0) {
+      this.setState({
+        average_cycle_time:
+          this.state.cycle_time[this.state.cycle_time.length - 1] /
+          this.state.cycle_time.length
+      });
+    }
   };
 
   showPreMatch = e => {
