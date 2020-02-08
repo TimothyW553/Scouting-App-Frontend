@@ -33,7 +33,15 @@ function Counter(props) {
         {" "}
         -{" "}
       </button>
-      <div className="counter-score"> {props.score} </div>
+      <div className="counter-score">
+        {" "}
+        <p style={{ fontSize: "15px", marginBottom: "0px" }}>
+          {props.displayName}
+        </p>
+        <div style={{ lineHeight: "20px", maxHeight: "20px" }}>
+          {props.score}
+        </div>
+      </div>
       <button
         className="counter-action increment"
         onClick={function() {
@@ -51,7 +59,11 @@ function Shot(props) {
   return (
     <div className="shot">
       <div className="shot-score">
-        <Counter score={props.score} onChange={props.onScoreChange} />
+        <Counter
+          score={props.score}
+          onChange={props.onScoreChange}
+          displayName={props.displayName}
+        />
       </div>
     </div>
   );
@@ -63,7 +75,7 @@ class Timer extends Component {
     this.state = {
       timer_running: null,
       timer: 0
-    }
+    };
   }
   render() {
     let that = this.props.this;
@@ -86,14 +98,13 @@ class Timer extends Component {
                 new Date().getTime() -
                 this.state.timer_running
             });
-            this.state.timer=(
-            this.state.timer +
-            new Date().getTime() -
-            this.state.timer_running);
+            this.state.timer =
+              this.state.timer +
+              new Date().getTime() -
+              this.state.timer_running;
           }
-          that.setState({[this.props.id]: this.state.timer});
-        }
-      }
+          that.setState({ [this.props.id]: this.state.timer });
+        }}
       >
         {(this.state.timer_running === null
           ? this.props.displayName
@@ -234,7 +245,7 @@ class Form extends Component {
 
   onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
-    if(index == 0 || index == 1) {
+    if (index == 0 || index == 1) {
       this.state.balls_scored += delta;
     }
     if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
@@ -486,6 +497,8 @@ class Form extends Component {
 
     let showncircle = this.state.circle_show ? this.Circle(this.state) : null;
 
+    let shotNames = ["Top", "Bot", "Miss"];
+
     let scoreboard =
       this.state.inMatchView === 2 ? (
         <span className="scoreboard">
@@ -499,6 +512,7 @@ class Form extends Component {
                     }.bind(this)}
                     score={shot.score}
                     key={index}
+                    displayName={shotNames[index]}
                   />
                 );
               }.bind(this)
@@ -514,11 +528,21 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td>
-                  <Timer this={this} name={this.state.defence_time} displayName="Defence Timer" id="defence_time"/>
+                  <Timer
+                    this={this}
+                    name={this.state.defence_time}
+                    displayName="Defence Timer"
+                    id="defence_time"
+                  />
                   <br /> <br />
                   {scoreboard}
                   <br />
-                  <Timer this={this} name={this.state} displayName="Climb Timer" id="climb_time"/>
+                  <Timer
+                    this={this}
+                    name={this.state}
+                    displayName="Climb Timer"
+                    id="climb_time"
+                  />
                 </td>
                 <td width="500px">{inMatchForm}</td>
               </tr>
