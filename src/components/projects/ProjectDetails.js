@@ -5,6 +5,14 @@ import { compose } from "redux";
 import { Redirect } from "react-router-dom";
 import moment from "moment";
 
+function average(arr) {
+  let sum = 0;
+  for(let i = 0; i < arr.length; i++) {
+    sum += arr[i];
+  }
+  return sum / arr.length;
+}
+
 const ProjectDetails = props => {
   const { match_form, auth } = props;
   if (!auth.uid) return <Redirect to="/signin" />;
@@ -22,10 +30,11 @@ const ProjectDetails = props => {
             <p>Upper Scored: {match_form.shots[0].score}</p>
             <p>Lower Scored: {match_form.shots[1].score}</p>
             <p>Miss Scored: {match_form.shots[2].score}</p>
-            <p>Floor pickup: {match_form.floor_pickup}</p>
-            <p>Station pickup: {match_form.station_pickup}</p>
-            <p>Stage 2 Activate: {match_form.stage2_activate}</p>
-            <p>Stage 3 Activate: {match_form.station_pickup}</p>
+            <p>Floor pickup: {match_form.floor_pickup ? "True" : "False"}</p>
+            <p>Station pickup: {match_form.station_pickup ? "True" : "False"}</p>
+            <p>Stage 2 Activate: {match_form.stage2_activate ? "True" : "False"}</p>
+            <p>Stage 3 Activate: {match_form.stage3_activate ? "True" : "False"}</p>
+            <p>Average Cycle Time: {average(match_form.cycle_time).toFixed(4)}</p>
           </div>
           <div className="card-action grey lighten-4 grey-text">
             <div>
