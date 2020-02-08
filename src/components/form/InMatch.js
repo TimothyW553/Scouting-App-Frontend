@@ -215,7 +215,7 @@ class Form extends Component {
   updateTeamChange = () => {
     try {
       this.setState({
-        teamSelected: document
+        teamSelected: +document
           .getElementsByClassName("  css-1uccc91-singleValue")[0]
           .innerText.slice(5)
       });
