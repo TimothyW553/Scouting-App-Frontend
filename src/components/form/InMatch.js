@@ -177,7 +177,8 @@ class Form extends Component {
           score: 0,
           id: 3
         }
-      ]
+      ],
+      teamSelected: null
     };
   }
 
@@ -220,6 +221,16 @@ class Form extends Component {
       return null;
     }
   }
+
+  updateTeamChange = () => {
+    try {
+      this.setState({
+        teamSelected: document.getElementsByClassName(
+          "  css-1uccc91-singleValue"
+        )[0].innerText
+      });
+    } catch {}
+  };
 
   onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
@@ -362,9 +373,15 @@ class Form extends Component {
           <div className="row">
             <div className="col-md-4" style={{ marginLeft: "15px" }}>
               <h5 style={{ fontWeight: "bold" }}>
-                Select The Team Your Scouting
+                Select The Team You're Scouting
               </h5>
-              <Select options={CompetingTeams_Array} />
+              <div onClick={this.updateTeamChange} id="teamSelect2">
+                <Select
+                  options={CompetingTeams_Array}
+                  id="teamSelect"
+                  ref="teamselect"
+                />
+              </div>
             </div>
             <div className="col-md-4"></div>
           </div>
@@ -398,6 +415,7 @@ class Form extends Component {
           </div>
           <div className="input-field">
             <button
+              onClick={this.updateTeamChange}
               className="btn pink lighten-1"
               onSubmit={() => {
                 this.getCurrentTime();
