@@ -155,7 +155,8 @@ class Form extends Component {
     super(props);
     this.state = {
       team_num: 0,
-      cycle_time: [],
+      cycle_time: [0],
+      ind_cycle_time: [],
       average: 0,
       climb_time: 0.0,
       defence_time: 0.0,
@@ -251,15 +252,17 @@ class Form extends Component {
     }
     if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
       this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
+      this.state.ind_cycle_time.push(
+        this.state.cycle_time[this.state.cycle_time.length - 1] -
+          this.state.cycle_time[this.state.cycle_time.length - 2]
+      );
     }
+
+    // this.setState({});
+    this.state.average_cycle_time =
+      this.state.cycle_time[this.state.cycle_time.length - 1] /
+      this.state.cycle_time.length;
     this.setState(this.state);
-    if (this.state.cycle_time.length != 0) {
-      this.setState({
-        average_cycle_time:
-          this.state.cycle_time[this.state.cycle_time.length - 1] /
-          this.state.cycle_time.length
-      });
-    }
   };
 
   showPreMatch = e => {
