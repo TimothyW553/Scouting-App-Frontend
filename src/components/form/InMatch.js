@@ -63,7 +63,7 @@ class Timer extends Component {
     this.state = {
       timer_running: null,
       timer: 0
-    }
+    };
   }
   render() {
     let that = this.props.this;
@@ -86,14 +86,13 @@ class Timer extends Component {
                 new Date().getTime() -
                 this.state.timer_running
             });
-            this.state.timer=(
-            this.state.timer +
-            new Date().getTime() -
-            this.state.timer_running);
+            this.state.timer =
+              this.state.timer +
+              new Date().getTime() -
+              this.state.timer_running;
           }
-          that.setState({[this.props.id]: this.state.timer});
-        }
-      }
+          that.setState({ [this.props.id]: this.state.timer });
+        }}
       >
         {(this.state.timer_running === null
           ? this.props.displayName
@@ -234,7 +233,7 @@ class Form extends Component {
 
   onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
-    if(index == 0 || index == 1) {
+    if (index == 0 || index == 1) {
       this.state.balls_scored += delta;
     }
     if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
@@ -283,7 +282,7 @@ class Form extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.createMatchForm(this.state);
-    this.props.history.push("/");
+    this.props.history.push("/home");
   };
 
   togglecircledisplay = () => {
@@ -475,7 +474,7 @@ class Form extends Component {
           <form className="white" onSubmit={this.handleSubmit}>
             <div className="input-field">
               <button className="btn pink lighten-1" id="button4">
-                Next
+                Submit
               </button>
             </div>
           </form>
@@ -514,11 +513,21 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td>
-                  <Timer this={this} name={this.state.defence_time} displayName="Defence Timer" id="defence_time"/>
+                  <Timer
+                    this={this}
+                    name={this.state.defence_time}
+                    displayName="Defence Timer"
+                    id="defence_time"
+                  />
                   <br /> <br />
                   {scoreboard}
                   <br />
-                  <Timer this={this} name={this.state} displayName="Climb Timer" id="climb_time"/>
+                  <Timer
+                    this={this}
+                    name={this.state}
+                    displayName="Climb Timer"
+                    id="climb_time"
+                  />
                 </td>
                 <td width="500px">{inMatchForm}</td>
               </tr>
@@ -574,4 +583,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Form)
+);
