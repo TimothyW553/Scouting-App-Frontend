@@ -305,7 +305,7 @@ class Form extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.createMatchForm(this.state);
-    this.props.history.push("/");
+    this.props.history.push("/home");
   };
 
   togglecircledisplay = () => {
@@ -497,7 +497,7 @@ class Form extends Component {
           <form className="white" onSubmit={this.handleSubmit}>
             <div className="input-field">
               <button className="btn pink lighten-1" id="button4">
-                Next
+                Submit
               </button>
             </div>
           </form>
@@ -609,4 +609,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Form)
+);
