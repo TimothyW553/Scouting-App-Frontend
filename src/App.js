@@ -22,6 +22,7 @@ class App extends Component {
           <Navbar />
           <Switch>
             <Route exact path='/home'component={Dashboard} />
+            <Route exact path='/teams' component={Teams} />
             <Route path='/project/:id' component={ProjectDetails} />
             <Route path='/match_form/:id' component={TeamDetails} />
             <Route path='/signin' component={SignIn} />
@@ -29,7 +30,6 @@ class App extends Component {
             <Route path='/overall' component={TeamList} />
             <Route path='/pit-scouting' component={CreateProject} />
             <Route path='/form' component={Form} />
-            <Route path='/teams' component={Teams} />
             <Route path='/create-event' component={InitTeams} />
           </Switch>
         </div>
