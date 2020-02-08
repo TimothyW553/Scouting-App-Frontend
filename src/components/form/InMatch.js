@@ -390,7 +390,7 @@ class Form extends Component {
             </p>
             <button
               type="number"
-              id="balls_scored"
+              id="increment_preloads"
               onClick={this.incrementPreload}
               className="preload increment"
             >
@@ -398,7 +398,7 @@ class Form extends Component {
             </button>
             <button
               type="number"
-              id="balls_scored"
+              id="reset_preloads"
               onClick={this.resetPreload}
               className="preload decrement"
             >

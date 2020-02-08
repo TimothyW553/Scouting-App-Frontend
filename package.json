@@ -19,9 +19,10 @@
     "react-responsive-modal": "^4.0.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^3.3.0",
+    "react-select": "^3.0.8",
+    "react-stopwatch": "^2.0.4",
     "react-vis": "^1.11.7",
     "recharts": "^2.0.0-beta.1",
-    "react-stopwatch": "^2.0.4",
     "redux": "^4.0.0",
     "redux-firestore": "^0.5.7",
     "redux-thunk": "^2.3.0"
