@@ -82,6 +82,7 @@ class Teams extends Component {
     this.charts = this.charts.bind(this);
     this.state = {
       chartVisible: new Array(json.length),
+
       o: 0,
       p: 0
     };
@@ -104,6 +105,7 @@ class Teams extends Component {
     for (let i = 0; i < json.length; i++) {
       BUTTONS.push(json[i]);
     }
+
 
     let i = 0,
       j = 0,
@@ -171,6 +173,7 @@ class Teams extends Component {
     this.state.p = indexofele;
   }
   charts(x,y) {
+
     return (
       <div>
         Info about the team: {x}
@@ -178,6 +181,7 @@ class Teams extends Component {
         <BarChart
           width={300}
           height={300}
+
           data={data}//this will be data={data[y]} as we will have different data for each team
           //but right now we will just leave it as is because the connection to backend is not setup
           margin={{
@@ -200,3 +204,4 @@ class Teams extends Component {
   }
 }
 export default Teams;
+

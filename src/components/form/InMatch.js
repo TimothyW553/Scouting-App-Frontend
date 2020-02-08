@@ -3,11 +3,21 @@ import { connect } from "react-redux";
 import { createMatchForm } from "../../store/actions/matchFormActions";
 import { Redirect, withRouter } from "react-router-dom";
 import "./style.css";
+import Select from "react-select";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
 const field_size = 7;
+const CompetingTeams_Array = [
+  { label: "R 1: 610", value: 1 },
+  { label: "R 2: 690", value: 2 },
+  { label: "R 3: 420", value: 3 },
+  { label: "B 1: 1111", value: 4 },
+  { label: "B 2: 6969", value: 5 },
+  { label: "B 3: 4200", value: 6 }
+];
 
 let starting_time;
 
@@ -23,7 +33,15 @@ function Counter(props) {
         {" "}
         -{" "}
       </button>
-      <div className="counter-score"> {props.score} </div>
+      <div className="counter-score">
+        {" "}
+        <p style={{ fontSize: "15px", marginBottom: "0px" }}>
+          {props.displayName}
+        </p>
+        <div style={{ lineHeight: "20px", maxHeight: "20px" }}>
+          {props.score}
+        </div>
+      </div>
       <button
         className="counter-action increment"
         onClick={function() {
@@ -41,13 +59,65 @@ function Shot(props) {
   return (
     <div className="shot">
       <div className="shot-score">
-        <Counter score={props.score} onChange={props.onScoreChange} />
+        <Counter
+          score={props.score}
+          onChange={props.onScoreChange}
+          displayName={props.displayName}
+        />
       </div>
     </div>
   );
 }
 
-class Checkbox extends React.Component {
+class Timer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      timer_running: null,
+      timer: 0
+    };
+  }
+  render() {
+    let that = this.props.this;
+    // this.props.state.name=this.state.timer;
+    return (
+      <button
+        className="btn btn-danger"
+        style={{ height: "60px" }}
+        onClick={() => {
+          if (!this.state.timer_running) {
+            this.setState({ timer_running: new Date().getTime() });
+            // let formtimercopy = [...that.state.timers];
+            // formtimercopy[this.props.index] = this.state.timer;
+            // that.setState({ timers: formtimercopy });
+          } else {
+            this.setState({
+              timer_running: null,
+              timer:
+                this.state.timer +
+                new Date().getTime() -
+                this.state.timer_running
+            });
+            this.state.timer =
+              this.state.timer +
+              new Date().getTime() -
+              this.state.timer_running;
+          }
+          that.setState({ [this.props.id]: this.state.timer });
+        }}
+      >
+        {(this.state.timer_running === null
+          ? this.props.displayName
+          : "Stop Timer") +
+          ": " +
+          (this.state.timer / 1000).toFixed(3) +
+          "s"}
+      </button>
+    );
+  }
+}
+
+class Checkbox extends Component {
   constructor(props) {
     super(props);
     this.state = { value: this.props.type === Boolean ? false : null };
@@ -73,7 +143,7 @@ class Checkbox extends React.Component {
         </th>
         <th style={{ width: "30px", paddingTop: "0px", paddingBottom: "0px" }}>
           <div style={{ height: "11px" }}></div>
-          <p>{this.props.displayname}</p>
+          <p>{this.props.displayName}</p>
         </th>
       </tr>
     );
@@ -85,8 +155,11 @@ class Form extends Component {
     super(props);
     this.state = {
       team_num: 0,
-      cycle_time: [],
+      cycle_time: [0],
+      ind_cycle_time: [],
+      average: 0,
       climb_time: 0.0,
+      defence_time: 0.0,
       balls_scored: 0,
       floor_pickup: false,
       station_pickup: false,
@@ -101,8 +174,6 @@ class Form extends Component {
       inMatchView: 0,
       circle_size: 50,
       circle_show: true,
-      timer_running: null,
-      timer: [0, 0],
       shots: [
         {
           type: "high",
@@ -119,7 +190,8 @@ class Form extends Component {
           score: 0,
           id: 3
         }
-      ]
+      ],
+      teamSelected: null
     };
   }
 
@@ -163,11 +235,33 @@ class Form extends Component {
     }
   }
 
+  updateTeamChange = () => {
+    try {
+      this.setState({
+        teamSelected: +document
+          .getElementsByClassName("  css-1uccc91-singleValue")[0]
+          .innerText.slice(5)
+      });
+    } catch {}
+  };
+
   onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
+    if (index == 0 || index == 1) {
+      this.state.balls_scored += delta;
+    }
     if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
       this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
+      this.state.ind_cycle_time.push(
+        this.state.cycle_time[this.state.cycle_time.length - 1] -
+          this.state.cycle_time[this.state.cycle_time.length - 2]
+      );
     }
+
+    // this.setState({});
+    this.state.average_cycle_time =
+      this.state.cycle_time[this.state.cycle_time.length - 1] /
+      this.state.cycle_time.length;
     this.setState(this.state);
   };
 
@@ -179,17 +273,13 @@ class Form extends Component {
 
   showInMatch = e => {
     e.preventDefault();
-    this.setState({ inMatchView: 2, preloads: this.state.balls_scored });
+    this.setState({ inMatchView: 2, preloads: this.state.preloads });
     starting_time = new Date().getTime();
     console.log(this.state);
   };
 
   showEndMatch = e => {
     e.preventDefault();
-    if (this.state.timer_running !== null) {
-      this.setState({ timer_running: null });
-      clearInterval(this.timer);
-    }
     this.setState({ inMatchView: 3 });
     console.log(this.state);
   };
@@ -215,7 +305,7 @@ class Form extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.createMatchForm(this.state);
-    this.props.history.push("/");
+    this.props.history.push("/home");
   };
 
   togglecircledisplay = () => {
@@ -254,13 +344,13 @@ class Form extends Component {
 
   incrementPreload = e => {
     e.preventDefault();
-    if (this.state.balls_scored + 1 > 3) {
+    if (this.state.preloads + 1 > 3) {
       this.setState({
-        balls_scored: 3
+        preloads: 3
       });
     } else {
       this.setState({
-        balls_scored: this.state.balls_scored + 1
+        preloads: this.state.preloads + 1
       });
     }
   };
@@ -268,7 +358,7 @@ class Form extends Component {
   resetPreload = e => {
     e.preventDefault();
     this.setState({
-      balls_scored: 0
+      preloads: 0
     });
   };
 
@@ -297,6 +387,30 @@ class Form extends Component {
         </form>
       ) : null;
 
+    let CompetingTeams =
+      this.state.inMatchView === 1 ? (
+        <div className="spacer">
+          <h1> </h1>
+          {/* <div className="container"> */}
+          <div className="row">
+            <div className="col-md-4" style={{ marginLeft: "15px" }}>
+              <h5 style={{ fontWeight: "bold" }}>
+                Select The Team You're Scouting
+              </h5>
+              <div onClick={this.updateTeamChange} id="teamSelect2">
+                <Select
+                  options={CompetingTeams_Array}
+                  id="teamSelect"
+                  ref="teamselect"
+                />
+              </div>
+            </div>
+            <div className="col-md-4"></div>
+          </div>
+          {/* </div> */}
+        </div>
+      ) : null;
+
     let prematch =
       this.state.inMatchView === 1 ? (
         <form className="white" onSubmit={this.showInMatch}>
@@ -306,15 +420,15 @@ class Form extends Component {
             </p>
             <button
               type="number"
-              id="balls_scored"
+              id="increment_preloads"
               onClick={this.incrementPreload}
               className="preload increment"
             >
-              Preloads: {this.state.balls_scored}
+              Preloads: {this.state.preloads}
             </button>
             <button
               type="number"
-              id="balls_scored"
+              id="reset_preloads"
               onClick={this.resetPreload}
               className="preload decrement"
             >
@@ -323,6 +437,7 @@ class Form extends Component {
           </div>
           <div className="input-field">
             <button
+              onClick={this.updateTeamChange}
               className="btn pink lighten-1"
               onSubmit={() => {
                 this.getCurrentTime();
@@ -345,6 +460,28 @@ class Form extends Component {
       ></img>
     );
 
+    let boolCheckMap = () => {
+      let boolCheckMapList = [
+        ["Floor Pickup", "floor_pickup"],
+        ["Station Pickup", "station_pickup"],
+        ["Stage 2 Activated", "stage2_activate"],
+        ["Stage 3 Activated", "stage3_activate"],
+        ["Can Go Through Trench", "trench"]
+      ];
+      return boolCheckMapList.map(index => (
+        <Checkbox
+          key={index[0]}
+          type={Boolean}
+          displayName={index[0]}
+          doClick={state => {
+            this.setState(state);
+          }}
+          statename={index[1]}
+          key={index[1]}
+        />
+      ));
+    };
+
     let endMatchForm =
       this.state.inMatchView === 3 ? (
         <div className="container">
@@ -354,54 +491,13 @@ class Form extends Component {
             </p>
           </div>
           <table>
-            <tbody>
-              <Checkbox
-                type={Boolean}
-                displayname="Floor Pickup"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="floor_pickup"
-              ></Checkbox>
-              <Checkbox
-                type={Boolean}
-                displayname="Station Pickup"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="station_pickup"
-              ></Checkbox>
-              <Checkbox
-                type={Boolean}
-                displayname="Stage 2 Activated"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="stage2_activate"
-              ></Checkbox>
-              <Checkbox
-                type={Boolean}
-                displayname="Stage 3 Activated"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="stage3_activate"
-              ></Checkbox>
-              <Checkbox
-                type={Boolean}
-                displayname="Can Go Through Trench"
-                doClick={state => {
-                  this.setState(state);
-                }}
-                statename="trench"
-              ></Checkbox>
-            </tbody>
+            <tbody>{boolCheckMap()}</tbody>
           </table>
 
           <form className="white" onSubmit={this.handleSubmit}>
             <div className="input-field">
               <button className="btn pink lighten-1" id="button4">
-                Next
+                Submit
               </button>
             </div>
           </form>
@@ -411,6 +507,8 @@ class Form extends Component {
     let inMatchForm = this.state.inMatchView === 2 ? matchField : null;
 
     let showncircle = this.state.circle_show ? this.Circle(this.state) : null;
+
+    let shotNames = ["Top", "Bot", "Miss"];
 
     let scoreboard =
       this.state.inMatchView === 2 ? (
@@ -425,6 +523,7 @@ class Form extends Component {
                     }.bind(this)}
                     score={shot.score}
                     key={index}
+                    displayName={shotNames[index]}
                   />
                 );
               }.bind(this)
@@ -440,46 +539,21 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td>
-                  {scoreboard}{" "}
-                  <button
-                    className="btn btn-danger"
-                    style={{ height: "60px" }}
-                    onClick={() => {
-                      this.setState({
-                        timer: [
-                          this.state.timer_running === null
-                            ? this.state.timer[0]
-                            : this.state.timer[0] +
-                              new Date().getTime() -
-                              this.state.timer_running,
-                          this.state.timer[1]
-                        ]
-                      });
-                      if (this.state.timer_running !== null) {
-                        this.setState({ timer_running: null });
-                        clearInterval(this.timer);
-                      } else {
-                        this.setState({ timer_running: new Date().getTime() });
-                        this.timer = setInterval(() => {
-                          const date = new Date().getTime();
-                          this.setState({
-                            timer: [
-                              this.state.timer[0] +
-                                date -
-                                this.state.timer_running,
-                              this.state.timer[1]
-                            ],
-                            timer_running: date
-                          });
-                        }, 1);
-                      }
-                    }}
-                  >
-                    {(this.state.timer_running === null ? "Start" : "Stop") +
-                      " timer: " +
-                      (this.state.timer[0] / 1000).toFixed(3) +
-                      "s"}
-                  </button>
+                  <Timer
+                    this={this}
+                    name={this.state.defence_time}
+                    displayName="Defence Timer"
+                    id="defence_time"
+                  />
+                  <br /> <br />
+                  {scoreboard}
+                  <br />
+                  <Timer
+                    this={this}
+                    name={this.state}
+                    displayName="Climb Timer"
+                    id="climb_time"
+                  />
                 </td>
                 <td width="500px">{inMatchForm}</td>
               </tr>
@@ -503,6 +577,7 @@ class Form extends Component {
         <div>{}</div>
         <span>
           {newMatchForm}
+          {CompetingTeams}
           {prematch}
           {/* {team_select} */}
           {field_input}
@@ -515,7 +590,7 @@ class Form extends Component {
     document.getElementById("button1").focus();
   }
 
-  componentDidUpdate(prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevState.inMatchView != this.state.inMatchView) {
       document.getElementById("button" + (this.state.inMatchView + 1)).focus();
     }
@@ -534,4 +609,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Form)
+);
