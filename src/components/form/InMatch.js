@@ -63,10 +63,11 @@ class Timer extends Component {
     this.state = {
       timer_running: null,
       timer: 0
-    };
+    }
   }
   render() {
     let that = this.props.this;
+    // this.props.state.name=this.state.timer;
     return (
       <button
         className="btn btn-danger"
@@ -74,6 +75,9 @@ class Timer extends Component {
         onClick={() => {
           if (!this.state.timer_running) {
             this.setState({ timer_running: new Date().getTime() });
+            // let formtimercopy = [...that.state.timers];
+            // formtimercopy[this.props.index] = this.state.timer;
+            // that.setState({ timers: formtimercopy });
           } else {
             this.setState({
               timer_running: null,
@@ -82,8 +86,14 @@ class Timer extends Component {
                 new Date().getTime() -
                 this.state.timer_running
             });
+            this.state.timer=(
+            this.state.timer +
+            new Date().getTime() -
+            this.state.timer_running);
           }
-        }}
+          that.setState({[this.props.id]: this.state.timer});
+        }
+      }
       >
         {(this.state.timer_running === null
           ? this.props.displayName
@@ -136,6 +146,7 @@ class Form extends Component {
       team_num: 0,
       cycle_time: [],
       climb_time: 0.0,
+      defence_time: 0.0,
       balls_scored: 0,
       floor_pickup: false,
       station_pickup: false,
@@ -145,12 +156,12 @@ class Form extends Component {
       preloads: 0,
       shooting_pos: [],
       time: 0,
+      timers: [0, 0, 0, 0, 0],
       isOn: false,
       start: 0,
       inMatchView: 0,
       circle_size: 50,
       circle_show: true,
-      timers: [0, 0, 0, 0, 0],
       shots: [
         {
           type: "high",
@@ -483,11 +494,11 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td>
-                  <Timer this={this} index="0" displayName="Defence Timer" />
+                  <Timer this={this} name={this.state.defence_time} displayName="Defence Timer" id="defence_time"/>
                   <br /> <br />
                   {scoreboard}
                   <br />
-                  <Timer this={this} index="1" displayName="Climb Timer" />
+                  <Timer this={this} name={this.state} displayName="Climb Timer" id="climb_time"/>
                 </td>
                 <td width="500px">{inMatchForm}</td>
               </tr>
