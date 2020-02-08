@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 8;
+const field_size = 7;
 const CompetingTeams_Array = [
   { label: "Red 1: 610", value: 1 },
   { label: "Red 2: 690", value: 2 },
