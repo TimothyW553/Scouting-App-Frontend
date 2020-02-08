@@ -3,11 +3,21 @@ import { connect } from "react-redux";
 import { createMatchForm } from "../../store/actions/matchFormActions";
 import { Redirect, withRouter } from "react-router-dom";
 import "./style.css";
+import Select from "react-select";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 7;
+const field_size = 8;
+const CompetingTeams_Array = [
+  { label: "Red 1: 610", value: 1 },
+  { label: "Red 2: 690", value: 2 },
+  { label: "Red 3: 420", value: 3 },
+  { label: "Blue 1: 1111", value: 4 },
+  { label: "Blue 2: 6969", value: 5 },
+  { label: "Blue 3: 4200", value: 6 }
+];
 
 let starting_time;
 
@@ -353,6 +363,24 @@ class Form extends Component {
         </form>
       ) : null;
 
+    let CompetingTeams =
+      this.state.inMatchView === 1 ? (
+        <div className="spacer">
+          <h1> </h1>
+          {/* <div className="container"> */}
+          <div className="row">
+            <div className="col-md-4" style={{ marginLeft: "15px" }}>
+              <h5 style={{ fontWeight: "bold" }}>
+                Select The Team Your Scouting
+              </h5>
+              <Select options={CompetingTeams_Array} />
+            </div>
+            <div className="col-md-4"></div>
+          </div>
+          {/* </div> */}
+        </div>
+      ) : null;
+
     let prematch =
       this.state.inMatchView === 1 ? (
         <form className="white" onSubmit={this.showInMatch}>
@@ -504,6 +532,7 @@ class Form extends Component {
         <div>{}</div>
         <span>
           {newMatchForm}
+          {CompetingTeams}
           {prematch}
           {/* {team_select} */}
           {field_input}
