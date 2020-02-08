@@ -176,3 +176,5 @@ export default compose(
     { collection: "notifications", limit: 3, orderBy: ["time", "desc"] }
   ])
 )(Teams);
+export default Teams;
+
