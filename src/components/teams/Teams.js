@@ -56,10 +56,7 @@ const data = [
     amt: 2100
   }
 ];
-//import CHARTS from './CHART';
 
-// {} -> dict
-// [] -> array
 let json = [];
 
 const fetchAndLog = async () => {
@@ -77,14 +74,6 @@ const fetchAndLog = async () => {
   }
   console.log(json);
 };
-
-function teamList() {
-  return (
-    <button type="button" className="btn btn-secondary">
-      Left
-    </button>
-  );
-}
 fetchAndLog();
 
 class Teams extends Component {
@@ -92,8 +81,8 @@ class Teams extends Component {
     super(props);
     this.charts = this.charts.bind(this);
     this.state = {
-      //      chartVisible:[{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},{isOn:false},]
-      chartVisible: new Array(36),
+      chartVisible: new Array(json.length),
+
       o: 0,
       p: 0
     };
@@ -116,10 +105,7 @@ class Teams extends Component {
     for (let i = 0; i < json.length; i++) {
       BUTTONS.push(json[i]);
     }
-    // let BUTTONS1=[];
-    // for(let i = 19; i <json.length; i++) {
-    //   BUTTONS1.push(json[i]);
-    // }
+
 
     let i = 0,
       j = 0,
@@ -148,7 +134,7 @@ class Teams extends Component {
                     }
                   }
                 }}
-                key={BUTTONS[k++]}
+                key={index}
                 style={{
                   border: this.state.chartVisible[index]
                     ? "2px solid black"
@@ -159,17 +145,17 @@ class Teams extends Component {
               </button>
             ))}
           </div>
-          {/* <div>            
-            {BUTTONS1.map((currElement1, index1)=>(<button onClick={()=>this.onClicked(currElement1, index1+19)} key={BUTTONS1[l++]}>{BUTTONS1[j++]}{this.state.chartVisible[index1+19]?this.charts(currElement1+19):null}</button>))}
-            </div> */}
-          {/* <div>state: {(this.state.chartVisible[this.state.p]?this.charts(this.state.o):null)}</div> */}
-          <div className="align-baseline" role="group">
+          <table className="align-baseline" role="group">
+            <tbody>
+              <tr>
             {this.state.chartVisible.map((currElement, index) =>
               this.state.chartVisible[index] ? (
-                <td style={{ color: "red" }}>{this.charts(BUTTONS[index])}</td>
+                <td key={index} style={{ color: "red" }}>{this.charts(BUTTONS[index], index)}</td>
               ) : null
             )}
-          </div>
+            </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     );
@@ -186,7 +172,8 @@ class Teams extends Component {
     this.setState({ o: element });
     this.state.p = indexofele;
   }
-  charts(x) {
+  charts(x,y) {
+
     return (
       <div>
         Info about the team: {x}
@@ -194,7 +181,9 @@ class Teams extends Component {
         <BarChart
           width={300}
           height={300}
-          data={data}
+
+          data={data}//this will be data={data[y]} as we will have different data for each team
+          //but right now we will just leave it as is because the connection to backend is not setup
           margin={{
             top: 0,
             right: 0,
@@ -215,3 +204,4 @@ class Teams extends Component {
   }
 }
 export default Teams;
+
