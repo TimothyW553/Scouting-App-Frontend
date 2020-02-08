@@ -52,7 +52,7 @@ class Timer extends Component {
     super(props);
     this.state = {
       timer_running: null,
-      timer: [0, 0]
+      timer: 0
     };
   }
   render() {
@@ -62,34 +62,16 @@ class Timer extends Component {
         className="btn btn-danger"
         style={{ height: "60px" }}
         onClick={() => {
-          this.setState({
-            timer: [
-              this.state.timer_running === null
-                ? this.state.timer[0]
-                : this.state.timer[0] +
-                  new Date().getTime() -
-                  this.state.timer_running,
-              this.state.timer[1]
-            ]
-          });
-          if (this.state.timer_running !== null) {
-            this.setState({ timer_running: null });
-            clearInterval(this.timer);
-            let formtimercopy = [...that.state.timers];
-            formtimercopy[this.props.index] = this.state.timer;
-            that.setState({ timers: formtimercopy });
-          } else {
+          if (!this.state.timer_running) {
             this.setState({ timer_running: new Date().getTime() });
-            this.timer = setInterval(() => {
-              const date = new Date().getTime();
-              this.setState({
-                timer: [
-                  this.state.timer[0] + date - this.state.timer_running,
-                  this.state.timer[1]
-                ],
-                timer_running: date
-              });
-            }, 1);
+          } else {
+            this.setState({
+              timer_running: null,
+              timer:
+                this.state.timer +
+                new Date().getTime() -
+                this.state.timer_running
+            });
           }
         }}
       >
@@ -97,7 +79,7 @@ class Timer extends Component {
           ? this.props.displayName
           : "Stop Timer") +
           ": " +
-          (this.state.timer[0] / 1000).toFixed(3) +
+          (this.state.timer / 1000).toFixed(3) +
           "s"}
       </button>
     );
@@ -242,10 +224,6 @@ class Form extends Component {
 
   showEndMatch = e => {
     e.preventDefault();
-    if (this.state.timer_running !== null) {
-      this.setState({ timer_running: null });
-      clearInterval(this.timer);
-    }
     this.setState({ inMatchView: 3 });
     console.log(this.state);
   };
@@ -401,26 +379,27 @@ class Form extends Component {
       ></img>
     );
 
-    let boolCheckMapList = [
-      ["Floor Pickup", "floor_pickup"],
-      ["Station Pickup", "station_pickup"],
-      ["Stage 2 Activated", "stage2_activate"],
-      ["Stage 3 Activated", "stage3_activate"],
-      ["Can Go Through Trench", "trench"]
-    ];
-
-    let boolCheckMap = boolCheckMapList.map(index => (
-      <Checkbox
-        key={index[0]}
-        type={Boolean}
-        displayName={index[0]}
-        doClick={state => {
-          this.setState(state);
-        }}
-        statename={index[1]}
-        key={index[1]}
-      />
-    ));
+    let boolCheckMap = () => {
+      let boolCheckMapList = [
+        ["Floor Pickup", "floor_pickup"],
+        ["Station Pickup", "station_pickup"],
+        ["Stage 2 Activated", "stage2_activate"],
+        ["Stage 3 Activated", "stage3_activate"],
+        ["Can Go Through Trench", "trench"]
+      ];
+      return boolCheckMapList.map(index => (
+        <Checkbox
+          key={index[0]}
+          type={Boolean}
+          displayName={index[0]}
+          doClick={state => {
+            this.setState(state);
+          }}
+          statename={index[1]}
+          key={index[1]}
+        />
+      ));
+    };
 
     let endMatchForm =
       this.state.inMatchView === 3 ? (
@@ -431,7 +410,7 @@ class Form extends Component {
             </p>
           </div>
           <table>
-            <tbody>{boolCheckMap}</tbody>
+            <tbody>{boolCheckMap()}</tbody>
           </table>
 
           <form className="white" onSubmit={this.handleSubmit}>
@@ -486,7 +465,7 @@ class Form extends Component {
               </tr>
             </tbody>
           </table>
-          {showncircle}   
+          {showncircle}   
           <div className="input-field">
             <button
               className="btn pink lighten-1"
