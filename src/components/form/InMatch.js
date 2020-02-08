@@ -156,7 +156,6 @@ class Form extends Component {
       preloads: 0,
       shooting_pos: [],
       time: 0,
-      timers: [0, 0, 0, 0, 0],
       isOn: false,
       start: 0,
       inMatchView: 0,
@@ -224,6 +223,9 @@ class Form extends Component {
 
   onScoreChange = (index, delta) => {
     this.state.shots[index].score += delta;
+    if(index == 0 || index == 1) {
+      this.state.balls_scored += delta;
+    }
     if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
       this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
     }
@@ -238,7 +240,7 @@ class Form extends Component {
 
   showInMatch = e => {
     e.preventDefault();
-    this.setState({ inMatchView: 2, preloads: this.state.balls_scored });
+    this.setState({ inMatchView: 2, preloads: this.state.preloads });
     starting_time = new Date().getTime();
     console.log(this.state);
   };
@@ -309,13 +311,13 @@ class Form extends Component {
 
   incrementPreload = e => {
     e.preventDefault();
-    if (this.state.balls_scored + 1 > 3) {
+    if (this.state.preloads + 1 > 3) {
       this.setState({
-        balls_scored: 3
+        preloads: 3
       });
     } else {
       this.setState({
-        balls_scored: this.state.balls_scored + 1
+        preloads: this.state.preloads + 1
       });
     }
   };
@@ -323,7 +325,7 @@ class Form extends Component {
   resetPreload = e => {
     e.preventDefault();
     this.setState({
-      balls_scored: 0
+      preloads: 0
     });
   };
 
@@ -383,7 +385,7 @@ class Form extends Component {
               onClick={this.incrementPreload}
               className="preload increment"
             >
-              Preloads: {this.state.balls_scored}
+              Preloads: {this.state.preloads}
             </button>
             <button
               type="number"
