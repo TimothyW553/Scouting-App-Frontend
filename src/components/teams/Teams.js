@@ -128,6 +128,7 @@ class Teams extends Component {
     if (!auth.uid) return <Redirect to="/signin" />;
 
     return (
+      
       <div>
         <div className="align-baseline" role="group" arial-label="Basic Example">
           {buttons.map((currElement, index) =>(
@@ -148,7 +149,7 @@ class Teams extends Component {
               <tr>
                 {this.state.chartVisible.map((currElement, index) => 
                   this.state.chartVisible[index] ? 
-                  (<td style={{ color: "red"}}>{this.charts(buttons[index], data)}</td>) : null
+                  (<td key={index} style={{ color: "red"}}>{this.charts(buttons[index], data)}</td>) : null
                 )}
               </tr>
             </tbody>
