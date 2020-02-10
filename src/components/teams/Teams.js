@@ -138,7 +138,7 @@ class Teams extends Component {
               } 
             }} 
               key={buttons[k++]} 
-              style={{ border: this.state.chartVisible[index] ? "2px solid black" : null }} > 
+              style={ { width:"75px", height:"50px",background:"green", border: this.state.chartVisible[index] ? "2px solid black" : null }} > 
               {buttons[i++]} 
             </button>
           ))}
