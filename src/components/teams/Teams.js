@@ -142,11 +142,17 @@ class Teams extends Component {
             </button>
           ))}
         </div>
-        <div className="align-baseline" role="group">
-          {this.state.chartVisible.map((currElement, index) => 
-            this.state.chartVisible[index] ? 
-            (<td style={{ color: "red"}}>{this.charts(buttons[index], data)}</td>) : null
-          )}
+        <div>
+          <table className="align-baseline" role="group">
+            <tbody>
+              <tr>
+                {this.state.chartVisible.map((currElement, index) => 
+                  this.state.chartVisible[index] ? 
+                  (<td style={{ color: "red"}}>{this.charts(buttons[index], data)}</td>) : null
+                )}
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div className="dashboard container">
           <div className="row">
