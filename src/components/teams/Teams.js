@@ -82,7 +82,6 @@ class Teams extends Component {
     this.charts = this.charts.bind(this);
     this.state = {
       chartVisible: new Array(json.length),
-
       o: 0,
       p: 0
     };
@@ -106,7 +105,6 @@ class Teams extends Component {
       BUTTONS.push(json[i]);
     }
 
-
     let i = 0,
       j = 0,
       k = 0,
@@ -123,7 +121,7 @@ class Teams extends Component {
             aria-label="Basic example"
           >
             {BUTTONS.map((currElement, index) => (
-              <button
+              <button 
                 onClick={() => {
                   if (
                     this.state.chartVisible[index] ||
@@ -136,9 +134,13 @@ class Teams extends Component {
                 }}
                 key={index}
                 style={{
+                  background:"green",
+                  width:"75px",
+                  height:"50px",
                   border: this.state.chartVisible[index]
-                    ? "2px solid black"
+                    ? "2px solid orange"
                     : null
+                  
                 }}
               >
                 {BUTTONS[i++]}
@@ -149,8 +151,10 @@ class Teams extends Component {
             <tbody>
               <tr>
             {this.state.chartVisible.map((currElement, index) =>
-              this.state.chartVisible[index] ? (
-                <td key={index} style={{ color: "red" }}>{this.charts(BUTTONS[index], index)}</td>
+            this.state.chartVisible[index] ? (
+                <td key={index} style={{ color: "red", border: this.state.chartVisible[index]
+                ? "2px solid black"
+                : null}}>{this.charts(BUTTONS[index], index)}</td>
               ) : null
             )}
             </tr>
@@ -173,7 +177,6 @@ class Teams extends Component {
     this.state.p = indexofele;
   }
   charts(x,y) {
-
     return (
       <div>
         Info about the team: {x}
@@ -181,7 +184,6 @@ class Teams extends Component {
         <BarChart
           width={300}
           height={300}
-
           data={data}//this will be data={data[y]} as we will have different data for each team
           //but right now we will just leave it as is because the connection to backend is not setup
           margin={{
@@ -204,4 +206,3 @@ class Teams extends Component {
   }
 }
 export default Teams;
-
