@@ -27,7 +27,7 @@ let getAvg = async that => {
       that.state.balls_scored_avg.forEach(value => {
         sum += value;
       });
-      that.setState({ balls_scored_avg: sum / len });
+      that.setState({ balls_scored_avg: (sum / len).toFixed(3) });
     });
 };
 
