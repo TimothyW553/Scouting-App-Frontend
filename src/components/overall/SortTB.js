@@ -3,43 +3,46 @@ import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import firebase from "../../config/fbConfig.js";
 
-const json = [];
+let refresh = async function(asfunc, func2, that) {
+  await asfunc(that);
+  that.setState({ refresh: !that.state.refresh });
+  func2(that);
+  that.setState({ refresh: !that.state.refresh });
+};
+
+let getAvg = async that => {
+  await firebase
+    .firestore()
+    .collection("match_forms")
+    .get()
+    .then(snapshot => {
+      let len = snapshot.docs.length;
+      snapshot.docs.forEach(doc => {
+        let listcopy = [...that.state.balls_scored_avg];
+        listcopy.push(doc.data().balls_scored);
+        that.setState({ balls_scored_avg: listcopy });
+        console.log(listcopy);
+      });
+      let sum = 0;
+      that.state.balls_scored_avg.forEach(value => {
+        sum += value;
+      });
+      that.setState({ balls_scored_avg: sum / len });
+    });
+};
+
+let setAvg = that => {
+  console.log(that.state);
+  for (let i = 0; i < that.state.json.length; i++) {
+    that.state.json[i].Average = that.state.balls_scored_avg;
+  }
+};
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-// let getAvg = that => {
-//   let avg = firebase
-//     .firestore()
-//     .collection("match_forms")
-//     .get()
-//     .then(snap => snap.doc.data().json())
-//     .then(snapshot => {
-//       let avg1 = 0;
-//       snapshot.docs.forEach(doc => {
-//         avg1 += doc.data().balls_scored;
-//       });
-//       avg1 /= snapshot.docs.length;
-//       that.setState({ refresh: /*!that.state.refresh*/ 3 });
-//       return avg1;
-//     });
-//   console.log(avg);
-//   return avg;
-// };
-
-// firebase
-//   .firestore()
-//   .collection("match_forms")
-//   .get()
-//   .then(snapshot => {
-//     snapshot.docs.forEach(doc => {
-//       let balls = doc.data().balls_scored;
-//       // ReactDOM.render(<p>{balls}</p>, document.getElementById());
-//     });
-//   });
-
-const fetchAndLog = async () => {
+let fetchAndLog = async that => {
   const response = await fetch(
     `https://www.thebluealliance.com/api/v3/event/2020onosh/teams`,
     {
@@ -48,38 +51,54 @@ const fetchAndLog = async () => {
       }
     }
   );
-  const json_temp = await response.json();
+
+  let json_temp = await response.json();
   for (let i = 0; i < json_temp.length; i++) {
-    json.push({
+    let jsoncopy = [...that.state.json];
+    jsoncopy.push({
       TeamNumber: json_temp[i].team_number,
       CycleTime: getRandomInt(100),
       CycleTime: getRandomInt(100),
       Upper: getRandomInt(100),
       Lower: getRandomInt(100),
       Miss: getRandomInt(100),
-      // Average: getAvg(this),
       ClimbTime: getRandomInt(100),
-      Preloads: getRandomInt(100)
+      Preloads: getRandomInt(100),
+      Average: null
     });
+    that.setState({ json: jsoncopy });
   }
-  console.log(json);
+  console.log(that.state.json);
 };
-fetchAndLog();
 
 class SortTB extends Component {
   constructor() {
     super();
     this.state = {
-      refresh: false
+      refresh: false,
+      balls_scored_avg: [],
+      json: []
     };
+    fetchAndLog(this);
+    // refresh(getAvg, this);
   }
+
+  componentDidMount() {
+    // fetchAndLog(this);
+    refresh(getAvg, setAvg, this);
+  }
+
   render() {
-    console.log("rendered");
+    // this.getAvg();
     return (
       <div className="card text-center">
         <div className="card-header">Overall Table</div>
         <div className="card-body">
-          <BootstrapTable ref="table" data={json} multiColumnSort={2}>
+          <BootstrapTable
+            ref="table"
+            data={this.state.json}
+            multiColumnSort={2}
+          >
             <TableHeaderColumn
               width="120"
               dataField="TeamNumber"
@@ -103,6 +122,9 @@ class SortTB extends Component {
             </TableHeaderColumn>
             <TableHeaderColumn width="120" dataField="Miss" dataSort={true}>
               Avg. Balls Missed
+            </TableHeaderColumn>
+            <TableHeaderColumn width="120" dataField="Average" dataSort={true}>
+              Avg. Balls Shot
             </TableHeaderColumn>
             <TableHeaderColumn
               width="120"
