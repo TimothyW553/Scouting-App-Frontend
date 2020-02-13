@@ -9,7 +9,10 @@ let getAvg = async that => {
     .collection("match_forms")
     .get()
     .then(snapshot => {
-      that.snap_Loaded(snapshot.docs);
+      that.snap_Loaded(snapshot.docs, [
+        ["average_cycle_time", "AverageCycle"],
+        ["preloads", "Preloads"]
+      ]);
     });
 };
 
@@ -37,9 +40,7 @@ let fetchAndLog = async that => {
       Upper: getRandomInt(100),
       Lower: getRandomInt(100),
       Miss: getRandomInt(100),
-      ClimbTime: getRandomInt(100),
-      Preloads: getRandomInt(100),
-      Average: null
+      ClimbTime: getRandomInt(100)
     });
     that.setState({ json: jsoncopy });
   }
@@ -65,39 +66,42 @@ class SortTB extends Component {
 
   that = this.props.that;
 
-  snap_Loaded(docs1) {
-    this.that.setState({ docs: docs1, data: docs1[0].data() });
-    for (let i = 0; i < this.state.json.length; i++) {
-      let docs = this.that.state.docs;
-      let avg = 0;
-      let listcopy = [...docs];
-      let bad = 0;
-      for (let I = docs.length - 1; I >= 0; I--) {
-        if (this.state.json[i].TeamNumber == docs[I].data().team_num) {
-          if (typeof docs[I].data().average_cycle_time == "number") {
-            avg += docs[I].data().average_cycle_time;
-            listcopy.splice(I, 1);
-          } else {
-            listcopy.splice(I, 1);
-            bad++;
+  snap_Loaded(docs1, varlist) {
+    // varlist: list containing match form var names and display names
+    for (let j = 0; j < varlist.length; j++) {
+      this.that.setState({ docs: docs1, data: docs1[0].data() });
+      // loop through varlist
+      for (let i = 0; i < this.state.json.length; i++) {
+        let docs = this.that.state.docs;
+        let avg = 0;
+        let listcopy = [...docs];
+        let bad = 0;
+        for (let I = docs.length - 1; I >= 0; I--) {
+          if (this.state.json[i].TeamNumber == docs[I].data().team_num) {
+            if (typeof docs[I].data()[varlist[j][0]] == "number") {
+              avg += docs[I].data()[varlist[j][0]];
+              listcopy.splice(I, 1);
+            } else {
+              listcopy.splice(I, 1);
+              bad++;
+            }
           }
         }
-      }
-      if (listcopy.length != docs.length) {
-        avg = (avg / (docs.length - listcopy.length + bad)).toFixed(3);
-        console.log([
-          docs.length,
-          listcopy.length,
-          bad,
-          docs.length - (listcopy.length - bad)
-        ]);
-        this.that.setState({ docs: listcopy });
-        let jsoncopy = [...this.state.json];
-        jsoncopy[i].Average = avg;
-        this.setState({ json: jsoncopy });
+        if (listcopy.length != docs.length) {
+          avg = (avg / (docs.length - listcopy.length + bad)).toFixed(3);
+          // console.log([
+          //   docs.length,
+          //   listcopy.length,
+          //   bad,
+          //   docs.length - (listcopy.length - bad)
+          // ]);
+          this.that.setState({ docs: listcopy });
+          let jsoncopy = [...this.state.json];
+          jsoncopy[i][varlist[j][1]] = avg;
+          this.setState({ json: jsoncopy });
+        }
       }
     }
-    // this.setState({ json: this.that.state.docs });
   }
 
   componentDidMount() {
@@ -146,8 +150,12 @@ class SortTB extends Component {
             <TableHeaderColumn width="120" dataField="Miss" dataSort={true}>
               Avg. Balls Missed
             </TableHeaderColumn>
-            <TableHeaderColumn width="120" dataField="Average" dataSort={true}>
-              Avg. Balls Shot
+            <TableHeaderColumn
+              width="120"
+              dataField="AverageCycle"
+              dataSort={true}
+            >
+              Avg. Cycle Time
             </TableHeaderColumn>
             <TableHeaderColumn
               width="120"
