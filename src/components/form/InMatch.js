@@ -275,6 +275,9 @@ class Form extends Component {
     e.preventDefault();
     this.setState({ inMatchView: 2, preloads: this.state.preloads });
     starting_time = new Date().getTime();
+    this.setState({
+      team_num: this.state.teamSelected
+    });
     console.log(this.state);
   };
 
@@ -609,9 +612,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Form)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));

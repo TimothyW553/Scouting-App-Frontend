@@ -3,39 +3,14 @@ import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import firebase from "../../config/fbConfig.js";
 
-let refresh = async function(asfunc, func2, that) {
-  await asfunc(that);
-  that.setState({ refresh: !that.state.refresh });
-  func2(that);
-  that.setState({ refresh: !that.state.refresh });
-};
-
 let getAvg = async that => {
-  await firebase
+  firebase
     .firestore()
     .collection("match_forms")
     .get()
     .then(snapshot => {
-      let len = snapshot.docs.length;
-      snapshot.docs.forEach(doc => {
-        let listcopy = [...that.state.balls_scored_avg];
-        listcopy.push(doc.data().balls_scored);
-        that.setState({ balls_scored_avg: listcopy });
-        console.log(listcopy);
-      });
-      let sum = 0;
-      that.state.balls_scored_avg.forEach(value => {
-        sum += value;
-      });
-      that.setState({ balls_scored_avg: (sum / len).toFixed(3) });
+      that.snap_Loaded(snapshot.docs);
     });
-};
-
-let setAvg = that => {
-  console.log(that.state);
-  for (let i = 0; i < that.state.json.length; i++) {
-    that.state.json[i].Average = that.state.balls_scored_avg;
-  }
 };
 
 function getRandomInt(max) {
@@ -72,26 +47,49 @@ let fetchAndLog = async that => {
 };
 
 class SortTB extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       refresh: false,
-      balls_scored_avg: [],
       json: []
     };
     fetchAndLog(this);
     // refresh(getAvg, this);
   }
 
+  that = this.props.that;
+
+  snap_Loaded(docs1) {
+    this.that.setState({ docs: docs1, data: docs1[0].data() });
+    // for (let i = 0; i < this.state.json.length; i++) {
+    //   let idata = this.that.state.docs;
+    //   for (let I = 0; I < idata.length; I++) {
+    //     if (this.state.json[i].TeamNumber == idata.team_number) {
+    //       this.state.json[i].Average = idata.balls_scored;
+    //     }
+    //   }
+    // }
+    // this.setState({ json: this.that.state.docs });
+  }
+
   componentDidMount() {
     // fetchAndLog(this);
-    refresh(getAvg, setAvg, this);
+    // refresh(getAvg, setAvg, this);
   }
 
   render() {
+    let that = this.props.that;
+    getAvg(this);
     // this.getAvg();
     return (
       <div className="card text-center">
+        <button
+          onClick={() => {
+            this.setState({ refresh: !this.state.refresh });
+          }}
+        >
+          refresh
+        </button>
         <div className="card-header">Overall Table</div>
         <div className="card-body">
           <BootstrapTable
