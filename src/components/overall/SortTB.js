@@ -35,8 +35,6 @@ let fetchAndLog = async that => {
     let jsoncopy = [...that.state.json];
     jsoncopy.push({
       TeamNumber: json_temp[i].team_number,
-      CycleTime: getRandomInt(100),
-      CycleTime: getRandomInt(100),
       Upper: getRandomInt(100),
       Lower: getRandomInt(100),
       Miss: getRandomInt(100),
@@ -136,7 +134,7 @@ class SortTB extends Component {
             </TableHeaderColumn>
             <TableHeaderColumn
               width="120"
-              dataField="CycleTime"
+              dataField="AverageCycle"
               dataSort={true}
             >
               Avg. Cycle Time
@@ -149,13 +147,6 @@ class SortTB extends Component {
             </TableHeaderColumn>
             <TableHeaderColumn width="120" dataField="Miss" dataSort={true}>
               Avg. Balls Missed
-            </TableHeaderColumn>
-            <TableHeaderColumn
-              width="120"
-              dataField="AverageCycle"
-              dataSort={true}
-            >
-              Avg. Cycle Time
             </TableHeaderColumn>
             <TableHeaderColumn
               width="120"
