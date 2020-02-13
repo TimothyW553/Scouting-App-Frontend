@@ -3,42 +3,14 @@ import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import firebase from "../../config/fbConfig.js";
 
-let refresh = async function(asfunc, f1args, func2, f2args, that) {
-  await asfunc(that, f1args);
-  that.setState({ refresh: !that.state.refresh });
-  func2(that, f2args);
-  that.setState({ refresh: !that.state.refresh });
-};
-
-let getAvg = async (that, team_number) => {
-  await firebase
+let getAvg = async that => {
+  firebase
     .firestore()
     .collection("match_forms")
     .get()
     .then(snapshot => {
-      snapshot.docs.forEach(doc => {
-        if (doc.data().teamSelected == team_number) {
-          let listcopy = [...that.state.balls_scored_avg];
-          listcopy.push(doc.data().balls_scored);
-          that.setState({ balls_scored_avg: listcopy });
-        }
-      });
-      let len = that.state.balls_scored_avg.length;
-      let sum = 0;
-      that.state.balls_scored_avg.forEach(value => {
-        sum += value;
-      });
-      that.setState({
-        balls_scored_avg: len ? (sum / len).toFixed(3) : "No data"
-      });
+      that.snap_Loaded(snapshot.docs);
     });
-};
-
-let setAvg = that => {
-  console.log(that.state);
-  for (let i = 0; i < that.state.json.length; i++) {
-    that.state.json[i].Average = that.state.balls_scored_avg;
-  }
 };
 
 function getRandomInt(max) {
@@ -59,7 +31,7 @@ let fetchAndLog = async that => {
   for (let i = 0; i < json_temp.length; i++) {
     let jsoncopy = [...that.state.json];
     jsoncopy.push({
-      TeamNumber: i ? json_temp[i].team_number : 6969,
+      TeamNumber: json_temp[i].team_number,
       CycleTime: getRandomInt(100),
       CycleTime: getRandomInt(100),
       Upper: getRandomInt(100),
@@ -75,51 +47,49 @@ let fetchAndLog = async that => {
 };
 
 class SortTB extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       refresh: false,
-      balls_scored_avg: [],
       json: []
     };
     fetchAndLog(this);
     // refresh(getAvg, this);
   }
 
-  docs;
+  that = this.props.that;
 
-  getDocs = async () => {
-    this.docs = await firebase
-      .firestore()
-      .collection("match_forms")
-      .get()
-      .then(snapshot => {
-        return snapshot;
-      });
-  };
-
-  getAvg = team_number => {
-    let count = 0;
-    let value = 0;
-    let team_num = this.docs.data().teamSelected;
-    this.docs.data().forEach(val => {
-      if (team_number == team_num) {
-        count++;
-        value += val.balls_scored_avg;
-      }
-    });
-    value /= count;
-  };
+  snap_Loaded(docs1) {
+    this.that.setState({ docs: docs1, data: docs1[0].data() });
+    // for (let i = 0; i < this.state.json.length; i++) {
+    //   let idata = this.that.state.docs;
+    //   for (let I = 0; I < idata.length; I++) {
+    //     if (this.state.json[i].TeamNumber == idata.team_number) {
+    //       this.state.json[i].Average = idata.balls_scored;
+    //     }
+    //   }
+    // }
+    // this.setState({ json: this.that.state.docs });
+  }
 
   componentDidMount() {
     // fetchAndLog(this);
-    refresh(getAvg, 6969, setAvg, null, this);
+    // refresh(getAvg, setAvg, this);
   }
 
   render() {
+    let that = this.props.that;
+    getAvg(this);
     // this.getAvg();
     return (
       <div className="card text-center">
+        <button
+          onClick={() => {
+            this.setState({ refresh: !this.state.refresh });
+          }}
+        >
+          refresh
+        </button>
         <div className="card-header">Overall Table</div>
         <div className="card-body">
           <BootstrapTable
