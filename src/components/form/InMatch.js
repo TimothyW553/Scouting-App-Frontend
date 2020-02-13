@@ -191,6 +191,9 @@ class Form extends Component {
           id: 3
         }
       ],
+      top: 0,
+      bot: 0,
+      miss: 0,
       teamSelected: null
     };
   }
@@ -262,6 +265,9 @@ class Form extends Component {
     this.state.average_cycle_time =
       this.state.cycle_time[this.state.cycle_time.length - 1] /
       this.state.cycle_time.length;
+    this.state.top = this.state.shots[0].score;
+    this.state.bot = this.state.shots[1].score;
+    this.state.miss = this.state.shots[2].score;
     this.setState(this.state);
   };
 

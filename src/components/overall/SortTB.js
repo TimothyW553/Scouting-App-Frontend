@@ -11,7 +11,12 @@ let getAvg = async that => {
     .then(snapshot => {
       that.snap_Loaded(snapshot.docs, [
         ["average_cycle_time", "AverageCycle"],
-        ["preloads", "Preloads"]
+        ["preloads", "Preloads"],
+        ["climb_time", "ClimbTime"],
+        ["defence_time", "DefenceTime"],
+        ["top", "Upper"],
+        ["bot", "Lower"],
+        ["miss", "Miss"]
       ]);
     });
 };
@@ -34,11 +39,7 @@ let fetchAndLog = async that => {
   for (let i = 0; i < json_temp.length; i++) {
     let jsoncopy = [...that.state.json];
     jsoncopy.push({
-      TeamNumber: json_temp[i].team_number,
-      Upper: getRandomInt(100),
-      Lower: getRandomInt(100),
-      Miss: getRandomInt(100),
-      ClimbTime: getRandomInt(100)
+      TeamNumber: json_temp[i].team_number
     });
     that.setState({ json: jsoncopy });
   }
@@ -157,7 +158,7 @@ class SortTB extends Component {
             </TableHeaderColumn>
             <TableHeaderColumn
               width="120"
-              dataField="ClimbTime"
+              dataField="DefenceTime"
               dataSort={true}
             >
               Avg. Defence Time
