@@ -43,6 +43,13 @@ let fetchAndLog = async that => {
     });
     that.setState({ json: jsoncopy });
   }
+  that.state.json[0].TeamNumber = 6969;
+  that.state.json[1].TeamNumber = 188;
+  that.state.json[2].TeamNumber = 2200;
+  that.state.json[3].TeamNumber = 2609;
+  that.state.json[4].TeamNumber = 2994;
+
+  that.setState({});
   console.log(that.state.json);
 };
 
@@ -54,33 +61,51 @@ class SortTB extends Component {
       json: []
     };
     fetchAndLog(this);
-    // refresh(getAvg, this);
   }
 
   that = this.props.that;
 
   snap_Loaded(docs1) {
     this.that.setState({ docs: docs1, data: docs1[0].data() });
-    // for (let i = 0; i < this.state.json.length; i++) {
-    //   let idata = this.that.state.docs;
-    //   for (let I = 0; I < idata.length; I++) {
-    //     if (this.state.json[i].TeamNumber == idata.team_number) {
-    //       this.state.json[i].Average = idata.balls_scored;
-    //     }
-    //   }
-    // }
+    for (let i = 0; i < this.state.json.length; i++) {
+      let docs = this.that.state.docs;
+      let avg = 0;
+      let listcopy = [...docs];
+      let bad = 0;
+      for (let I = docs.length - 1; I >= 0; I--) {
+        if (this.state.json[i].TeamNumber == docs[I].data().team_num) {
+          if (typeof docs[I].data().average_cycle_time == "number") {
+            avg += docs[I].data().average_cycle_time;
+            listcopy.splice(I, 1);
+          } else {
+            listcopy.splice(I, 1);
+            bad++;
+          }
+        }
+      }
+      if (listcopy.length != docs.length) {
+        avg = (avg / (docs.length - listcopy.length + bad)).toFixed(3);
+        console.log([
+          docs.length,
+          listcopy.length,
+          bad,
+          docs.length - (listcopy.length - bad)
+        ]);
+        this.that.setState({ docs: listcopy });
+        let jsoncopy = [...this.state.json];
+        jsoncopy[i].Average = avg;
+        this.setState({ json: jsoncopy });
+      }
+    }
     // this.setState({ json: this.that.state.docs });
   }
 
   componentDidMount() {
-    // fetchAndLog(this);
-    // refresh(getAvg, setAvg, this);
+    getAvg(this);
   }
 
   render() {
     let that = this.props.that;
-    getAvg(this);
-    // this.getAvg();
     return (
       <div className="card text-center">
         <button
@@ -88,7 +113,7 @@ class SortTB extends Component {
             this.setState({ refresh: !this.state.refresh });
           }}
         >
-          refresh
+          Set State
         </button>
         <div className="card-header">Overall Table</div>
         <div className="card-body">
