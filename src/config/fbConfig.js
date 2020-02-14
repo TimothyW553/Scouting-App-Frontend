@@ -1,6 +1,8 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/auth";
+import React from "react";
+import ReactDOM from "react-dom";
 
 // Replace this with your own config details
 var config = {
@@ -15,9 +17,20 @@ var config = {
 };
 
 firebase.initializeApp(config);
-require('firebase/firestore');
-require('firebase/database');
+require("firebase/firestore");
+require("firebase/database");
 const db = firebase.firestore();
 db.settings({ timestampsInSnapshots: true });
 
-export default firebase 
+db.collection("match_forms")
+  .get()
+  .then(snap => {
+    var avg1 = 0;
+    snap.docs.forEach(doc => {
+      avg1 += doc.data().balls_scored;
+    });
+    avg1 /= snap.docs.length;
+    // ReactDOM.render(<p>{avg1}</p>, document.getElementById("test"));
+  });
+
+export default firebase;
