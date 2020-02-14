@@ -142,7 +142,6 @@ class SortTB extends Component {
             this.setState({ refresh: !this.state.refresh });
           }}
           className="btn btn-danger grey darken-3"
-          // style={{color: }}
         >
           Re-fetch
         </button>
