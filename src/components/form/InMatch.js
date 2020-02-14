@@ -80,31 +80,25 @@ class Timer extends Component {
   render() {
     let that = this.props.this;
     // this.props.state.name=this.state.timer;
+    let stopTimer = () => {
+      if (!this.state.timer_running) {
+        this.setState({ timer_running: new Date().getTime() });
+      } else {
+        this.setState({
+          timer_running: null,
+          timer:
+            this.state.timer + new Date().getTime() - this.state.timer_running
+        });
+        this.state.timer =
+          this.state.timer + new Date().getTime() - this.state.timer_running;
+      }
+      that.setState({ [this.props.id]: this.state.timer });
+    };
     return (
       <button
         className="btn btn-danger"
         style={{ height: "60px" }}
-        onClick={() => {
-          if (!this.state.timer_running) {
-            this.setState({ timer_running: new Date().getTime() });
-            // let formtimercopy = [...that.state.timers];
-            // formtimercopy[this.props.index] = this.state.timer;
-            // that.setState({ timers: formtimercopy });
-          } else {
-            this.setState({
-              timer_running: null,
-              timer:
-                this.state.timer +
-                new Date().getTime() -
-                this.state.timer_running
-            });
-            this.state.timer =
-              this.state.timer +
-              new Date().getTime() -
-              this.state.timer_running;
-          }
-          that.setState({ [this.props.id]: this.state.timer });
-        }}
+        onClick={stopTimer}
       >
         {(this.state.timer_running === null
           ? this.props.displayName
@@ -228,7 +222,6 @@ class Form extends Component {
           ></img>
         );
       };
-
       let circles = props.shooting_pos.map(index => {
         return circle(index.index);
       });
@@ -239,6 +232,7 @@ class Form extends Component {
   }
 
   updateTeamChange = () => {
+    this.setState({ match_start_time: new Date().getTime() });
     try {
       this.setState({
         teamSelected: +document
@@ -289,7 +283,18 @@ class Form extends Component {
 
   showEndMatch = e => {
     e.preventDefault();
-    this.setState({ inMatchView: 3 });
+    this.state.shooting_pos.splice(0, this.state.shooting_pos_auto.length);
+    this.setState({
+      inMatchView: 3,
+      defence_time:
+        typeof this.state.defence_time == "number"
+          ? this.state.defence_time / 1000
+          : null,
+      climb_time:
+        typeof this.state.climb_time == "number"
+          ? this.state.climb_time / 1000
+          : null
+    });
     console.log(this.state);
   };
 
@@ -347,6 +352,9 @@ class Form extends Component {
         index: this.state.shooting_pos.length
       });
       this.setState({ shooting_pos: shooting_pos_copy });
+      if (new Date().getTime() - this.state.match_start_time < 15000) {
+        this.setState({ shooting_pos_auto: shooting_pos_copy });
+      }
       console.log(this.state);
     }
   };

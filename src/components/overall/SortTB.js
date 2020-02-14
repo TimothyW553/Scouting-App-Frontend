@@ -140,10 +140,11 @@ class SortTB extends Component {
             getAvg(this);
             this.setState({ refresh: !this.state.refresh });
           }}
+          className="btn btn-danger grey darken-3"
+          // style={{color: }}
         >
           Re-fetch
         </button>
-        <div className="card-header">Overall Table</div>
         <div className="card-body">
           <BootstrapTable
             ref="table"
