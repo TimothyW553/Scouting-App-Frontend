@@ -4,15 +4,7 @@ import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { Redirect } from "react-router-dom";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend
-} from "recharts";
+import {XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalBarSeries, VerticalGridLines} from 'react-vis';
 
 let json = [];
 
@@ -30,6 +22,7 @@ const fetchAndLog = async () => {
     json.push(json_temp[i].team_number);
   }
   console.log(json);
+
 };
 
 fetchAndLog();
@@ -40,129 +33,107 @@ class Teams extends Component {
     this.state = {
       chartVisible: new Array(json.length),
       o: 0,
-      p: 0
+      p: 0,
+      data : [],
+      check:true
+    
     };
     this.state.chartVisible.fill(false);
+
   }
+  
+
 
   countTrues(arr) {
     let count = 0;
-    for (let i = 0; i < arr.length; i++) if (arr[i]) count++;
+    for(let i = 0; i < arr.length; i++)
+      if(arr[i]) count++; 
     return count;
   }
 
   onClicked = (element, indexOfElem) => {
-    this.setState(
-      () =>
-        (this.state.chartVisible[indexOfElem] = !this.state.chartVisible[
-          indexOfElem
-        ])
-    );
-    console.log("team: " + element);
-    this.setState({ o: element });
-    this.state.p = indexOfElem;
-  };
-
-  charts = (e, data) => {
+    this.setState(() => 
+      (this.state.chartVisible[indexOfElem] = !this.state.chartVisible[indexOfElem])
+    )
+    console.log("team: " + element)
+    this.setState({o: element})
+    this.state.p = indexOfElem
+    console.log(this.props.match_forms[0]);
+    if(this.state.check){
+      for(let i=0; i<this.props.match_forms.length;i++){
+        this.state.data.push(this.props.match_forms[i]);
+      }
+      this.setState({check:false});
+    }
+    console.log(this.state.data);
+  }
+  
+  charts = (e, dataIn, ind) => {
     return (
       <div>
         Info about the team: {e}
-        {console.log(e)}
-        <BarChart
-          width={300}
-          height={300}
-          data={data}
-          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name " />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="pv" stackId="a" fill="#8884d8" />
-          <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
-        </BarChart>
+        {console.log(dataIn[ind])}
+        <XYPlot margin={{bottom: 100, left:50}} xType="ordinal" width={300} height={300} >
+      <VerticalGridLines />
+      <HorizontalGridLines />
+      <XAxis tickLabelAngle={-45} />
+      <YAxis />
+      <VerticalBarSeries
+        data={[
+          {x: 'Upper Scored', y: dataIn[ind].shots[0].score},
+          {x: 'Lower Scored', y: dataIn[ind].shots[1].score},
+          {x: 'Missed', y: dataIn[ind].shots[2].score}
+
+        ]}
+      />
+
+    </XYPlot>
+    <XYPlot margin={{bottom: 75, left:50}} xType="ordinal" width={300} height={300} >
+      <VerticalGridLines />
+      <HorizontalGridLines />
+      <XAxis tickLabelAngle={-45} />
+      <YAxis />
+      <VerticalBarSeries
+        data={[
+          {x: 'Cycle Time', y: dataIn[ind].average_cycle_time},
+          {x: 'Climb Time', y: dataIn[ind].climb_time},
+          {x: 'Defence Time', y: dataIn[ind].defence_time}
+        ]}
+      />
+
+    </XYPlot>
       </div>
-    );
-  };
+    )
+  }
 
   render() {
-    let data = [
-      {
-        name: "CycleTime",
-        uv: 4000,
-        pv: 2400
-      },
-      {
-        name: "BallsUpper",
-        uv: 3000,
-        pv: 1398
-      },
-      {
-        name: "BallsLower",
-        uv: 2000,
-        pv: 1320
-      },
-      {
-        name: "BallsMissed",
-        uv: 2780,
-        pv: 3908
-      },
-      {
-        name: "ClimbTime",
-        uv: 1890,
-        pv: 4800
-      },
-      {
-        name: "DefenceTime",
-        uv: 2390,
-        pv: 3800
-      },
-      {
-        name: "Preloads",
-        uv: 3490,
-        pv: 4300
-      }
-    ];
-    let buttons = [];
-    for (let i = 0; i < json.length; i++) buttons.push(json[i]);
 
-    let i = 0,
-      j = 0,
-      k = 0,
-      l = 0;
+
+    let buttons = [];
+    for(let i = 0; i < json.length; i++)
+      buttons.push(json[i]);
+
+    let i = 0, j = 0, k = 0, l = 0;
     let teamN = 0;
 
     const { match_forms, auth, notifications } = this.props;
     if (!auth.uid) return <Redirect to="/signin" />;
+    
 
     return (
+      
       <div>
-        <div
-          className="align-baseline"
-          role="group"
-          arial-label="Basic Example"
-        >
-          {buttons.map((currElement, index) => (
-            <button
-              onClick={() => {
-                if (
-                  this.state.chartVisible[index] ||
-                  this.countTrues(this.state.chartVisible) < 3
-                ) {
-                  {
-                    this.onClicked(currElement, index);
-                  }
-                }
-              }}
-              key={buttons[k++]}
-              style={{
-                border: this.state.chartVisible[index]
-                  ? "2px solid black"
-                  : null
-              }}
-            >
-              {buttons[i++]}
+        
+        <div className="align-baseline" role="group" arial-label="Basic Example">
+          {buttons.map((currElement, index) =>(
+            <button onClick={() => { 
+              if ( this.state.chartVisible[index] || this.countTrues(this.state.chartVisible) < 3 ) { 
+                { this.onClicked(currElement, index); }
+              } 
+            }} 
+              key={buttons[k++]} 
+              style={ { width:"75px", height:"50px",background:"green", border: this.state.chartVisible[index] ? "2px solid black" : null }} > 
+              {buttons[i++]} 
             </button>
           ))}
         </div>
@@ -170,12 +141,9 @@ class Teams extends Component {
           <table className="align-baseline" role="group">
             <tbody>
               <tr>
-                {this.state.chartVisible.map((currElement, index) =>
-                  this.state.chartVisible[index] ? (
-                    <td key={index} style={{ color: "red" }}>
-                      {this.charts(buttons[index], data)}
-                    </td>
-                  ) : null
+                {this.state.chartVisible.map((currElement, index) => 
+                  this.state.chartVisible[index] ? 
+                  (<td key={index} style={{ color: "red"}}>{this.charts(buttons[index], this.state.data, index)}</td>) : null
                 )}
               </tr>
             </tbody>
@@ -199,6 +167,7 @@ const mapStateToProps = state => {
     match_forms: state.firestore.ordered.match_forms,
     auth: state.firebase.auth,
     notifications: state.firestore.ordered.notifications
+    
   };
 };
 
