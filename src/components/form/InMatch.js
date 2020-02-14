@@ -156,11 +156,14 @@ class Form extends Component {
     this.state = {
       team_num: 0,
       cycle_time: [0],
+      auto_cycle_time: [0],
+      match_start_time: 0.0,
       ind_cycle_time: [],
       average: 0,
       climb_time: 0.0,
       defence_time: 0.0,
       balls_scored: 0,
+      auto_balls_scored: 0,
       floor_pickup: false,
       station_pickup: false,
       stage2_activate: false,
@@ -168,6 +171,7 @@ class Form extends Component {
       trench: false,
       preloads: 0,
       shooting_pos: [],
+      shooting_pos_auto: [],
       time: 0,
       isOn: false,
       start: 0,
@@ -175,6 +179,23 @@ class Form extends Component {
       circle_size: 50,
       circle_show: true,
       shots: [
+        {
+          type: "high",
+          score: 0,
+          id: 1
+        },
+        {
+          type: "low",
+          score: 0,
+          id: 2
+        },
+        {
+          type: "miss",
+          score: 0,
+          id: 3
+        }
+      ],
+      auto_shots: [
         {
           type: "high",
           score: 0,
@@ -236,6 +257,7 @@ class Form extends Component {
   }
 
   updateTeamChange = () => {
+    this.setState({ match_start_time: new Date().getTime() });
     try {
       this.setState({
         teamSelected: +document
@@ -246,23 +268,33 @@ class Form extends Component {
   };
 
   onScoreChange = (index, delta) => {
-    this.state.shots[index].score += delta;
-    if (index == 0 || index == 1) {
-      this.state.balls_scored += delta;
+    if ((new Date().getTime() - this.state.match_start_time) / 1000 <= 20) {
+      this.state.auto_shots[index].score += delta;
+      if (index == 0 || index == 1) {
+        this.state.auto_balls_scored += delta;
+      }
+      if (
+        (this.state.auto_shots[0].score + this.state.auto_shots[1].score) %
+          5 ===
+        0
+      ) {
+        this.state.auto_cycle_time.push(
+          (new Date().getTime() - starting_time) / 1000
+        );
+      }
+      this.setState(this.state);
+    } else {
+      this.state.shots[index].score += delta;
+      if (index == 0 || index == 1) {
+        this.state.balls_scored += delta;
+      }
+      if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
+        this.state.cycle_time.push(
+          (new Date().getTime() - starting_time) / 1000
+        );
+      }
+      this.setState(this.state);
     }
-    if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
-      this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
-      this.state.ind_cycle_time.push(
-        this.state.cycle_time[this.state.cycle_time.length - 1] -
-          this.state.cycle_time[this.state.cycle_time.length - 2]
-      );
-    }
-
-    // this.setState({});
-    this.state.average_cycle_time =
-      this.state.cycle_time[this.state.cycle_time.length - 1] /
-      this.state.cycle_time.length;
-    this.setState(this.state);
   };
 
   showPreMatch = e => {
@@ -275,10 +307,14 @@ class Form extends Component {
     e.preventDefault();
     this.setState({ inMatchView: 2, preloads: this.state.preloads });
     starting_time = new Date().getTime();
+    this.setState({
+      team_num: this.state.teamSelected
+    });
     console.log(this.state);
   };
 
   showEndMatch = e => {
+    this.state.shooting_pos.splice(0, this.state.shooting_pos_auto.length);
     e.preventDefault();
     this.setState({ inMatchView: 3 });
     console.log(this.state);
@@ -338,6 +374,9 @@ class Form extends Component {
         index: this.state.shooting_pos.length
       });
       this.setState({ shooting_pos: shooting_pos_copy });
+      if (new Date().getTime() - this.state.match_start_time < 20000) {
+        this.setState({ shooting_pos_auto: shooting_pos_copy });
+      }
       console.log(this.state);
     }
   };
@@ -512,24 +551,45 @@ class Form extends Component {
 
     let scoreboard =
       this.state.inMatchView === 2 ? (
-        <span className="scoreboard">
-          <span className="shots">
-            {this.state.shots.map(
-              function(shot, index) {
-                return (
-                  <Shot
-                    onScoreChange={function(delta) {
-                      this.onScoreChange(index, delta);
-                    }.bind(this)}
-                    score={shot.score}
-                    key={index}
-                    displayName={shotNames[index]}
-                  />
-                );
-              }.bind(this)
-            )}
+        new Date().getTime() - this.state.match_start_time <= 20 * 1000 ? (
+          <span className="scoreboard">
+            <span className="shots">
+              {this.state.auto_shots.map(
+                function(shot, index) {
+                  return (
+                    <Shot
+                      onScoreChange={function(delta) {
+                        this.onScoreChange(index, delta);
+                      }.bind(this)}
+                      score={shot.score}
+                      key={index}
+                      displayName={shotNames[index]}
+                    />
+                  );
+                }.bind(this)
+              )}
+            </span>
           </span>
-        </span>
+        ) : (
+          <span className="scoreboard">
+            <span className="shots">
+              {this.state.shots.map(
+                function(shot, index) {
+                  return (
+                    <Shot
+                      onScoreChange={function(delta) {
+                        this.onScoreChange(index, delta);
+                      }.bind(this)}
+                      score={shot.score}
+                      key={index}
+                      displayName={shotNames[index]}
+                    />
+                  );
+                }.bind(this)
+              )}
+            </span>
+          </span>
+        )
       ) : null;
 
     let field_input =
