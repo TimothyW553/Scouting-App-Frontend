@@ -11,12 +11,12 @@ const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
 const field_size = 7;
 const CompetingTeams_Array = [
-  { label: "R 1: 610", value: 1 },
-  { label: "R 2: 690", value: 2 },
-  { label: "R 3: 420", value: 3 },
-  { label: "B 1: 1111", value: 4 },
-  { label: "B 2: 6969", value: 5 },
-  { label: "B 3: 4200", value: 6 }
+  { label: "Red 1: 610", value: 1 },
+  { label: "Red 2: 690", value: 2 },
+  { label: "Red 3: 420", value: 3 },
+  { label: "Blue 1: 1111", value: 4 },
+  { label: "Blue 2: 6969", value: 5 },
+  { label: "Blue 3: 4200", value: 6 }
 ];
 
 let starting_time;
@@ -33,15 +33,7 @@ function Counter(props) {
         {" "}
         -{" "}
       </button>
-      <div className="counter-score">
-        {" "}
-        <p style={{ fontSize: "15px", marginBottom: "0px" }}>
-          {props.displayName}
-        </p>
-        <div style={{ lineHeight: "20px", maxHeight: "20px" }}>
-          {props.score}
-        </div>
-      </div>
+      <div className="counter-score"> {props.score} </div>
       <button
         className="counter-action increment"
         onClick={function() {
@@ -59,11 +51,7 @@ function Shot(props) {
   return (
     <div className="shot">
       <div className="shot-score">
-        <Counter
-          score={props.score}
-          onChange={props.onScoreChange}
-          displayName={props.displayName}
-        />
+        <Counter score={props.score} onChange={props.onScoreChange} />
       </div>
     </div>
   );
@@ -155,12 +143,13 @@ class Form extends Component {
     super(props);
     this.state = {
       team_num: 0,
-      cycle_time: [0],
-      ind_cycle_time: [],
-      average: 0,
+      cycle_time: [],
+      auto_cycle_time: [],
       climb_time: 0.0,
       defence_time: 0.0,
+      match_time: 0.0,
       balls_scored: 0,
+      auto_balls_scored: 0,
       floor_pickup: false,
       station_pickup: false,
       stage2_activate: false,
@@ -168,6 +157,7 @@ class Form extends Component {
       trench: false,
       preloads: 0,
       shooting_pos: [],
+      auto_shooting_pos: [],
       time: 0,
       isOn: false,
       start: 0,
@@ -191,46 +181,98 @@ class Form extends Component {
           id: 3
         }
       ],
+      auto_shots: [
+        {
+          type: "high",
+          score: 0,
+          id: 1
+        },
+        {
+          type: "low",
+          score: 0,
+          id: 2
+        },
+        {
+          type: "miss",
+          score: 0,
+          id: 3
+        }
+      ],
       teamSelected: null
     };
   }
 
   Circle(props) {
     try {
-      let circle = index => {
-        return (
-          <img
-            key={props.shooting_pos[index].index}
-            src={require(`${circleimg}`)}
-            width={props.circle_size}
-            height={props.circle_size}
-            onClick={() => {
-              this.clicky(window.event);
-            }}
-            style={{
-              position: "absolute",
-              left:
-                props.shooting_pos[index].x +
-                document.getElementById("clickyimg").getBoundingClientRect()
-                  .left -
-                props.circle_size / 2 +
-                "px",
-              top:
-                props.shooting_pos[index].y +
-                document.getElementById("clickyimg").getBoundingClientRect()
-                  .top -
-                props.circle_size / 2 +
-                "px"
-            }}
-          ></img>
-        );
-      };
-
-      let circles = props.shooting_pos.map(index => {
-        return circle(index.index);
-      });
-      return <React.Fragment>{circles}</React.Fragment>;
+      if ((new Date().getTime() - this.state.match_time) / 1000 <= 15) {
+        let auto_circle = index => {
+          return (
+            <img
+              key={props.auto_shooting_pos[index].index}
+              src={require(`${circleimg}`)}
+              width={props.circle_size}
+              height={props.circle_size}
+              onClick={() => {
+                this.clicky(window.event);
+              }}
+              style={{
+                position: "absolute",
+                left:
+                  props.auto_shooting_pos[index].x +
+                  document.getElementById("clickyimg").getBoundingClientRect()
+                    .left -
+                  props.circle_size / 2 +
+                  "px",
+                top:
+                  props.auto_shooting_pos[index].y +
+                  document.getElementById("clickyimg").getBoundingClientRect()
+                    .top -
+                  props.circle_size / 2 +
+                  "px"
+              }}
+            ></img>
+          );
+        };
+        let circles = props.auto_shooting_pos.map(index => {
+          return this.Circle(index.index);
+        });
+        return <React.Fragment>{circles}</React.Fragment>;
+      } else {
+        let circle = index => {
+          return (
+            <img
+              key={props.shooting_pos[index].index}
+              src={require(`${circleimg}`)}
+              width={props.circle_size}
+              height={props.circle_size}
+              onClick={() => {
+                this.clicky(window.event);
+              }}
+              style={{
+                position: "absolute",
+                left:
+                  props.shooting_pos[index].x +
+                  document.getElementById("clickyimg").getBoundingClientRect()
+                    .left -
+                  props.circle_size / 2 +
+                  "px",
+                top:
+                  props.shooting_pos[index].y +
+                  document.getElementById("clickyimg").getBoundingClientRect()
+                    .top -
+                  props.circle_size / 2 +
+                  "px"
+              }}
+            ></img>
+          );
+        };
+        let circles = props.shooting_pos.map(index => {
+          return this.Circle(index.index);
+        });
+        return <React.Fragment>{circles}</React.Fragment>;
+      }
     } catch {
+      console.log("fail");
       return null;
     }
   }
@@ -238,31 +280,42 @@ class Form extends Component {
   updateTeamChange = () => {
     try {
       this.setState({
-        teamSelected: +document
-          .getElementsByClassName("  css-1uccc91-singleValue")[0]
-          .innerText.slice(5)
+        teamSelected: document.getElementsByClassName(
+          "  css-1uccc91-singleValue"
+        )[0].innerText
       });
     } catch {}
   };
 
   onScoreChange = (index, delta) => {
-    this.state.shots[index].score += delta;
-    if (index == 0 || index == 1) {
-      this.state.balls_scored += delta;
+    console.log((new Date().getTime() - this.state.match_time) / 1000);
+    if ((new Date().getTime() - this.state.match_time) / 1000 <= 15) {
+      this.state.auto_shots[index].score += delta;
+      if (index == 0 || index == 1) {
+        this.state.auto_balls_scored += delta;
+      }
+      if (
+        (this.state.auto_shots[0].score + this.state.auto_shots[1].score) %
+          5 ===
+        0
+      ) {
+        this.state.auto_cycle_time.push(
+          (new Date().getTime() - starting_time) / 1000
+        );
+      }
+      this.setState(this.state);
+    } else {
+      this.state.shots[index].score += delta;
+      if (index == 0 || index == 1) {
+        this.state.balls_scored += delta;
+      }
+      if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
+        this.state.cycle_time.push(
+          (new Date().getTime() - starting_time) / 1000
+        );
+      }
+      this.setState(this.state);
     }
-    if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
-      this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
-      this.state.ind_cycle_time.push(
-        this.state.cycle_time[this.state.cycle_time.length - 1] -
-          this.state.cycle_time[this.state.cycle_time.length - 2]
-      );
-    }
-
-    // this.setState({});
-    this.state.average_cycle_time =
-      this.state.cycle_time[this.state.cycle_time.length - 1] /
-      this.state.cycle_time.length;
-    this.setState(this.state);
   };
 
   showPreMatch = e => {
@@ -274,12 +327,15 @@ class Form extends Component {
   showInMatch = e => {
     e.preventDefault();
     this.setState({ inMatchView: 2, preloads: this.state.preloads });
-    starting_time = new Date().getTime();
-    this.setState({
-      team_num: this.state.teamSelected
-    });
+    this.setState({ match_time: new Date().getTime() });
     console.log(this.state);
   };
+
+  // auto_time = e => {
+  //   e.preventDefault();
+  //   if(this.setState({ inMatchView: 2});
+  //   match_time = )
+  // };
 
   showEndMatch = e => {
     e.preventDefault();
@@ -333,16 +389,26 @@ class Form extends Component {
       y <=
         document.getElementById("clickyimg").getBoundingClientRect().bottom -
           document.getElementById("clickyimg").getBoundingClientRect().top
-    ) {
-      let shooting_pos_copy = [...this.state.shooting_pos];
-      shooting_pos_copy.push({
-        x: Number(x),
-        y: Number(y),
-        index: this.state.shooting_pos.length
-      });
-      this.setState({ shooting_pos: shooting_pos_copy });
-      console.log(this.state);
-    }
+    )
+      if ((new Date().getTime() - this.state.match_time) / 1000 <= 15) {
+        let auto_shooting_pos_copy = [...this.state.auto_shooting_pos];
+        auto_shooting_pos_copy.push({
+          x: Number(x),
+          y: Number(y),
+          index: this.state.auto_shooting_pos.length
+        });
+        this.setState({ auto_shooting_pos: auto_shooting_pos_copy });
+        console.log(this.state);
+      } else {
+        let shooting_pos_copy = [...this.state.shooting_pos];
+        shooting_pos_copy.push({
+          x: Number(x),
+          y: Number(y),
+          index: this.state.shooting_pos.length
+        });
+        this.setState({ shooting_pos: shooting_pos_copy });
+        console.log(this.state);
+      }
   };
 
   incrementPreload = e => {
@@ -453,6 +519,12 @@ class Form extends Component {
         </form>
       ) : null;
 
+    // let auto_time =
+    //   this.state.inMatchView === 2
+    //     ? (this.setState({ match_time: new Date().getTime() }),
+    //       console.log(this.state.match_time))
+    //     : null;
+
     let matchField = (
       <img
         src={require(`${red_field}`)}
@@ -500,7 +572,7 @@ class Form extends Component {
           <form className="white" onSubmit={this.handleSubmit}>
             <div className="input-field">
               <button className="btn pink lighten-1" id="button4">
-                Submit
+                Next
               </button>
             </div>
           </form>
@@ -511,28 +583,45 @@ class Form extends Component {
 
     let showncircle = this.state.circle_show ? this.Circle(this.state) : null;
 
-    let shotNames = ["Top", "Bot", "Miss"];
-
     let scoreboard =
       this.state.inMatchView === 2 ? (
-        <span className="scoreboard">
-          <span className="shots">
-            {this.state.shots.map(
-              function(shot, index) {
-                return (
-                  <Shot
-                    onScoreChange={function(delta) {
-                      this.onScoreChange(index, delta);
-                    }.bind(this)}
-                    score={shot.score}
-                    key={index}
-                    displayName={shotNames[index]}
-                  />
-                );
-              }.bind(this)
-            )}
+        new Date().getTime() - this.state.match_time <= 15 * 1000 ? (
+          <span className="scoreboard">
+            <span className="shots">
+              {this.state.auto_shots.map(
+                function(auto_shot, index) {
+                  return (
+                    <Shot
+                      onScoreChange={function(delta) {
+                        this.onScoreChange(index, delta);
+                      }.bind(this)}
+                      score={auto_shot.score}
+                      key={index}
+                    />
+                  );
+                }.bind(this)
+              )}
+            </span>
           </span>
-        </span>
+        ) : (
+          <span className="scoreboard">
+            <span className="shots">
+              {this.state.shots.map(
+                function(shot, index) {
+                  return (
+                    <Shot
+                      onScoreChange={function(delta) {
+                        this.onScoreChange(index, delta);
+                      }.bind(this)}
+                      score={shot.score}
+                      key={index}
+                    />
+                  );
+                }.bind(this)
+              )}
+            </span>
+          </span>
+        )
       ) : null;
 
     let field_input =
