@@ -2,7 +2,7 @@ import ReactDOM from "react-dom";
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import firebase from "../../config/fbConfig.js";
-
+//
 let getAvg = async that => {
   firebase
     .firestore()
