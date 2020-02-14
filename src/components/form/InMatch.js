@@ -226,20 +226,22 @@ class Form extends Component {
             width={props.circle_size}
             height={props.circle_size}
             onClick={() => {
-              this.clicky(window.event);
+              this.field_onClick(window.event);
             }}
             style={{
               position: "absolute",
               left:
                 props.shooting_pos[index].x +
-                document.getElementById("clickyimg").getBoundingClientRect()
-                  .left -
+                document
+                  .getElementById("match_field_image")
+                  .getBoundingClientRect().left -
                 props.circle_size / 2 +
                 "px",
               top:
                 props.shooting_pos[index].y +
-                document.getElementById("clickyimg").getBoundingClientRect()
-                  .top -
+                document
+                  .getElementById("match_field_image")
+                  .getBoundingClientRect().top -
                 props.circle_size / 2 +
                 "px"
             }}
@@ -348,24 +350,31 @@ class Form extends Component {
     this.setState({ circle_show: !this.state.circle_show });
   };
 
-  clicky = e => {
+  field_onClick = e => {
     let x = e.clientX;
     let y = e.clientY;
     x = Number(
-      x - document.getElementById("clickyimg").getBoundingClientRect().left
+      x -
+        document.getElementById("match_field_image").getBoundingClientRect()
+          .left
     ).toFixed(0);
     y = Number(
-      y - document.getElementById("clickyimg").getBoundingClientRect().top
+      y -
+        document.getElementById("match_field_image").getBoundingClientRect().top
     ).toFixed(0);
     if (
       x >= 0 &&
       y >= 0 &&
       x <=
-        document.getElementById("clickyimg").getBoundingClientRect().right -
-          document.getElementById("clickyimg").getBoundingClientRect().left &&
+        document.getElementById("match_field_image").getBoundingClientRect()
+          .right -
+          document.getElementById("match_field_image").getBoundingClientRect()
+            .left &&
       y <=
-        document.getElementById("clickyimg").getBoundingClientRect().bottom -
-          document.getElementById("clickyimg").getBoundingClientRect().top
+        document.getElementById("match_field_image").getBoundingClientRect()
+          .bottom -
+          document.getElementById("match_field_image").getBoundingClientRect()
+            .top
     ) {
       let shooting_pos_copy = [...this.state.shooting_pos];
       shooting_pos_copy.push({
@@ -494,8 +503,8 @@ class Form extends Component {
         src={require(`${red_field}`)}
         width={76 * 1.3 * field_size}
         height={47 * 1.3 * field_size}
-        onClick={this.clicky}
-        id="clickyimg"
+        onClick={this.field_onClick}
+        id="match_field_image"
       ></img>
     );
 
