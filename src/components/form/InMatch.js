@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 7;
+const field_size = 5;
 const CompetingTeams_Array = [
   { label: "R 1: 610", value: 1 },
   { label: "R 2: 690", value: 2 },
@@ -162,6 +162,7 @@ class Form extends Component {
       trench: false,
       preloads: 0,
       shooting_pos: [],
+      shooting_pos_auto: [],
       time: 0,
       isOn: false,
       start: 0,
@@ -385,7 +386,7 @@ class Form extends Component {
     let newMatchForm =
       this.state.inMatchView === 0 ? (
         <form className="white" onSubmit={this.showPreMatch}>
-          <div className="input-field">
+          <div className="input-field" style={{ marginBottom: "0px" }}>
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
               Enter the current match number:
             </p>
@@ -430,7 +431,14 @@ class Form extends Component {
 
     let prematch =
       this.state.inMatchView === 1 ? (
-        <form className="white" onSubmit={this.showInMatch}>
+        <form
+          className="white"
+          onSubmit={this.showInMatch}
+          style={{
+            marginTop: "0px",
+            paddingTop: "0px"
+          }}
+        >
           <div className="input-field">
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
               Number of Preloads
@@ -555,16 +563,15 @@ class Form extends Component {
           <table className="FieldInput">
             <tbody>
               <tr>
-                <td>
+                <td style={{ width: "200px" }}>
                   <Timer
                     this={this}
                     name={this.state.defence_time}
                     displayName="Defence Timer"
                     id="defence_time"
                   />
-                  <br /> <br />
+                  <div style={{ height: "15px" }} />
                   {scoreboard}
-                  <br />
                   <Timer
                     this={this}
                     name={this.state}
