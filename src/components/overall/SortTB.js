@@ -57,8 +57,7 @@ class SortTB extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      refresh: false,
-      json: []
+      refresh: false
     };
     // fetchAndLog(this);
   }
@@ -68,12 +67,15 @@ class SortTB extends Component {
   snap_Loaded(docs1, varlist) {
     // get all the teams
     let teamsList = [];
+    let used = [];
     for (let i = 0; i < docs1.length; i++) {
-      if (!teamsList.includes(docs1[i].data().team_num)) {
+      if (!used.includes(docs1[i].data().team_num)) {
         teamsList.push({ TeamNumber: docs1[i].data().team_num });
+        used.push(docs1[i].data().team_num);
       }
     }
     this.setState({ json: teamsList });
+    console.log(teamsList);
 
     // varlist: list containing match form var names and display names
     for (let j = 0; j < varlist.length; j++) {
