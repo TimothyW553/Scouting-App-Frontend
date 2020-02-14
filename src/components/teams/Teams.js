@@ -89,37 +89,37 @@ class Teams extends Component {
   render() {
     let data = [
       {
-        name: "Page A",
+        name: "CycleTime",
         uv: 4000,
         pv: 2400
       },
       {
-        name: "Page B",
+        name: "BallsUpper",
         uv: 3000,
         pv: 1398
       },
       {
-        name: "Page C",
+        name: "BallsLower",
         uv: 2000,
         pv: 1320
       },
       {
-        name: "Page D",
+        name: "BallsMissed",
         uv: 2780,
         pv: 3908
       },
       {
-        name: "Page E",
+        name: "ClimbTime",
         uv: 1890,
         pv: 4800
       },
       {
-        name: "Page F",
+        name: "DefenceTime",
         uv: 2390,
         pv: 3800
       },
       {
-        name: "Page G",
+        name: "Preloads",
         uv: 3490,
         pv: 4300
       }
