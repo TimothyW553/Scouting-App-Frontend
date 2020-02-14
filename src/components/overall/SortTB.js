@@ -74,8 +74,12 @@ class SortTB extends Component {
         used.push(docs1[i].data().team_num);
       }
     }
-    this.setState({ json: teamsList });
-    console.log(teamsList);
+    this.setState({
+      json: teamsList,
+      teamsList: teamsList.map(x => {
+        return x.TeamNumber;
+      })
+    });
 
     // varlist: list containing match form var names and display names
     for (let j = 0; j < varlist.length; j++) {
@@ -98,17 +102,23 @@ class SortTB extends Component {
           }
         }
         if (listcopy.length != docs.length) {
-          avg = (avg / (docs.length - listcopy.length + bad)).toFixed(3);
-          // console.log([
-          //   docs.length,
-          //   listcopy.length,
-          //   bad,
-          //   docs.length - (listcopy.length - bad)
-          // ]);
-          this.that.setState({ docs: listcopy });
-          let jsoncopy = [...this.state.json];
-          jsoncopy[i][varlist[j][1]] = avg;
-          this.setState({ json: jsoncopy });
+          if (bad != docs.length - listcopy.length) {
+            avg = (avg / (docs.length - listcopy.length - bad)).toFixed(3);
+            this.that.setState({ docs: listcopy });
+            let jsoncopy = [...this.state.json];
+            jsoncopy[i][varlist[j][1]] = avg;
+            this.setState({ json: jsoncopy });
+          } else {
+            let jsoncopy = [...this.state.json];
+            jsoncopy[i][varlist[j][1]] = null;
+            this.setState({ json: jsoncopy });
+          }
+        }
+      }
+      for (let i = 0; i < this.state.teamsList.length; i++) {
+        if (this.state.json[i][varlist[j][1]] === null) {
+          this.state.json[i][varlist[j][1]] = "No data.";
+          this.setState({});
         }
       }
     }
