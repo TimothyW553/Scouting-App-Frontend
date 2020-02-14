@@ -209,6 +209,9 @@ class Form extends Component {
           id: 3
         }
       ],
+      tele_top: 0,
+      tele_bot: 0,
+      tele_miss: 0,
       teamSelected: null
     };
   }
@@ -301,6 +304,9 @@ class Form extends Component {
     this.state.top = this.state.shots[0].score;
     this.state.bot = this.state.shots[1].score;
     this.state.miss = this.state.shots[2].score;
+    this.state.tele_top = this.state.auto_shots[0].score;
+    this.state.tele_bot = this.state.auto_shots[1].score;
+    this.state.tele_miss = this.state.auto_shots[2].score;
     this.setState(this.state);
   };
 

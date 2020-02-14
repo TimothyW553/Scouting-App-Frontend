@@ -3,21 +3,26 @@ import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import firebase from "../../config/fbConfig.js";
 
+let display_list = [
+  ["average_cycle_time", "AverageCycle", "Avg. Cycle Time"],
+  ["preloads", "Preloads", "Avg. Preloads"],
+  ["climb_time", "ClimbTime", "Avg. Climb Time"],
+  ["defence_time", "DefenceTime", "Avg. Defence Time"],
+  ["top", "Upper", "Avg. Balls Upper"],
+  ["bot", "Lower", "Avg. Balls Lower"],
+  ["miss", "Miss", "Avg. Balls Missed"],
+  ["tele_top", "Tele_Upper", "Avg. Teleop Balls Upper"],
+  ["tele_bot", "Tele_Lower", "Avg. Teleop Balls Lower"],
+  ["tele_miss", "Tele_Miss", "Avg. Teleop Balls Missed"]
+];
+
 let getAvg = async that => {
   firebase
     .firestore()
     .collection("match_forms")
     .get()
     .then(snapshot => {
-      that.snap_Loaded(snapshot.docs, [
-        ["average_cycle_time", "AverageCycle"],
-        ["preloads", "Preloads"],
-        ["climb_time", "ClimbTime"],
-        ["defence_time", "DefenceTime"],
-        ["top", "Upper"],
-        ["bot", "Lower"],
-        ["miss", "Miss"]
-      ]);
+      that.snap_Loaded(snapshot.docs, display_list);
     });
 };
 
@@ -136,8 +141,10 @@ class SortTB extends Component {
           onClick={() => {
             this.setState({ refresh: !this.state.refresh });
           }}
+          className="btn btn-danger grey darken-3"
+          // style={{color: }}
         >
-          Set State
+          Re-fetch
         </button>
         <div className="card-header">Overall Table</div>
         <div className="card-body">
@@ -154,39 +161,13 @@ class SortTB extends Component {
             >
               Team #
             </TableHeaderColumn>
-            <TableHeaderColumn
-              width="120"
-              dataField="AverageCycle"
-              dataSort={true}
-            >
-              Avg. Cycle Time
-            </TableHeaderColumn>
-            <TableHeaderColumn width="120" dataField="Upper" dataSort={true}>
-              Avg. Balls Upper
-            </TableHeaderColumn>
-            <TableHeaderColumn width="120" dataField="Lower" dataSort={true}>
-              Avg. Balls Lower
-            </TableHeaderColumn>
-            <TableHeaderColumn width="120" dataField="Miss" dataSort={true}>
-              Avg. Balls Missed
-            </TableHeaderColumn>
-            <TableHeaderColumn
-              width="120"
-              dataField="ClimbTime"
-              dataSort={true}
-            >
-              Avg. Climb Time
-            </TableHeaderColumn>
-            <TableHeaderColumn
-              width="120"
-              dataField="DefenceTime"
-              dataSort={true}
-            >
-              Avg. Defence Time
-            </TableHeaderColumn>
-            <TableHeaderColumn width="120" dataField="Preloads" dataSort={true}>
-              Avg. Preloads
-            </TableHeaderColumn>
+            {display_list.map(x => {
+              return (
+                <TableHeaderColumn width="120" dataField={x[1]} dataSort={true}>
+                  {x[2]}
+                </TableHeaderColumn>
+              );
+            })}
           </BootstrapTable>
         </div>
       </div>
