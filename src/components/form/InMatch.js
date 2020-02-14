@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 7;
+const field_size = 5;
 const CompetingTeams_Array = [
   { label: "R 1: 610", value: 1 },
   { label: "R 2: 690", value: 2 },
@@ -80,31 +80,25 @@ class Timer extends Component {
   render() {
     let that = this.props.this;
     // this.props.state.name=this.state.timer;
+    let stopTimer = () => {
+      if (!this.state.timer_running) {
+        this.setState({ timer_running: new Date().getTime() });
+      } else {
+        this.setState({
+          timer_running: null,
+          timer:
+            this.state.timer + new Date().getTime() - this.state.timer_running
+        });
+        this.state.timer =
+          this.state.timer + new Date().getTime() - this.state.timer_running;
+      }
+      that.setState({ [this.props.id]: this.state.timer });
+    };
     return (
       <button
         className="btn btn-danger"
         style={{ height: "60px" }}
-        onClick={() => {
-          if (!this.state.timer_running) {
-            this.setState({ timer_running: new Date().getTime() });
-            // let formtimercopy = [...that.state.timers];
-            // formtimercopy[this.props.index] = this.state.timer;
-            // that.setState({ timers: formtimercopy });
-          } else {
-            this.setState({
-              timer_running: null,
-              timer:
-                this.state.timer +
-                new Date().getTime() -
-                this.state.timer_running
-            });
-            this.state.timer =
-              this.state.timer +
-              new Date().getTime() -
-              this.state.timer_running;
-          }
-          that.setState({ [this.props.id]: this.state.timer });
-        }}
+        onClick={stopTimer}
       >
         {(this.state.timer_running === null
           ? this.props.displayName
@@ -195,6 +189,9 @@ class Form extends Component {
           id: 3
         }
       ],
+      top: 0,
+      bot: 0,
+      miss: 0,
       auto_shots: [
         {
           type: "high",
@@ -246,7 +243,6 @@ class Form extends Component {
           ></img>
         );
       };
-
       let circles = props.shooting_pos.map(index => {
         return circle(index.index);
       });
@@ -295,6 +291,15 @@ class Form extends Component {
       }
       this.setState(this.state);
     }
+
+    // this.setState({});
+    this.state.average_cycle_time =
+      this.state.cycle_time[this.state.cycle_time.length - 1] /
+      this.state.cycle_time.length;
+    this.state.top = this.state.shots[0].score;
+    this.state.bot = this.state.shots[1].score;
+    this.state.miss = this.state.shots[2].score;
+    this.setState(this.state);
   };
 
   showPreMatch = e => {
@@ -316,7 +321,18 @@ class Form extends Component {
   showEndMatch = e => {
     this.state.shooting_pos.splice(0, this.state.shooting_pos_auto.length);
     e.preventDefault();
-    this.setState({ inMatchView: 3 });
+    this.state.shooting_pos.splice(0, this.state.shooting_pos_auto.length);
+    this.setState({
+      inMatchView: 3,
+      defence_time:
+        typeof this.state.defence_time == "number"
+          ? this.state.defence_time / 1000
+          : null,
+      climb_time:
+        typeof this.state.climb_time == "number"
+          ? this.state.climb_time / 1000
+          : null
+    });
     console.log(this.state);
   };
 
@@ -407,7 +423,7 @@ class Form extends Component {
     let newMatchForm =
       this.state.inMatchView === 0 ? (
         <form className="white" onSubmit={this.showPreMatch}>
-          <div className="input-field">
+          <div className="input-field" style={{ marginBottom: "0px" }}>
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
               Enter the current match number:
             </p>
@@ -452,7 +468,14 @@ class Form extends Component {
 
     let prematch =
       this.state.inMatchView === 1 ? (
-        <form className="white" onSubmit={this.showInMatch}>
+        <form
+          className="white"
+          onSubmit={this.showInMatch}
+          style={{
+            marginTop: "0px",
+            paddingTop: "0px"
+          }}
+        >
           <div className="input-field">
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
               Number of Preloads
@@ -598,16 +621,15 @@ class Form extends Component {
           <table className="FieldInput">
             <tbody>
               <tr>
-                <td>
+                <td style={{ width: "200px" }}>
                   <Timer
                     this={this}
                     name={this.state.defence_time}
                     displayName="Defence Timer"
                     id="defence_time"
                   />
-                  <br /> <br />
+                  <div style={{ height: "15px" }} />
                   {scoreboard}
-                  <br />
                   <Timer
                     this={this}
                     name={this.state}

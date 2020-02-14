@@ -4,7 +4,15 @@ import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { Redirect } from "react-router-dom";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend
+} from "recharts";
 
 let json = [];
 
@@ -32,114 +40,129 @@ class Teams extends Component {
     this.state = {
       chartVisible: new Array(json.length),
       o: 0,
-      p: 0,
+      p: 0
     };
     this.state.chartVisible.fill(false);
   }
 
   countTrues(arr) {
     let count = 0;
-    for(let i = 0; i < arr.length; i++)
-      if(arr[i]) count++; 
+    for (let i = 0; i < arr.length; i++) if (arr[i]) count++;
     return count;
   }
 
   onClicked = (element, indexOfElem) => {
-    this.setState(() => 
-      (this.state.chartVisible[indexOfElem] = !this.state.chartVisible[indexOfElem])
-    )
-    console.log("team: " + element)
-    this.setState({o: element})
-    this.state.p = indexOfElem
-  }
+    this.setState(
+      () =>
+        (this.state.chartVisible[indexOfElem] = !this.state.chartVisible[
+          indexOfElem
+        ])
+    );
+    console.log("team: " + element);
+    this.setState({ o: element });
+    this.state.p = indexOfElem;
+  };
 
   charts = (e, data) => {
     return (
       <div>
         Info about the team: {e}
         {console.log(e)}
-        <BarChart width={300} height={300} data={data} margin={{top: 0, right: 0, left: 0, bottom: 0}}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name " />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-
-        <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
+        <BarChart
+          width={300}
+          height={300}
+          data={data}
+          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name " />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="pv" stackId="a" fill="#8884d8" />
+          <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
         </BarChart>
       </div>
-    )
-  }
+    );
+  };
 
   render() {
-
     let data = [
       {
         name: "CycleTime",
         uv: 4000,
-        pv: 2400,
-        amt: 2400
+        pv: 2400
       },
       {
         name: "BallsUpper",
         uv: 3000,
-        pv: 1398,
-        amt: 2210
+        pv: 1398
       },
       {
         name: "BallsLower",
         uv: 2000,
-        pv: 9800,
-        amt: 2290
+        pv: 1320
       },
       {
         name: "BallsMissed",
         uv: 2780,
-        pv: 3908,
-        amt: 2000
+        pv: 3908
       },
       {
         name: "ClimbTime",
         uv: 1890,
-        pv: 4800,
-        amt: 2181
+        pv: 4800
       },
       {
         name: "DefenceTime",
         uv: 2390,
-        pv: 3800,
-        amt: 2500
+        pv: 3800
       },
       {
         name: "Preloads",
         uv: 3490,
-        pv: 4300,
-        amt: 2100
+        pv: 4300
       }
     ];
     let buttons = [];
-    for(let i = 0; i < json.length; i++)
-      buttons.push(json[i]);
+    for (let i = 0; i < json.length; i++) buttons.push(json[i]);
 
-    let i = 0, j = 0, k = 0, l = 0;
+    let i = 0,
+      j = 0,
+      k = 0,
+      l = 0;
     let teamN = 0;
 
     const { match_forms, auth, notifications } = this.props;
     if (!auth.uid) return <Redirect to="/signin" />;
 
     return (
-      
       <div>
-        <div className="align-baseline" role="group" arial-label="Basic Example">
-          {buttons.map((currElement, index) =>(
-            <button onClick={() => { 
-              if ( this.state.chartVisible[index] || this.countTrues(this.state.chartVisible) < 3 ) { 
-                { this.onClicked(currElement, index); }
-              } 
-            }} 
-              key={buttons[k++]} 
-              style={ { width:"75px", height:"50px",background:"green", border: this.state.chartVisible[index] ? "2px solid black" : null }} > 
-              {buttons[i++]} 
+        <div
+          className="align-baseline"
+          role="group"
+          arial-label="Basic Example"
+        >
+          {buttons.map((currElement, index) => (
+            <button
+              onClick={() => {
+                if (
+                  this.state.chartVisible[index] ||
+                  this.countTrues(this.state.chartVisible) < 3
+                ) {
+                  {
+                    this.onClicked(currElement, index);
+                  }
+                }
+              }}
+              key={buttons[k++]}
+              style={{
+                border: this.state.chartVisible[index]
+                  ? "2px solid black"
+                  : null
+              }}
+            >
+              {buttons[i++]}
             </button>
           ))}
         </div>
@@ -147,9 +170,12 @@ class Teams extends Component {
           <table className="align-baseline" role="group">
             <tbody>
               <tr>
-                {this.state.chartVisible.map((currElement, index) => 
-                  this.state.chartVisible[index] ? 
-                  (<td key={index} style={{ color: "red"}}>{this.charts(buttons[index], data)}</td>) : null
+                {this.state.chartVisible.map((currElement, index) =>
+                  this.state.chartVisible[index] ? (
+                    <td key={index} style={{ color: "red" }}>
+                      {this.charts(buttons[index], data)}
+                    </td>
+                  ) : null
                 )}
               </tr>
             </tbody>
