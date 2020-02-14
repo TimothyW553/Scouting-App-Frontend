@@ -146,7 +146,6 @@ class SortTB extends Component {
         >
           Re-fetch
         </button>
-        <div className="card-header">Overall Table</div>
         <div className="card-body">
           <BootstrapTable
             ref="table"
