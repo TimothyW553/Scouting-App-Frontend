@@ -74,7 +74,7 @@ class Timer extends Component {
     super(props);
     this.state = {
       timer_running: null,
-      timer: 0
+      timer: 0 / 1000
     };
   }
   render() {
@@ -319,6 +319,10 @@ class Form extends Component {
     this.state.shooting_pos.splice(0, this.state.shooting_pos_auto.length);
     e.preventDefault();
     this.setState({ inMatchView: 3 });
+    this.setState({
+      climb_time: this.state.climb_time / 1000,
+      defence_time: this.state.defence_time / 1000
+    });
     console.log(this.state);
   };
 
