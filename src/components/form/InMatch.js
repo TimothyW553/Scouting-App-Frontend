@@ -168,6 +168,7 @@ class Form extends Component {
       trench: false,
       preloads: 0,
       shooting_pos: [],
+      shooting_pos_auto: [],
       time: 0,
       isOn: false,
       start: 0,
@@ -236,6 +237,7 @@ class Form extends Component {
   }
 
   updateTeamChange = () => {
+    this.setState({ match_start_time: new Date().getTime() });
     try {
       this.setState({
         teamSelected: +document
@@ -279,6 +281,7 @@ class Form extends Component {
   };
 
   showEndMatch = e => {
+    this.state.shooting_pos.splice(0, this.state.shooting_pos_auto.length);
     e.preventDefault();
     this.setState({ inMatchView: 3 });
     console.log(this.state);
@@ -338,6 +341,9 @@ class Form extends Component {
         index: this.state.shooting_pos.length
       });
       this.setState({ shooting_pos: shooting_pos_copy });
+      if (new Date().getTime() - this.state.match_start_time < 15000) {
+        this.setState({ shooting_pos_auto: shooting_pos_copy });
+      }
       console.log(this.state);
     }
   };
