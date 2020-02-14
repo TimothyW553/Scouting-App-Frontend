@@ -26,37 +26,37 @@ let getAvg = async that => {
     });
 };
 
-// function getRandomInt(max) {
-//   return Math.floor(Math.random() * Math.floor(max));
-// }
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
 
-// let fetchAndLog = async that => {
-//   const response = await fetch(
-//     `https://www.thebluealliance.com/api/v3/event/2020onosh/teams`,
-//     {
-//       headers: {
-//         "X-TBA-Auth-Key": `rVSoi1uFgP4KkYnjXvjtFdakv662U7rCi3wtFZ1jwNcQTiphjrlveXAo6fYG7mt7`
-//       }
-//     }
-//   );
+let fetchAndLog = async that => {
+  const response = await fetch(
+    `https://www.thebluealliance.com/api/v3/event/2020onosh/teams`,
+    {
+      headers: {
+        "X-TBA-Auth-Key": `rVSoi1uFgP4KkYnjXvjtFdakv662U7rCi3wtFZ1jwNcQTiphjrlveXAo6fYG7mt7`
+      }
+    }
+  );
 
-//   let json_temp = await response.json();
-//   for (let i = 0; i < json_temp.length; i++) {
-//     let jsoncopy = [...that.state.json];
-//     jsoncopy.push({
-//       TeamNumber: json_temp[i].team_number
-//     });
-//     that.setState({ json: jsoncopy });
-//   }
-//   that.state.json[0].TeamNumber = 6969;
-//   that.state.json[1].TeamNumber = 188;
-//   that.state.json[2].TeamNumber = 2200;
-//   that.state.json[3].TeamNumber = 2609;
-//   that.state.json[4].TeamNumber = 2994;
+  let json_temp = await response.json();
+  for (let i = 0; i < json_temp.length; i++) {
+    let jsoncopy = [...that.state.json];
+    jsoncopy.push({
+      TeamNumber: json_temp[i].team_number
+    });
+    that.setState({ json: jsoncopy });
+  }
+  that.state.json[0].TeamNumber = 6969;
+  that.state.json[1].TeamNumber = 188;
+  that.state.json[2].TeamNumber = 2200;
+  that.state.json[3].TeamNumber = 2609;
+  that.state.json[4].TeamNumber = 2994;
 
-//   that.setState({});
-//   console.log(that.state.json);
-// };
+  that.setState({});
+  console.log(that.state.json);
+};
 
 class SortTB extends Component {
   constructor(props) {
@@ -74,10 +74,7 @@ class SortTB extends Component {
     let teamsList = [];
     let used = [];
     for (let i = 0; i < docs1.length; i++) {
-      if (
-        !used.includes(docs1[i].data().team_num) &&
-        docs1[i].data().team_num === 1 + docs1[i].data().team_num - 1
-      ) {
+      if (!used.includes(docs1[i].data().team_num)) {
         teamsList.push({ TeamNumber: docs1[i].data().team_num });
         used.push(docs1[i].data().team_num);
       }
@@ -125,7 +122,7 @@ class SortTB extends Component {
       }
       for (let i = 0; i < this.state.teamsList.length; i++) {
         if (this.state.json[i][varlist[j][1]] === null) {
-          this.state.json[i][varlist[j][1]] = "No data";
+          this.state.json[i][varlist[j][1]] = "No data.";
           this.setState({});
         }
       }
@@ -142,19 +139,14 @@ class SortTB extends Component {
       <div className="card text-center">
         <button
           onClick={() => {
-            getAvg(this);
             this.setState({ refresh: !this.state.refresh });
           }}
           className="btn btn-danger grey darken-3"
-<<<<<<< Updated upstream
           // style={{color: }}
         >
           Re-fetch
-=======
-        >
-          Re-Fetch
->>>>>>> Stashed changes
         </button>
+        <div className="card-header">Overall Table</div>
         <div className="card-body">
           <BootstrapTable
             ref="table"
