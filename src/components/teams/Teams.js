@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { Redirect } from "react-router-dom";
-import {XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalBarSeries, VerticalGridLines} from 'react-vis';
+import Chart from "react-google-charts";
 
 let json = [];
 
@@ -34,14 +34,25 @@ class Teams extends Component {
       chartVisible: new Array(json.length),
       o: 0,
       p: 0,
-      data : [],
-      check:true
-    
+      data : [[]],
+      check:true,
+      dataChartTele:[[[]]],
+      dataChartAuto:[[[]]]
     };
     this.state.chartVisible.fill(false);
+    for(let i=0;i<json.length;i++){
+      this.state.data[i]=new Array(0);
+    }
+    for(let i=0;i<json.length;i++){
+      this.state.dataChartTele[i]=new Array(0);
+    }
+    for(let i=0;i<json.length;i++){
+      this.state.dataChartAuto[i]=new Array(0);
+    }
+
 
   }
-  
+
 
 
   countTrues(arr) {
@@ -55,53 +66,84 @@ class Teams extends Component {
     this.setState(() => 
       (this.state.chartVisible[indexOfElem] = !this.state.chartVisible[indexOfElem])
     )
-    console.log("team: " + element)
-    this.setState({o: element})
-    this.state.p = indexOfElem
+    console.log(json);
+    console.log("data: "+this.state.data);
     console.log(this.props.match_forms[0]);
+    this.setState({o: element});
+    this.state.p = indexOfElem;
+
     if(this.state.check){
-      for(let i=0; i<this.props.match_forms.length;i++){
-        this.state.data.push(this.props.match_forms[i]);
+      for(let j=0;j<json.length;j++){
+      for(let i=0;i<this.props.match_forms.length;i++){
+        if(this.props.match_forms[i].team_num==json[j]){
+          console.log("yes");
+          this.state.data[j].push(this.props.match_forms[i]);
+
+        }
       }
+      
+    }
+    for(let i=0;i<this.state.data.length;i++){
+      if(!(this.state.data[i].length===0)){
+
+        for(let j=0;j<this.state.data[i].length;j++){
+          this.state.dataChartTele[i][j]=new Array(0);
+          this.state.dataChartTele[i][j].push("Tele");
+          for(let k=0;k<3;k++){
+            console.log(this.state.data[i][j].shots[k].score);
+            this.state.dataChartTele[i][j].push(this.state.data[i][j].shots[k].score);
+          }
+          console.log("yes");
+        }
+      }
+    }
+    for(let i=0;i<this.state.data.length;i++){
+      if(!(this.state.data[i].length===0)){
+
+        for(let j=0;j<this.state.data[i].length;j++){
+          this.state.dataChartAuto[i][j]=new Array(0);
+          this.state.dataChartAuto[i][j].push("Auto");
+          for(let k=0;k<3;k++){
+            console.log(this.state.data[i][j].auto_shots[k].score);
+            this.state.dataChartAuto[i][j].push(this.state.data[i][j].auto_shots[k].score);
+          }
+          console.log("yes");
+        }
+      }
+    }
       this.setState({check:false});
     }
-    console.log(this.state.data);
+    console.log(this.state.data, "total data");
+    console.log(this.state.dataChartTele, "tele");
+    console.log(this.state.dataChartAuto,"auto");
+
   }
   
-  charts = (e, dataIn, ind) => {
+  charts = (e, ind) => {
     return (
+
       <div>
+        
         Info about the team: {e}
-        {console.log(dataIn[ind])}
-        <XYPlot margin={{bottom: 100, left:50}} xType="ordinal" width={300} height={300} >
-      <VerticalGridLines />
-      <HorizontalGridLines />
-      <XAxis tickLabelAngle={-45} />
-      <YAxis />
-      <VerticalBarSeries
-        data={[
-          {x: 'Upper Scored', y: dataIn[ind].shots[0].score},
-          {x: 'Lower Scored', y: dataIn[ind].shots[1].score},
-          {x: 'Missed', y: dataIn[ind].shots[2].score}
-
-        ]}
-      />
-
-    </XYPlot>
-    <XYPlot margin={{bottom: 75, left:50}} xType="ordinal" width={300} height={300} >
-      <VerticalGridLines />
-      <HorizontalGridLines />
-      <XAxis tickLabelAngle={-45} />
-      <YAxis />
-      <VerticalBarSeries
-        data={[
-          {x: 'Cycle Time', y: dataIn[ind].average_cycle_time},
-          {x: 'Climb Time', y: dataIn[ind].climb_time},
-          {x: 'Defence Time', y: dataIn[ind].defence_time}
-        ]}
-      />
-
-    </XYPlot>
+        {console.log((this.state.dataChartTele[ind].map((index)=>(index))))}
+        <Chart
+  width={'300px'}
+  height={'300px'}
+  chartType="BarChart"
+  loader={<div>Loading Chart</div>}
+  data={[
+    ["Time", "Top", "Bottom", "Miss"],
+    
+     ((this.state.dataChartTele[ind].map((index)=>(index))[0]))
+  ]}
+  options={{
+    chartArea: { width: '50%' },
+    isStacked: true
+  }}
+  // For tests
+  rootProps={{ 'data-testid': '3' }}
+/>
+        
       </div>
     )
   }
@@ -143,7 +185,7 @@ class Teams extends Component {
               <tr>
                 {this.state.chartVisible.map((currElement, index) => 
                   this.state.chartVisible[index] ? 
-                  (<td key={index} style={{ color: "red"}}>{this.charts(buttons[index], this.state.data, index)}</td>) : null
+                  (<td key={index} style={{ color: "red"}}>{this.charts(buttons[index], index)}</td>) : null
                 )}
               </tr>
             </tbody>
