@@ -20,6 +20,7 @@ const CompetingTeams_Array = [
 ];
 
 let starting_time;
+let tele_start_time;
 
 function Counter(props) {
   return (
@@ -149,8 +150,8 @@ class Form extends Component {
     super(props);
     this.state = {
       team_num: 0,
-      cycle_time: [0],
-      auto_cycle_time: [0],
+      cycle_time: [],
+      auto_cycle_time: [],
       match_start_time: 0.0,
       ind_cycle_time: [],
       average: 0,
@@ -271,7 +272,7 @@ class Form extends Component {
   onScoreChange = (index, delta) => {
     if ((new Date().getTime() - this.state.match_start_time) / 1000 <= 20) {
       this.state.auto_shots[index].score += delta;
-      if (index == 0 || index == 1) {
+      if (index === 0 || index === 1) {
         this.state.auto_balls_scored += delta;
       }
       if (
@@ -282,31 +283,32 @@ class Form extends Component {
         this.state.auto_cycle_time.push(
           (new Date().getTime() - starting_time) / 1000
         );
+        starting_time = new Date().getTime();
       }
       this.setState(this.state);
     } else {
       this.state.shots[index].score += delta;
-      if (index == 0 || index == 1) {
+      if (index === 0 || index === 1) {
         this.state.balls_scored += delta;
       }
       if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
         this.state.cycle_time.push(
-          (new Date().getTime() - starting_time) / 1000
+          (new Date().getTime() - tele_start_time) / 1000
         );
+        tele_start_time = new Date().getTime();
       }
       this.setState(this.state);
     }
 
-    // this.setState({});
     this.state.average_cycle_time =
       this.state.cycle_time[this.state.cycle_time.length - 1] /
       this.state.cycle_time.length;
-    this.state.top = this.state.shots[0].score;
-    this.state.bot = this.state.shots[1].score;
-    this.state.miss = this.state.shots[2].score;
-    this.state.tele_top = this.state.auto_shots[0].score;
-    this.state.tele_bot = this.state.auto_shots[1].score;
-    this.state.tele_miss = this.state.auto_shots[2].score;
+    this.state.top = this.state.auto_shots[0].score;
+    this.state.bot = this.state.auto_shots[1].score;
+    this.state.miss = this.state.auto_shots[2].score;
+    this.state.tele_top = this.state.shots[0].score;
+    this.state.tele_bot = this.state.shots[1].score;
+    this.state.tele_miss = this.state.shots[2].score;
     this.setState(this.state);
   };
 
@@ -320,6 +322,7 @@ class Form extends Component {
     e.preventDefault();
     this.setState({ inMatchView: 2, preloads: this.state.preloads });
     starting_time = new Date().getTime();
+    tele_start_time = new Date().getTime() + 20 * 1000;
     this.setState({
       team_num: this.state.teamSelected
     });

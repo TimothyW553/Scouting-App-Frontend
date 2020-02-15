@@ -1,8 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
-import React from "react";
-import ReactDOM from "react-dom";
 
 // Replace this with your own config details
 var config = {
@@ -30,7 +28,6 @@ db.collection("match_forms")
       avg1 += doc.data().balls_scored;
     });
     avg1 /= snap.docs.length;
-    // ReactDOM.render(<p>{avg1}</p>, document.getElementById("test"));
   });
 
 export default firebase;

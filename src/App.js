@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import GetFirebase from "./components/firebase/GetFirebase";
 import Navbar from "./components/layout/Navbar";
 import Dashboard from "./components/dashboard/Dashboard";
 import ProjectDetails from "./components/projects/ProjectDetails";
@@ -15,10 +16,23 @@ import "../node_modules/bootstrap-css-only/css/bootstrap.min.css";
 import ProjectList from "./components/projects/ProjectList";
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = { refresh: false };
+
+    // this.TeamList = <TeamList that3={this} />;
+    // console.log(this.TeamList);
+  }
+
+  dataArrived = () => {
+    this.setState({ refresh: !this.state.refresh });
+  };
+
   render() {
     return (
       <BrowserRouter>
         <div className="App">
+          <GetFirebase that={this} onRefresh={this.dataArrived} />
           <Navbar />
           <Switch>
             <Route exact path="/home" component={Dashboard} />
@@ -27,7 +41,16 @@ class App extends Component {
             <Route path="/match_form/:id" component={TeamDetails} />
             <Route path="/signin" component={SignIn} />
             <Route path="/signup" component={SignUp} />
-            <Route path="/overall" component={TeamList} />
+            <Route
+              path="/overall"
+              render={props => (
+                <TeamList
+                  {...props}
+                  that3={this}
+                  onRefresh={this.dataArrived}
+                />
+              )}
+            />
             <Route path="/pit-scouting" component={CreateProject} />
             <Route path="/form" component={Form} />
             <Route path="/create-event" component={InitTeams} />
@@ -36,6 +59,8 @@ class App extends Component {
       </BrowserRouter>
     );
   }
+
+  // componentDidMount() {}
 }
 
 export default App;
