@@ -37,6 +37,7 @@ class GetFirebase extends Component {
     }
 
     let getAvg = async that => {
+      this.props.that.setState({ display_list: display_list });
       firebase
         .firestore()
         .collection("match_forms")

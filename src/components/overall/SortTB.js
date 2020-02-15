@@ -3,18 +3,18 @@ import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import firebase from "../../config/fbConfig.js";
 
-let display_list = [
-  ["average_cycle_time", "AverageCycle", "Avg. Cycle Time"],
-  ["preloads", "Preloads", "Avg. Preloads"],
-  ["climb_time", "ClimbTime", "Avg. Climb Time"],
-  ["defence_time", "DefenceTime", "Avg. Defence Time"],
-  ["top", "Upper", "Avg. Balls Upper"],
-  ["bot", "Lower", "Avg. Balls Lower"],
-  ["miss", "Miss", "Avg. Balls Missed"],
-  ["tele_top", "Tele_Upper", "Avg. Teleop Balls Upper"],
-  ["tele_bot", "Tele_Lower", "Avg. Teleop Balls Lower"],
-  ["tele_miss", "Tele_Miss", "Avg. Teleop Balls Missed"]
-];
+// [
+//   ["average_cycle_time", "AverageCycle", "Avg. Cycle Time"],
+//   ["preloads", "Preloads", "Avg. Preloads"],
+//   ["climb_time", "ClimbTime", "Avg. Climb Time"],
+//   ["defence_time", "DefenceTime", "Avg. Defence Time"],
+//   ["top", "Upper", "Avg. Balls Upper"],
+//   ["bot", "Lower", "Avg. Balls Lower"],
+//   ["miss", "Miss", "Avg. Balls Missed"],
+//   ["tele_top", "Tele_Upper", "Avg. Teleop Balls Upper"],
+//   ["tele_bot", "Tele_Lower", "Avg. Teleop Balls Lower"],
+//   ["tele_miss", "Tele_Miss", "Avg. Teleop Balls Missed"]
+// ];
 
 // let func_list = [];
 // for (let i = 0; i < display_list.length; i++) {
@@ -111,7 +111,6 @@ class SortTB extends Component {
     this.state = {
       refresh: false
     };
-    console.log(this.props.that.that2.state);
   }
 
   componentDidMount() {
@@ -121,40 +120,49 @@ class SortTB extends Component {
 
   render() {
     let data = this.props.that.that2.state.json;
-    return (
-      <div className="card text-center">
-        <button
-          onClick={() => {
-            this.props.that.props.onRefresh();
-          }}
-          className="btn btn-danger grey darken-3"
-        >
-          Re-fetch
-        </button>
-        <div className="card-body">
-          <BootstrapTable ref="table" data={data} multiColumnSort={2}>
-            <TableHeaderColumn
-              width="120"
-              dataField="TeamNumber"
-              isKey={true}
-              dataSort={true}
-            >
-              Team #
-            </TableHeaderColumn>
-            {display_list.map(x => {
-              return (
-                <TableHeaderColumn width="120" dataField={x[1]} dataSort={true}>
-                  {x[2]}
-                </TableHeaderColumn>
-              );
-            })}
-          </BootstrapTable>
+    this.display_list = this.props.that.that2.state.display_list;
+    try {
+      return (
+        <div className="card text-center">
+          <button
+            onClick={() => {
+              this.props.that.props.onRefresh();
+            }}
+            className="btn btn-danger grey darken-3"
+          >
+            Re-fetch
+          </button>
+          <div className="card-body">
+            <BootstrapTable ref="table" data={data} multiColumnSort={2}>
+              <TableHeaderColumn
+                width="120"
+                dataField="TeamNumber"
+                isKey={true}
+                dataSort={true}
+              >
+                Team #
+              </TableHeaderColumn>
+              {this.display_list.map(x => {
+                return (
+                  <TableHeaderColumn
+                    width="120"
+                    dataField={x[1]}
+                    dataSort={true}
+                  >
+                    {x[2]}
+                  </TableHeaderColumn>
+                );
+              })}
+            </BootstrapTable>
+          </div>
         </div>
-      </div>
+      );
+    } catch {
+      return null;
+    }
 
-      // empty div
-      // <div>{/* <h1>{this.that.that.state.test}</h1> */}</div>
-    );
+    // empty div
+    // <div>{/* <h1>{this.that.that.state.test}</h1> */}</div>
   }
 }
 // console.log([...document.getElementsByClassName("table table-bordered")]);
