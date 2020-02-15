@@ -5,6 +5,12 @@ import { Redirect } from "react-router-dom";
 import SortTB from "./SortTB";
 
 class TeamList extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  that2 = this.props.that3;
+
   state = {
     title: "",
     content: "",
