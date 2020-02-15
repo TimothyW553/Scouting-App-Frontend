@@ -10,23 +10,43 @@ class GetFirebase extends Component {
     this.state = { docs: [] };
 
     let display_list = [
-      ["average_cycle_time", "AverageCycle", "Avg. Cycle Time"],
-      ["preloads", "Preloads", "Avg. Preloads"],
-      ["climb_time", "ClimbTime", "Avg. Climb Time"],
-      ["defence_time", "DefenceTime", "Avg. Defence Time"],
-      ["top", "Upper", "Avg. Balls Upper"],
-      ["bot", "Lower", "Avg. Balls Lower"],
-      ["miss", "Miss", "Avg. Balls Missed"],
-      ["tele_top", "Tele_Upper", "Avg. Teleop Balls Upper"],
-      ["tele_bot", "Tele_Lower", "Avg. Teleop Balls Lower"],
-      ["tele_miss", "Tele_Miss", "Avg. Teleop Balls Missed"]
+      // [InMatchForm state name, display name]
+      ["average_cycle_time", "Cycle Time"],
+      ["preloads", "Preloads"],
+      ["climb_time", "Climb Time"],
+      ["defence_time", "Defence Time"],
+      ["top", "Balls Upper"],
+      ["bot", "Balls Lower"],
+      ["miss", "Balls Missed"],
+      ["tele_top", "Teleop Balls Upper"],
+      ["tele_bot", "Teleop Balls Lower"],
+      ["tele_miss", "Teleop Balls Missed"],
+      ["floor_pickup", "Floor Pickup Prob."],
+      ["station_pickup", "Station Pickup Prob."],
+      ["stage2_activate", "Stage 2 Prob."],
+      ["stage3_activate", "Stage 3 Prob."],
+      ["trench", "Trench Prob."]
     ];
 
     let func_list = [];
-    for (let i = 0; i < display_list.length; i++) {
+    // return original
+    for (let i = 0; i < 10; i++) {
       func_list.push(x => {
         try {
           let y = +x;
+          y++;
+          y--;
+          return y;
+        } catch {
+          return undefined;
+        }
+      });
+    }
+    // return 1 or 0: true or false
+    for (let i = 0; i < 5; i++) {
+      func_list.push(x => {
+        try {
+          let y = x ? 1 : 0;
           y++;
           y--;
           return y;
@@ -91,7 +111,7 @@ class GetFirebase extends Component {
           }
           if (listcopy.length != docs.length) {
             if (bad != docs.length - listcopy.length) {
-              avg = (avg / (docs.length - listcopy.length - bad)).toFixed(3);
+              avg = (avg / (docs.length - listcopy.length - bad)).toFixed(2);
               this.that.setState({ docs: listcopy });
               let jsoncopy = [...that.state.json];
               jsoncopy[i][varlist[j][1]] = avg;

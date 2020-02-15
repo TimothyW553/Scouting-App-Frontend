@@ -18,7 +18,7 @@ import ProjectList from "./components/projects/ProjectList";
 class App extends Component {
   constructor() {
     super();
-    this.state = { test: 11114801721417421028107810127341432, refresh: false };
+    this.state = { refresh: false };
 
     // this.TeamList = <TeamList that3={this} />;
     // console.log(this.TeamList);

@@ -148,8 +148,9 @@ class SortTB extends Component {
                     width="120"
                     dataField={x[1]}
                     dataSort={true}
+                    key={x[0]}
                   >
-                    {x[2]}
+                    {x[1]}
                   </TableHeaderColumn>
                 );
               })}
