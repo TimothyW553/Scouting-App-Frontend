@@ -105,6 +105,12 @@ import firebase from "../../config/fbConfig.js";
 //   }
 // };
 
+function rowStyleFormat(row, rowIdx) {
+  return {
+    backgroundColor: rowIdx % 2 === 0 ? "#F7F7F7" : "#EAEAEA"
+  };
+}
+
 class SortTB extends Component {
   constructor(props) {
     super(props);
@@ -133,7 +139,12 @@ class SortTB extends Component {
             Re-fetch
           </button>
           <div className="card-body">
-            <BootstrapTable ref="table" data={data} multiColumnSort={2}>
+            <BootstrapTable
+              ref="table"
+              data={data}
+              multiColumnSort={2}
+              trStyle={rowStyleFormat}
+            >
               <TableHeaderColumn
                 width="120"
                 dataField="TeamNumber"
