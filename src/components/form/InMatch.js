@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 7;
+const field_size = 5;
 const CompetingTeams_Array = [
   { label: "R 1: 610", value: 1 },
   { label: "R 2: 690", value: 2 },
@@ -74,37 +74,31 @@ class Timer extends Component {
     super(props);
     this.state = {
       timer_running: null,
-      timer: 0
+      timer: 0 / 1000
     };
   }
   render() {
     let that = this.props.this;
     // this.props.state.name=this.state.timer;
+    let stopTimer = () => {
+      if (!this.state.timer_running) {
+        this.setState({ timer_running: new Date().getTime() });
+      } else {
+        this.setState({
+          timer_running: null,
+          timer:
+            this.state.timer + new Date().getTime() - this.state.timer_running
+        });
+        this.state.timer =
+          this.state.timer + new Date().getTime() - this.state.timer_running;
+      }
+      that.setState({ [this.props.id]: this.state.timer });
+    };
     return (
       <button
         className="btn btn-danger"
         style={{ height: "60px" }}
-        onClick={() => {
-          if (!this.state.timer_running) {
-            this.setState({ timer_running: new Date().getTime() });
-            // let formtimercopy = [...that.state.timers];
-            // formtimercopy[this.props.index] = this.state.timer;
-            // that.setState({ timers: formtimercopy });
-          } else {
-            this.setState({
-              timer_running: null,
-              timer:
-                this.state.timer +
-                new Date().getTime() -
-                this.state.timer_running
-            });
-            this.state.timer =
-              this.state.timer +
-              new Date().getTime() -
-              this.state.timer_running;
-          }
-          that.setState({ [this.props.id]: this.state.timer });
-        }}
+        onClick={stopTimer}
       >
         {(this.state.timer_running === null
           ? this.props.displayName
@@ -156,11 +150,14 @@ class Form extends Component {
     this.state = {
       team_num: 0,
       cycle_time: [0],
+      auto_cycle_time: [0],
+      match_start_time: 0.0,
       ind_cycle_time: [],
       average: 0,
       climb_time: 0.0,
       defence_time: 0.0,
       balls_scored: 0,
+      auto_balls_scored: 0,
       floor_pickup: false,
       station_pickup: false,
       stage2_activate: false,
@@ -168,6 +165,7 @@ class Form extends Component {
       trench: false,
       preloads: 0,
       shooting_pos: [],
+      shooting_pos_auto: [],
       time: 0,
       isOn: false,
       start: 0,
@@ -191,6 +189,29 @@ class Form extends Component {
           id: 3
         }
       ],
+      top: 0,
+      bot: 0,
+      miss: 0,
+      auto_shots: [
+        {
+          type: "high",
+          score: 0,
+          id: 1
+        },
+        {
+          type: "low",
+          score: 0,
+          id: 2
+        },
+        {
+          type: "miss",
+          score: 0,
+          id: 3
+        }
+      ],
+      tele_top: 0,
+      tele_bot: 0,
+      tele_miss: 0,
       teamSelected: null
     };
   }
@@ -205,27 +226,28 @@ class Form extends Component {
             width={props.circle_size}
             height={props.circle_size}
             onClick={() => {
-              this.clicky(window.event);
+              this.field_onClick(window.event);
             }}
             style={{
               position: "absolute",
               left:
                 props.shooting_pos[index].x +
-                document.getElementById("clickyimg").getBoundingClientRect()
-                  .left -
+                document
+                  .getElementById("match_field_image")
+                  .getBoundingClientRect().left -
                 props.circle_size / 2 +
                 "px",
               top:
                 props.shooting_pos[index].y +
-                document.getElementById("clickyimg").getBoundingClientRect()
-                  .top -
+                document
+                  .getElementById("match_field_image")
+                  .getBoundingClientRect().top -
                 props.circle_size / 2 +
                 "px"
             }}
           ></img>
         );
       };
-
       let circles = props.shooting_pos.map(index => {
         return circle(index.index);
       });
@@ -236,6 +258,7 @@ class Form extends Component {
   }
 
   updateTeamChange = () => {
+    this.setState({ match_start_time: new Date().getTime() });
     try {
       this.setState({
         teamSelected: +document
@@ -246,22 +269,44 @@ class Form extends Component {
   };
 
   onScoreChange = (index, delta) => {
-    this.state.shots[index].score += delta;
-    if (index == 0 || index == 1) {
-      this.state.balls_scored += delta;
-    }
-    if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
-      this.state.cycle_time.push((new Date().getTime() - starting_time) / 1000);
-      this.state.ind_cycle_time.push(
-        this.state.cycle_time[this.state.cycle_time.length - 1] -
-          this.state.cycle_time[this.state.cycle_time.length - 2]
-      );
+    if ((new Date().getTime() - this.state.match_start_time) / 1000 <= 20) {
+      this.state.auto_shots[index].score += delta;
+      if (index == 0 || index == 1) {
+        this.state.auto_balls_scored += delta;
+      }
+      if (
+        (this.state.auto_shots[0].score + this.state.auto_shots[1].score) %
+          5 ===
+        0
+      ) {
+        this.state.auto_cycle_time.push(
+          (new Date().getTime() - starting_time) / 1000
+        );
+      }
+      this.setState(this.state);
+    } else {
+      this.state.shots[index].score += delta;
+      if (index == 0 || index == 1) {
+        this.state.balls_scored += delta;
+      }
+      if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
+        this.state.cycle_time.push(
+          (new Date().getTime() - starting_time) / 1000
+        );
+      }
+      this.setState(this.state);
     }
 
     // this.setState({});
     this.state.average_cycle_time =
       this.state.cycle_time[this.state.cycle_time.length - 1] /
       this.state.cycle_time.length;
+    this.state.top = this.state.shots[0].score;
+    this.state.bot = this.state.shots[1].score;
+    this.state.miss = this.state.shots[2].score;
+    this.state.tele_top = this.state.auto_shots[0].score;
+    this.state.tele_bot = this.state.auto_shots[1].score;
+    this.state.tele_miss = this.state.auto_shots[2].score;
     this.setState(this.state);
   };
 
@@ -275,12 +320,20 @@ class Form extends Component {
     e.preventDefault();
     this.setState({ inMatchView: 2, preloads: this.state.preloads });
     starting_time = new Date().getTime();
+    this.setState({
+      team_num: this.state.teamSelected
+    });
     console.log(this.state);
   };
 
   showEndMatch = e => {
+    this.state.shooting_pos.splice(0, this.state.shooting_pos_auto.length);
     e.preventDefault();
     this.setState({ inMatchView: 3 });
+    this.setState({
+      climb_time: this.state.climb_time / 1000,
+      defence_time: this.state.defence_time / 1000
+    });
     console.log(this.state);
   };
 
@@ -312,24 +365,31 @@ class Form extends Component {
     this.setState({ circle_show: !this.state.circle_show });
   };
 
-  clicky = e => {
+  field_onClick = e => {
     let x = e.clientX;
     let y = e.clientY;
     x = Number(
-      x - document.getElementById("clickyimg").getBoundingClientRect().left
+      x -
+        document.getElementById("match_field_image").getBoundingClientRect()
+          .left
     ).toFixed(0);
     y = Number(
-      y - document.getElementById("clickyimg").getBoundingClientRect().top
+      y -
+        document.getElementById("match_field_image").getBoundingClientRect().top
     ).toFixed(0);
     if (
       x >= 0 &&
       y >= 0 &&
       x <=
-        document.getElementById("clickyimg").getBoundingClientRect().right -
-          document.getElementById("clickyimg").getBoundingClientRect().left &&
+        document.getElementById("match_field_image").getBoundingClientRect()
+          .right -
+          document.getElementById("match_field_image").getBoundingClientRect()
+            .left &&
       y <=
-        document.getElementById("clickyimg").getBoundingClientRect().bottom -
-          document.getElementById("clickyimg").getBoundingClientRect().top
+        document.getElementById("match_field_image").getBoundingClientRect()
+          .bottom -
+          document.getElementById("match_field_image").getBoundingClientRect()
+            .top
     ) {
       let shooting_pos_copy = [...this.state.shooting_pos];
       shooting_pos_copy.push({
@@ -338,6 +398,9 @@ class Form extends Component {
         index: this.state.shooting_pos.length
       });
       this.setState({ shooting_pos: shooting_pos_copy });
+      if (new Date().getTime() - this.state.match_start_time < 20000) {
+        this.setState({ shooting_pos_auto: shooting_pos_copy });
+      }
       console.log(this.state);
     }
   };
@@ -368,7 +431,7 @@ class Form extends Component {
     let newMatchForm =
       this.state.inMatchView === 0 ? (
         <form className="white" onSubmit={this.showPreMatch}>
-          <div className="input-field">
+          <div className="input-field" style={{ marginBottom: "0px" }}>
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
               Enter the current match number:
             </p>
@@ -413,7 +476,14 @@ class Form extends Component {
 
     let prematch =
       this.state.inMatchView === 1 ? (
-        <form className="white" onSubmit={this.showInMatch}>
+        <form
+          className="white"
+          onSubmit={this.showInMatch}
+          style={{
+            marginTop: "0px",
+            paddingTop: "0px"
+          }}
+        >
           <div className="input-field">
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
               Number of Preloads
@@ -455,8 +525,8 @@ class Form extends Component {
         src={require(`${red_field}`)}
         width={76 * 1.3 * field_size}
         height={47 * 1.3 * field_size}
-        onClick={this.clicky}
-        id="clickyimg"
+        onClick={this.field_onClick}
+        id="match_field_image"
       ></img>
     );
 
@@ -512,24 +582,45 @@ class Form extends Component {
 
     let scoreboard =
       this.state.inMatchView === 2 ? (
-        <span className="scoreboard">
-          <span className="shots">
-            {this.state.shots.map(
-              function(shot, index) {
-                return (
-                  <Shot
-                    onScoreChange={function(delta) {
-                      this.onScoreChange(index, delta);
-                    }.bind(this)}
-                    score={shot.score}
-                    key={index}
-                    displayName={shotNames[index]}
-                  />
-                );
-              }.bind(this)
-            )}
+        new Date().getTime() - this.state.match_start_time <= 20 * 1000 ? (
+          <span className="scoreboard">
+            <span className="shots">
+              {this.state.auto_shots.map(
+                function(shot, index) {
+                  return (
+                    <Shot
+                      onScoreChange={function(delta) {
+                        this.onScoreChange(index, delta);
+                      }.bind(this)}
+                      score={shot.score}
+                      key={index}
+                      displayName={shotNames[index]}
+                    />
+                  );
+                }.bind(this)
+              )}
+            </span>
           </span>
-        </span>
+        ) : (
+          <span className="scoreboard">
+            <span className="shots">
+              {this.state.shots.map(
+                function(shot, index) {
+                  return (
+                    <Shot
+                      onScoreChange={function(delta) {
+                        this.onScoreChange(index, delta);
+                      }.bind(this)}
+                      score={shot.score}
+                      key={index}
+                      displayName={shotNames[index]}
+                    />
+                  );
+                }.bind(this)
+              )}
+            </span>
+          </span>
+        )
       ) : null;
 
     let field_input =
@@ -538,16 +629,15 @@ class Form extends Component {
           <table className="FieldInput">
             <tbody>
               <tr>
-                <td>
+                <td style={{ width: "200px" }}>
                   <Timer
                     this={this}
                     name={this.state.defence_time}
                     displayName="Defence Timer"
                     id="defence_time"
                   />
-                  <br /> <br />
+                  <div style={{ height: "15px" }} />
                   {scoreboard}
-                  <br />
                   <Timer
                     this={this}
                     name={this.state}
@@ -609,9 +699,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Form)
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Form));

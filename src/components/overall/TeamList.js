@@ -7,7 +7,8 @@ import SortTB from "./SortTB";
 class TeamList extends Component {
   state = {
     title: "",
-    content: ""
+    content: "",
+    docs: null
   };
   handleChange = e => {
     this.setState({
@@ -27,7 +28,7 @@ class TeamList extends Component {
     if (!auth.uid) return <Redirect to="/signin" />;
     return (
       <div>
-        <SortTB />
+        <SortTB that={this} />
       </div>
     );
   }
