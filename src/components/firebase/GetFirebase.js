@@ -97,7 +97,8 @@ class GetFirebase extends Component {
             if (that.state.json[i].TeamNumber == docs[I].data().team_num) {
               if (
                 typeof parseFloat(func[j](docs[I].data()[varlist[j][0]])) ==
-                "number"
+                  "number" &&
+                !isNaN(parseFloat(func[j](docs[I].data()[varlist[j][0]])))
               ) {
                 // apply function to each
                 avg += parseFloat(func[j](docs[I].data()[varlist[j][0]]));
