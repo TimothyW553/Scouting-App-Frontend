@@ -53,7 +53,6 @@ class App extends Component {
             />
             <Route path="/pit-scouting" component={CreateProject} />
             <Route path="/form" component={Form} />
-            <Route path="/create-event" component={InitTeams} />
           </Switch>
         </div>
       </BrowserRouter>
