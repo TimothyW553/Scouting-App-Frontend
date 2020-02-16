@@ -22,6 +22,54 @@ const CompetingTeams_Array = [
 let starting_time;
 let tele_start_time;
 
+let auto_cycles = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+];
+
+let tele_cycles = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+];
+
 function Counter(props) {
   return (
     <div className="counter">
@@ -214,7 +262,8 @@ class Form extends Component {
       tele_top: 0,
       tele_bot: 0,
       tele_miss: 0,
-      teamSelected: null
+      teamSelected: null,
+      dc: false
     };
   }
 
@@ -281,10 +330,13 @@ class Form extends Component {
           5 ===
         0
       ) {
-        this.state.auto_cycle_time.push(
-          (new Date().getTime() - starting_time) / 1000
-        );
-        starting_time = new Date().getTime();
+        if (auto_cycles[this.state.auto_balls_scored / 5 - 1] === false) {
+          auto_cycles[this.state.auto_balls_scored / 5 - 1] = true;
+          this.state.auto_cycle_time.push(
+            (new Date().getTime() - starting_time) / 1000
+          );
+          starting_time = new Date().getTime();
+        }
       }
       this.setState(this.state);
     } else {
@@ -293,10 +345,13 @@ class Form extends Component {
         this.state.balls_scored += delta;
       }
       if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
-        this.state.cycle_time.push(
-          (new Date().getTime() - tele_start_time) / 1000
-        );
-        tele_start_time = new Date().getTime();
+        if (tele_cycles[this.state.balls_scored / 5 - 1] === false) {
+          tele_cycles[this.state.balls_scored / 5 - 1] = true;
+          this.state.cycle_time.push(
+            (new Date().getTime() - tele_start_time) / 1000
+          );
+          tele_start_time = new Date().getTime();
+        }
       }
       this.setState(this.state);
     }
@@ -476,6 +531,7 @@ class Form extends Component {
               </h5>
               <div onClick={this.updateTeamChange} id="teamSelect2">
                 <Select
+                  isSearchable={false}
                   options={CompetingTeams_Array}
                   id="teamSelect"
                   ref="teamselect"
@@ -546,12 +602,13 @@ class Form extends Component {
 
     let boolCheckMap = () => {
       let boolCheckMapList = [
-        ["Floor Pickup", "floor_pickup"],
-        ["Station Pickup", "station_pickup"],
+        ["Did Floor Pickup", "floor_pickup"],
+        ["Did Station Pickup", "station_pickup"],
         ["Climb Successful", "climb"],
-        ["Stage 2 Activated", "stage2_activate"],
-        ["Stage 3 Activated", "stage3_activate"],
-        ["Can Go Through Trench", "trench"]
+        ["Stage 2 Activated - Turn Table Light", "stage2_activate"],
+        ["Stage 3 Activated - Turn Table Light", "stage3_activate"],
+        ["Did Go Under Trench", "trench"],
+        ["Did They D/C", "dc"]
       ];
       return boolCheckMapList.map(index => (
         <Checkbox
