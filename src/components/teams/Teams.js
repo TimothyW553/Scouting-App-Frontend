@@ -119,29 +119,44 @@ class Teams extends Component {
         }
         console.log(data4);
 
-        // let data_1 = [["Match", "Auton", "Teleop"]];
-        // for (let i = 0; i < rawData.length; i++) {
-        //   if (rawData[i].team_num == this.state.charts_shown[team]) {
-        //     let rawDatai = rawData[i];
-        //     data1.push([
-        //       "Match " + rawDatai.match_num,
-        //       +rawDatai["bot"] + +rawDatai["top"],
-        //       +rawDatai["tele_bot"] + +rawDatai["tele_top"]
-        //     ]);
-        //   }
-        // }
-        // let data2 = [["Match", "Cycle", "Defence", "Climb"]];
-        // for (let i = 0; i < rawData.length; i++) {
-        //   if (rawData[i].team_num == this.state.charts_shown[team]) {
-        //     let rawDatai = rawData[i];
-        //     data2.push([
-        //       "Match " + rawDatai.match_num,
-        //       +rawDatai["average_cycle_time"],
-        //       +rawDatai["defence_time"],
-        //       +rawDatai["climb_time"]
-        //     ]);
-        //   }
-        // }
+        let data5 = [
+          [
+            "Stat",
+            "Avg. Teleop Cycle Time",
+            "Avg. Auto Cycle Time",
+
+            "Avg. Auto Balls Upper",
+            "Avg. Auto Balls Lower",
+            "Avg. Auto Balls Missed",
+
+            "Avg. Teleop Balls Upper",
+            "Avg. Teleop Balls Lower",
+            "Avg. Teleop Balls Missed",
+
+            "Avg. Climb Time",
+            "Avg. Defence Time"
+          ]
+        ];
+        for (let i = 0; i < jsonData.length; i++) {
+          if (jsonData[i].TeamNumber === this.state.charts_shown[team]) {
+            let jsonDatai = jsonData[i];
+            data5.push([
+              "Team " + jsonDatai.TeamNumber,
+              +jsonDatai["Tele Cycle Time"],
+              +jsonDatai["Auto Cycle Time"],
+              +jsonDatai["Auto Balls Upper"],
+              +jsonDatai["Auto Balls Lower"],
+              +jsonDatai["Auto Balls Missed"],
+              +jsonDatai["Teleop Balls Upper"],
+              +jsonDatai["Teleop Balls Lower"],
+              +jsonDatai["Teleop Balls Missed"],
+              +jsonDatai["Climb Time"],
+              +jsonDatai["Defence Time"]
+            ]);
+          }
+        }
+
+        console.log(data5);
 
         // let data_3 = [["Stat", "Auton", "Teleop", "Cycle", "Defence", "Climb"]];
         // for (let i = 0; i < jsonData.length; i++) {
@@ -263,9 +278,9 @@ class Teams extends Component {
             </div>
           ) : null;
         let c4 =
-          data3.length - 1 ? (
+          data5.length - 1 ? (
             <div
-              key={"2" + team}
+              key={"4" + team}
               style={{
                 display: "inline-block",
                 width: (window.screen.width - 300) / 3 + 50
@@ -275,46 +290,92 @@ class Teams extends Component {
                 <tbody>
                   <tr>
                     <td>
-                      {data3[0][1] +
+                      {data5[0][1] +
                         ": " +
-                        (typeof +data3[1][1] == "number" && !isNaN(data3[1][1])
-                          ? data3[1][1]
+                        (typeof +data5[1][1] == "number" && !isNaN(data5[1][1])
+                          ? data5[1][1]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data3[0][2] +
+                      {data5[0][2] +
                         ": " +
-                        (typeof +data3[1][2] == "number" && !isNaN(data3[1][2])
-                          ? data3[1][2]
+                        (typeof +data5[1][2] == "number" && !isNaN(data5[1][2])
+                          ? data5[1][2]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data3[0][3] +
+                      {data5[0][3] +
                         ": " +
-                        (typeof +data3[1][3] == "number" && !isNaN(data3[1][3])
-                          ? data3[1][3]
+                        (typeof +data5[1][3] == "number" && !isNaN(data5[1][3])
+                          ? data5[1][3]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data3[0][4] +
+                      {data5[0][4] +
                         ": " +
-                        (typeof +data3[1][4] == "number" && !isNaN(data3[1][4])
-                          ? data3[1][4]
+                        (typeof +data5[1][4] == "number" && !isNaN(data5[1][4])
+                          ? data5[1][4]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data3[0][5] +
+                      {data5[0][5] +
                         ": " +
-                        (typeof +data3[1][5] == "number" && !isNaN(data3[1][5])
-                          ? data3[1][5]
+                        (typeof +data5[1][5] == "number" && !isNaN(data5[1][5])
+                          ? data5[1][5]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data5[0][6] +
+                        ": " +
+                        (typeof +data5[1][6] == "number" && !isNaN(data5[1][6])
+                          ? data5[1][6]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data5[0][7] +
+                        ": " +
+                        (typeof +data5[1][7] == "number" && !isNaN(data5[1][7])
+                          ? data5[1][7]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data5[0][8] +
+                        ": " +
+                        (typeof +data5[1][8] == "number" && !isNaN(data5[1][8])
+                          ? data5[1][8]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data5[0][9] +
+                        ": " +
+                        (typeof +data5[1][9] == "number" && !isNaN(data5[1][9])
+                          ? data5[1][9]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data5[0][10] +
+                        ": " +
+                        (typeof +data5[1][10] == "number" &&
+                        !isNaN(data5[1][10])
+                          ? data5[1][10]
                           : "No data")}
                     </td>
                   </tr>
@@ -351,6 +412,11 @@ class Teams extends Component {
               <tr>
                 {charts.map(x => {
                   return <td style={{ border: "1px solid black" }}>{x[3]}</td>;
+                })}
+              </tr>
+              <tr>
+                {charts.map(x => {
+                  return <td style={{ border: "1px solid black" }}>{x[4]}</td>;
                 })}
               </tr>
             </tbody>
