@@ -126,6 +126,7 @@ class SortTB extends Component {
 
   render() {
     let data = this.props.that.that2.state.json;
+
     this.display_list = this.props.that.that2.state.display_list;
     try {
       return (

@@ -11,21 +11,18 @@ class GetFirebase extends Component {
 
     let display_list = [
       // [InMatchForm state name, display name]
-      ["average_cycle_time", "Cycle Time"],
-      ["preloads", "Preloads"],
-      ["climb_time", "Climb Time"],
-      ["defence_time", "Defence Time"],
-      ["top", "Balls Upper"],
-      ["bot", "Balls Lower"],
-      ["miss", "Balls Missed"],
+      ["average_cycle_time", "Tele Cycle Time"],
+      ["average_auto_cycle_time", "Auto Cycle Time"],
+      ["top", "Auto Balls Upper"],
+      ["bot", "Auto Balls Lower"],
+      ["miss", "Auto Balls Missed"],
       ["tele_top", "Teleop Balls Upper"],
       ["tele_bot", "Teleop Balls Lower"],
       ["tele_miss", "Teleop Balls Missed"],
-      ["floor_pickup", "Floor Pickup Prob."],
-      ["station_pickup", "Station Pickup Prob."],
+      ["climb_time", "Climb Time"],
+      ["defence_time", "Defence Time"],
       ["stage2_activate", "Stage 2 Prob."],
-      ["stage3_activate", "Stage 3 Prob."],
-      ["trench", "Trench Prob."]
+      ["stage3_activate", "Stage 3 Prob."]
     ]; //
 
     let func_list = [];
@@ -43,7 +40,7 @@ class GetFirebase extends Component {
       });
     }
     // return 1 or 0: true or false
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 2; i++) {
       func_list.push(x => {
         try {
           let y = x ? 1 : 0;
