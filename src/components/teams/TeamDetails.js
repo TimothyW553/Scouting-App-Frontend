@@ -7,7 +7,7 @@ import moment from "moment";
 
 function average(arr) {
   let sum = 0;
-  for(let i = 0; i < arr.length; i++) {
+  for (let i = 0; i < arr.length; i++) {
     sum += arr[i];
   }
   return sum / arr.length;
@@ -21,7 +21,7 @@ const ProjectDetails = props => {
       <div className="container section project-details">
         <div className="card z-depth-0">
           <div className="card-content">
-            <span className="card-title">{match_form.team_num}</span>
+            {/* <span className="card-title">{match_form.team_num}</span>
             <p>Match Number: {match_form.match_num}</p>
             <p>Defence Time: {match_form.defence_time / 1000}</p>
             <p>Climb Time: {match_form.climb_time / 1000}</p>
@@ -34,7 +34,7 @@ const ProjectDetails = props => {
             <p>Station pickup: {match_form.station_pickup ? "True" : "False"}</p>
             <p>Stage 2 Activate: {match_form.stage2_activate ? "True" : "False"}</p>
             <p>Stage 3 Activate: {match_form.stage3_activate ? "True" : "False"}</p>
-            <p>Average Cycle Time: {average(match_form.cycle_time).toFixed(4)}</p>
+            <p>Average Cycle Time: {average(match_form.cycle_time).toFixed(4)}</p> */}
           </div>
           <div className="card-action grey lighten-4 grey-text">
             <div>

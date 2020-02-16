@@ -103,7 +103,8 @@ class Teams extends Component {
                 jsonDatai["Teleop Balls Upper"],
               +jsonDatai["Cycle Time"],
               +jsonDatai["Defence Time"],
-              +jsonDatai["Climb Time"]
+              +jsonDatai["Climb Time"],
+              +jsonDatai["Auto Cycle Time"]
             ]);
           }
         }
