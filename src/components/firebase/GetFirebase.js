@@ -24,7 +24,7 @@ class GetFirebase extends Component {
       ["stage2_activate", "Stage 2 Prob."],
       ["stage3_activate", "Stage 3 Prob."]
       // ["trench", "Trench Prob."],
-      // ["preloads", "Preloads Prob."]
+      // ["preloads", "Preloads Prob."],
       // ["floor_pickup", "Floor Pickup Prob."],
       // ["station_pickup", "Station Pickup Prob."]
     ]; //
@@ -98,7 +98,7 @@ class GetFirebase extends Component {
           for (let I = docs.length - 1; I >= 0; I--) {
             if (that.state.json[i].TeamNumber == docs[I].data().team_num) {
               if (
-                typeof parseFloat(func[j](docs[I].data()[varlist[j][0]])) ==
+                typeof parseFloat(func[j](docs[I].data()[varlist[j][0]])) ===
                   "number" &&
                 !isNaN(parseFloat(func[j](docs[I].data()[varlist[j][0]])))
               ) {

@@ -97,6 +97,28 @@ class Teams extends Component {
         }
         console.log(data2);
 
+        let data3 = [["Match", "Auto", "Teleop"]];
+        for (let i = 0; i < rawData.length; i++) {
+          if (rawData[i].team_num === this.state.charts_shown[team]) {
+            let rawDatai = rawData[i];
+            data3.push([
+              "M " + rawDatai.match_num,
+              +rawDatai["average_auto_cycle_time"],
+              +rawDatai["average_cycle_time"]
+            ]);
+          }
+        }
+        console.log(data3);
+
+        let data4 = [["Match", "Climb Time"]];
+        for (let i = 0; i < rawData.length; i++) {
+          if (rawData[i].team_num === this.state.charts_shown[team]) {
+            let rawDatai = rawData[i];
+            data4.push(["M " + rawDatai.match_num, +rawDatai["climb_time"]]);
+          }
+        }
+        console.log(data4);
+
         // let data_1 = [["Match", "Auton", "Teleop"]];
         // for (let i = 0; i < rawData.length; i++) {
         //   if (rawData[i].team_num == this.state.charts_shown[team]) {
@@ -120,19 +142,6 @@ class Teams extends Component {
         //     ]);
         //   }
         // }
-
-        let data3 = [["Match", "Auto", "Teleop"]];
-        for (let i = 0; i < jsonData.length; i++) {
-          if (jsonData[i].TeamNUmber === this.state.charts_shown[team]) {
-            let jsonDatai = jsonData[i];
-            data3.push([
-              "M " + jsonDatai.match_num,
-              +jsonDatai["Tele Cycle Time"],
-              +jsonDatai["Auto Cycle Time"]
-            ]);
-          }
-        }
-        console.log(data3);
 
         // let data_3 = [["Stat", "Auton", "Teleop", "Cycle", "Defence", "Climb"]];
         // for (let i = 0; i < jsonData.length; i++) {
@@ -204,7 +213,7 @@ class Teams extends Component {
         let c3 =
           data3.length - 1 ? (
             <div
-              key={"1" + team}
+              key={"2" + team}
               style={{
                 display: "inline-block",
                 width: (window.screen.width - 300) / 3 + 50
@@ -220,7 +229,34 @@ class Teams extends Component {
                   // Material design options
                   chart: {
                     title:
-                      "Team " + this.state.charts_shown[team] + " Cycle Times"
+                      "Team " +
+                      this.state.charts_shown[team] +
+                      " Average Cycle Time"
+                  }
+                }}
+              />
+            </div>
+          ) : null;
+        let c5 =
+          data4.length - 1 ? (
+            <div
+              key={"3" + team}
+              style={{
+                display: "inline-block",
+                width: (window.screen.width - 300) / 3 + 50
+              }}
+            >
+              <Chart
+                width={(window.screen.width - 300) / 3}
+                height={"300px"}
+                chartType="Bar"
+                loader={<div>Loading Chart...</div>}
+                data={data4}
+                options={{
+                  // Material design options
+                  chart: {
+                    title:
+                      "Team " + this.state.charts_shown[team] + " Climb Time"
                   }
                 }}
               />
@@ -286,9 +322,10 @@ class Teams extends Component {
               </table>
             </div>
           ) : null;
+        charts[charts.length - 1].push(c3);
         charts[charts.length - 1].push(c1);
         charts[charts.length - 1].push(c2);
-        charts[charts.length - 1].push(c3);
+        charts[charts.length - 1].push(c5);
         charts[charts.length - 1].push(c4);
       }
       return (
