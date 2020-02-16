@@ -23,6 +23,10 @@ class GetFirebase extends Component {
       ["defence_time", "Defence Time"],
       ["stage2_activate", "Stage 2 Prob."],
       ["stage3_activate", "Stage 3 Prob."]
+      // ["trench", "Trench Prob."],
+      // ["preloads", "Preloads Prob."]
+      // ["floor_pickup", "Floor Pickup Prob."],
+      // ["station_pickup", "Station Pickup Prob."]
     ]; //
 
     let func_list = [];
