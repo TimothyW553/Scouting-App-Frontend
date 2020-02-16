@@ -69,45 +69,87 @@ class Teams extends Component {
       let charts = [];
       for (let team = 0; team < this.state.charts_shown.length; team++) {
         charts.push([]);
-        let data1 = [["Match", "Auton", "Teleop"]];
+        let data1 = [["Match", "High", "Low", "Miss"]];
         for (let i = 0; i < rawData.length; i++) {
-          if (rawData[i].team_num == this.state.charts_shown[team]) {
+          if (rawData[i].team_num === this.state.charts_shown[team]) {
             let rawDatai = rawData[i];
             data1.push([
-              "Match " + rawDatai.match_num,
-              +rawDatai["bot"] + +rawDatai["top"],
-              +rawDatai["tele_bot"] + +rawDatai["tele_top"]
+              "M " + rawDatai.match_num,
+              +rawDatai["top"],
+              +rawDatai["bot"],
+              +rawDatai["miss"]
             ]);
           }
         }
-        let data2 = [["Match", "Cycle", "Defence", "Climb"]];
+        console.log(data1);
+
+        let data2 = [["Match", "High", "Low", "Miss"]];
         for (let i = 0; i < rawData.length; i++) {
-          if (rawData[i].team_num == this.state.charts_shown[team]) {
+          if (rawData[i].team_num === this.state.charts_shown[team]) {
             let rawDatai = rawData[i];
             data2.push([
-              "Match " + rawDatai.match_num,
-              +rawDatai["average_cycle_time"],
-              +rawDatai["defence_time"],
-              +rawDatai["climb_time"]
+              "M " + rawDatai.match_num,
+              +rawDatai["tele_top"],
+              +rawDatai["tele_bot"],
+              +rawDatai["tele_miss"]
             ]);
           }
         }
-        let data3 = [["Stat", "Auton", "Teleop", "Cycle", "Defence", "Climb"]];
+        console.log(data2);
+
+        // let data_1 = [["Match", "Auton", "Teleop"]];
+        // for (let i = 0; i < rawData.length; i++) {
+        //   if (rawData[i].team_num == this.state.charts_shown[team]) {
+        //     let rawDatai = rawData[i];
+        //     data1.push([
+        //       "Match " + rawDatai.match_num,
+        //       +rawDatai["bot"] + +rawDatai["top"],
+        //       +rawDatai["tele_bot"] + +rawDatai["tele_top"]
+        //     ]);
+        //   }
+        // }
+        // let data2 = [["Match", "Cycle", "Defence", "Climb"]];
+        // for (let i = 0; i < rawData.length; i++) {
+        //   if (rawData[i].team_num == this.state.charts_shown[team]) {
+        //     let rawDatai = rawData[i];
+        //     data2.push([
+        //       "Match " + rawDatai.match_num,
+        //       +rawDatai["average_cycle_time"],
+        //       +rawDatai["defence_time"],
+        //       +rawDatai["climb_time"]
+        //     ]);
+        //   }
+        // }
+
+        let data3 = [["Match", "Auto", "Teleop"]];
         for (let i = 0; i < jsonData.length; i++) {
-          if (jsonData[i].TeamNumber == this.state.charts_shown[team]) {
+          if (jsonData[i].TeamNUmber === this.state.charts_shown[team]) {
             let jsonDatai = jsonData[i];
             data3.push([
-              "Team " + jsonDatai.team_num,
-              +jsonDatai["Balls Lower"] + jsonDatai["Balls Upper"],
-              +jsonDatai["Teleop Balls Lower"] +
-                jsonDatai["Teleop Balls Upper"],
-              +jsonDatai["Cycle Time"],
-              +jsonDatai["Defence Time"],
-              +jsonDatai["Climb Time"]
+              "M " + jsonDatai.match_num,
+              +jsonDatai["Tele Cycle Time"],
+              +jsonDatai["Auto Cycle Time"]
             ]);
           }
         }
         console.log(data3);
+
+        // let data_3 = [["Stat", "Auton", "Teleop", "Cycle", "Defence", "Climb"]];
+        // for (let i = 0; i < jsonData.length; i++) {
+        //   if (jsonData[i].TeamNumber == this.state.charts_shown[team]) {
+        //     let jsonDatai = jsonData[i];
+        //     data3.push([
+        //       "Team " + jsonDatai.team_num,
+        //       +jsonDatai["Balls Lower"] + jsonDatai["Balls Upper"],
+        //       +jsonDatai["Teleop Balls Lower"] +
+        //         jsonDatai["Teleop Balls Upper"],
+        //       +jsonDatai["Cycle Time"],
+        //       +jsonDatai["Defence Time"],
+        //       +jsonDatai["Climb Time"]
+        //     ]);
+        //   }
+        // }
+        // console.log(data3);
         let c1 =
           data1.length - 1 ? (
             <div
@@ -122,13 +164,13 @@ class Teams extends Component {
                 width={(window.screen.width - 300) / 3}
                 height={"300px"}
                 chartType="Bar"
-                loader={<div>Loading Chart</div>}
+                loader={<div>Loading Chart...</div>}
                 data={data1}
                 options={{
-                  isStacked: true,
                   // Material design options
                   chart: {
-                    title: "Team " + this.state.charts_shown[team] + " Shots"
+                    title:
+                      "Team " + this.state.charts_shown[team] + " Auto Shots"
                   }
                 }}
               />
@@ -147,19 +189,44 @@ class Teams extends Component {
                 width={(window.screen.width - 300) / 3}
                 height={"300px"}
                 chartType="Bar"
-                loader={<div>Loading Chart</div>}
+                loader={<div>Loading Chart...</div>}
                 data={data2}
                 options={{
-                  isStacked: true,
                   // Material design options
                   chart: {
-                    title: "Team " + this.state.charts_shown[team] + " Times"
+                    title:
+                      "Team " + this.state.charts_shown[team] + " Tele Shots"
                   }
                 }}
               />
             </div>
           ) : null;
         let c3 =
+          data3.length - 1 ? (
+            <div
+              key={"1" + team}
+              style={{
+                display: "inline-block",
+                width: (window.screen.width - 300) / 3 + 50
+              }}
+            >
+              <Chart
+                width={(window.screen.width - 300) / 3}
+                height={"300px"}
+                chartType="Bar"
+                loader={<div>Loading Chart...</div>}
+                data={data3}
+                options={{
+                  // Material design options
+                  chart: {
+                    title:
+                      "Team " + this.state.charts_shown[team] + " Cycle Times"
+                  }
+                }}
+              />
+            </div>
+          ) : null;
+        let c4 =
           data3.length - 1 ? (
             <div
               key={"2" + team}
@@ -217,25 +284,12 @@ class Teams extends Component {
                   </tr>
                 </tbody>
               </table>
-              {/* <Chart
-                width={(window.screen.width - 300) / 3}
-                height={"300px"}
-                chartType="Bar"
-                loader={<div>Loading Chart</div>}
-                data={data3}
-                options={{
-                  isStacked: true,
-                  // Material design options
-                  chart: {
-                    title: "Team " + this.state.charts_shown[team] + " Averages"
-                  }
-                }}
-              /> */}
             </div>
           ) : null;
         charts[charts.length - 1].push(c1);
         charts[charts.length - 1].push(c2);
         charts[charts.length - 1].push(c3);
+        charts[charts.length - 1].push(c4);
       }
       return (
         <div>
@@ -255,6 +309,11 @@ class Teams extends Component {
               <tr>
                 {charts.map(x => {
                   return <td style={{ border: "1px solid black" }}>{x[2]}</td>;
+                })}
+              </tr>
+              <tr>
+                {charts.map(x => {
+                  return <td style={{ border: "1px solid black" }}>{x[3]}</td>;
                 })}
               </tr>
             </tbody>
