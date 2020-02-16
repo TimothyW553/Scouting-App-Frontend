@@ -164,6 +164,7 @@ class Form extends Component {
       stage2_activate: false,
       stage3_activate: false,
       trench: false,
+      climb: false,
       preloads: 0,
       shooting_pos: [],
       shooting_pos_auto: [],
@@ -547,6 +548,7 @@ class Form extends Component {
       let boolCheckMapList = [
         ["Floor Pickup", "floor_pickup"],
         ["Station Pickup", "station_pickup"],
+        ["Climb Successful", "climb"],
         ["Stage 2 Activated", "stage2_activate"],
         ["Stage 3 Activated", "stage3_activate"],
         ["Can Go Through Trench", "trench"]
