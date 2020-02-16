@@ -26,7 +26,7 @@ class GetFirebase extends Component {
       ["stage2_activate", "Stage 2 Prob."],
       ["stage3_activate", "Stage 3 Prob."],
       ["trench", "Trench Prob."]
-    ];
+    ]; //
 
     let func_list = [];
     // return original
@@ -64,6 +64,7 @@ class GetFirebase extends Component {
         .get()
         .then(snapshot => {
           snap_Loaded(snapshot.docs, display_list, that, func_list);
+          snap_Loaded1(snapshot.docs, that);
         });
     };
 
@@ -131,9 +132,18 @@ class GetFirebase extends Component {
           }
         }
       }
-      this.props.onRefresh();
     };
+
+    let snap_Loaded1 = (docs1, that) => {
+      let datalist = [];
+      for (let i = 0; i < docs1.length; i++) {
+        datalist.push(docs1[i].data());
+      }
+      that.setState({ rawData: datalist });
+    };
+
     getAvg(this.that);
+    this.props.onRefresh();
   }
   render() {
     return null;

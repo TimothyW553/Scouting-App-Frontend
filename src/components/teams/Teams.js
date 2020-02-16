@@ -22,7 +22,6 @@ const fetchAndLog = async () => {
     json.push(json_temp[i].team_number);
   }
   console.log(json);
-
 };
 
 fetchAndLog();
@@ -30,176 +29,241 @@ fetchAndLog();
 class Teams extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      chartVisible: new Array(json.length),
-      o: 0,
-      p: 0,
-      data : [[]],
-      check:true,
-      dataChartTele:[[[]]],
-      dataChartAuto:[[[]]]
-    };
-    this.state.chartVisible.fill(false);
-    for(let i=0;i<json.length;i++){
-      this.state.data[i]=new Array(0);
-    }
-    for(let i=0;i<json.length;i++){
-      this.state.dataChartTele[i]=new Array(0);
-    }
-    for(let i=0;i<json.length;i++){
-      this.state.dataChartAuto[i]=new Array(0);
-    }
-
-
+    this.state = { charts_shown: [] };
   }
 
-
-
-  countTrues(arr) {
-    let count = 0;
-    for(let i = 0; i < arr.length; i++)
-      if(arr[i]) count++; 
-    return count;
-  }
-
-  onClicked = (element, indexOfElem) => {
-    this.setState(() => 
-      (this.state.chartVisible[indexOfElem] = !this.state.chartVisible[indexOfElem])
-    )
-    console.log(json);
-    console.log("data: "+this.state.data);
-    console.log(this.props.match_forms[0]);
-    this.setState({o: element});
-    this.state.p = indexOfElem;
-
-    if(this.state.check){
-      for(let j=0;j<json.length;j++){
-      for(let i=0;i<this.props.match_forms.length;i++){
-        if(this.props.match_forms[i].team_num==json[j]){
-          console.log("yes");
-          this.state.data[j].push(this.props.match_forms[i]);
-
-        }
-      }
-      
+  buttons = json.map(x => {
+    try {
+      return (
+        <button
+          key={x}
+          style={{
+            width: "75px",
+            height: "50px",
+            background: "green"
+          }}
+          onClick={() => {
+            let chartscopy = [...this.state.charts_shown];
+            if (chartscopy.includes(x)) {
+              chartscopy.pop(x);
+            } else {
+              chartscopy.push(x);
+            }
+            this.setState({ charts_shown: chartscopy });
+          }}
+        >
+          {x}
+        </button>
+      );
+    } catch {
+      return null;
     }
-    for(let i=0;i<this.state.data.length;i++){
-      if(!(this.state.data[i].length===0)){
-
-        for(let j=0;j<this.state.data[i].length;j++){
-          this.state.dataChartTele[i][j]=new Array(0);
-          this.state.dataChartTele[i][j].push("Tele");
-          for(let k=0;k<3;k++){
-            console.log(this.state.data[i][j].shots[k].score);
-            this.state.dataChartTele[i][j].push(this.state.data[i][j].shots[k].score);
-          }
-          console.log("yes");
-        }
-      }
-    }
-    for(let i=0;i<this.state.data.length;i++){
-      if(!(this.state.data[i].length===0)){
-
-        for(let j=0;j<this.state.data[i].length;j++){
-          this.state.dataChartAuto[i][j]=new Array(0);
-          this.state.dataChartAuto[i][j].push("Auto");
-          for(let k=0;k<3;k++){
-            console.log(this.state.data[i][j].auto_shots[k].score);
-            this.state.dataChartAuto[i][j].push(this.state.data[i][j].auto_shots[k].score);
-          }
-          console.log("yes");
-        }
-      }
-    }
-      this.setState({check:false});
-    }
-    console.log(this.state.data, "total data");
-    console.log(this.state.dataChartTele, "tele");
-    console.log(this.state.dataChartAuto,"auto");
-
-  }
-  
-  charts = (e, ind) => {
-    return (
-
-      <div>
-        
-        Info about the team: {e}
-        {console.log((this.state.dataChartTele[ind].map((index)=>(index))))}
-        <Chart
-  width={'300px'}
-  height={'300px'}
-  chartType="BarChart"
-  loader={<div>Loading Chart</div>}
-  data={[
-    ["Time", "Top", "Bottom", "Miss"],
-    
-     ((this.state.dataChartTele[ind].map((index)=>(index))[0]))
-  ]}
-  options={{
-    chartArea: { width: '50%' },
-    isStacked: true
-  }}
-  // For tests
-  rootProps={{ 'data-testid': '3' }}
-/>
-        
-      </div>
-    )
-  }
+  });
 
   render() {
+    let that = this.props.appthat;
+    let rawData = that.state.rawData;
+    let jsonData = that.state.json;
 
-
-    let buttons = [];
-    for(let i = 0; i < json.length; i++)
-      buttons.push(json[i]);
-
-    let i = 0, j = 0, k = 0, l = 0;
-    let teamN = 0;
-
-    const { match_forms, auth, notifications } = this.props;
-    if (!auth.uid) return <Redirect to="/signin" />;
-    
-
-    return (
-      
-      <div>
-        
-        <div className="align-baseline" role="group" arial-label="Basic Example">
-          {buttons.map((currElement, index) =>(
-            <button onClick={() => { 
-              if ( this.state.chartVisible[index] || this.countTrues(this.state.chartVisible) < 3 ) { 
-                { this.onClicked(currElement, index); }
-              } 
-            }} 
-              key={buttons[k++]} 
-              style={ { width:"75px", height:"50px",background:"green", border: this.state.chartVisible[index] ? "2px solid black" : null }} > 
-              {buttons[i++]} 
-            </button>
-          ))}
-        </div>
+    if (rawData && jsonData) {
+      let charts = [];
+      for (let team = 0; team < this.state.charts_shown.length; team++) {
+        charts.push([]);
+        let data1 = [["Match", "Auton", "Teleop"]];
+        for (let i = 0; i < rawData.length; i++) {
+          if (rawData[i].team_num == this.state.charts_shown[team]) {
+            let rawDatai = rawData[i];
+            data1.push([
+              "Match " + rawDatai.match_num,
+              +rawDatai["bot"] + +rawDatai["top"],
+              +rawDatai["tele_bot"] + +rawDatai["tele_top"]
+            ]);
+          }
+        }
+        let data2 = [["Match", "Cycle", "Defence", "Climb"]];
+        for (let i = 0; i < rawData.length; i++) {
+          if (rawData[i].team_num == this.state.charts_shown[team]) {
+            let rawDatai = rawData[i];
+            data2.push([
+              "Match " + rawDatai.match_num,
+              +rawDatai["average_cycle_time"],
+              +rawDatai["defence_time"],
+              +rawDatai["climb_time"]
+            ]);
+          }
+        }
+        let data3 = [["Stat", "Auton", "Teleop", "Cycle", "Defence", "Climb"]];
+        for (let i = 0; i < jsonData.length; i++) {
+          if (jsonData[i].TeamNumber == this.state.charts_shown[team]) {
+            let jsonDatai = jsonData[i];
+            data3.push([
+              "Team " + jsonDatai.team_num,
+              +jsonDatai["Balls Lower"] + jsonDatai["Balls Upper"],
+              +jsonDatai["Teleop Balls Lower"] +
+                jsonDatai["Teleop Balls Upper"],
+              +jsonDatai["Cycle Time"],
+              +jsonDatai["Defence Time"],
+              +jsonDatai["Climb Time"]
+            ]);
+          }
+        }
+        console.log(data3);
+        let c1 =
+          data1.length - 1 ? (
+            <div
+              key={"0" + team}
+              style={{
+                display: "inline-block",
+                width: (window.screen.width - 300) / 3 + 50
+              }}
+            >
+              <Chart
+                style={{ display: "inline-block" }}
+                width={(window.screen.width - 300) / 3}
+                height={"300px"}
+                chartType="Bar"
+                loader={<div>Loading Chart</div>}
+                data={data1}
+                options={{
+                  isStacked: true,
+                  // Material design options
+                  chart: {
+                    title: "Team " + this.state.charts_shown[team] + " Shots"
+                  }
+                }}
+              />
+            </div>
+          ) : null;
+        let c2 =
+          data2.length - 1 ? (
+            <div
+              key={"1" + team}
+              style={{
+                display: "inline-block",
+                width: (window.screen.width - 300) / 3 + 50
+              }}
+            >
+              <Chart
+                width={(window.screen.width - 300) / 3}
+                height={"300px"}
+                chartType="Bar"
+                loader={<div>Loading Chart</div>}
+                data={data2}
+                options={{
+                  isStacked: true,
+                  // Material design options
+                  chart: {
+                    title: "Team " + this.state.charts_shown[team] + " Times"
+                  }
+                }}
+              />
+            </div>
+          ) : null;
+        let c3 =
+          data3.length - 1 ? (
+            <div
+              key={"2" + team}
+              style={{
+                display: "inline-block",
+                width: (window.screen.width - 300) / 3 + 50
+              }}
+            >
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      {data3[0][1] +
+                        ": " +
+                        (typeof +data3[1][1] == "number" && !isNaN(data3[1][1])
+                          ? data3[1][1]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data3[0][2] +
+                        ": " +
+                        (typeof +data3[1][2] == "number" && !isNaN(data3[1][2])
+                          ? data3[1][2]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data3[0][3] +
+                        ": " +
+                        (typeof +data3[1][3] == "number" && !isNaN(data3[1][3])
+                          ? data3[1][3]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data3[0][4] +
+                        ": " +
+                        (typeof +data3[1][4] == "number" && !isNaN(data3[1][4])
+                          ? data3[1][4]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {data3[0][5] +
+                        ": " +
+                        (typeof +data3[1][5] == "number" && !isNaN(data3[1][5])
+                          ? data3[1][5]
+                          : "No data")}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              {/* <Chart
+                width={(window.screen.width - 300) / 3}
+                height={"300px"}
+                chartType="Bar"
+                loader={<div>Loading Chart</div>}
+                data={data3}
+                options={{
+                  isStacked: true,
+                  // Material design options
+                  chart: {
+                    title: "Team " + this.state.charts_shown[team] + " Averages"
+                  }
+                }}
+              /> */}
+            </div>
+          ) : null;
+        charts[charts.length - 1].push(c1);
+        charts[charts.length - 1].push(c2);
+        charts[charts.length - 1].push(c3);
+      }
+      return (
         <div>
-          <table className="align-baseline" role="group">
+          {this.buttons}
+          <table>
             <tbody>
               <tr>
-                {this.state.chartVisible.map((currElement, index) => 
-                  this.state.chartVisible[index] ? 
-                  (<td key={index} style={{ color: "red"}}>{this.charts(buttons[index], index)}</td>) : null
-                )}
+                {charts.map(x => {
+                  return <td style={{ border: "1px solid black" }}>{x[0]}</td>;
+                })}
+              </tr>
+              <tr>
+                {charts.map(x => {
+                  return <td style={{ border: "1px solid black" }}>{x[1]}</td>;
+                })}
+              </tr>
+              <tr>
+                {charts.map(x => {
+                  return <td style={{ border: "1px solid black" }}>{x[2]}</td>;
+                })}
               </tr>
             </tbody>
           </table>
         </div>
-        <div className="dashboard container">
-          <div className="row">
-            <div className="col s12 m6">
-              <TeamsList match_forms={match_forms} />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+      );
+    } else {
+      return <p>not werking</p>;
+    }
   }
 }
 
@@ -209,7 +273,6 @@ const mapStateToProps = state => {
     match_forms: state.firestore.ordered.match_forms,
     auth: state.firebase.auth,
     notifications: state.firestore.ordered.notifications
-    
   };
 };
 

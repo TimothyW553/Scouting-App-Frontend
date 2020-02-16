@@ -36,7 +36,13 @@ class App extends Component {
           <Navbar />
           <Switch>
             <Route exact path="/home" component={Dashboard} />
-            <Route exact path="/teams" component={Teams} />
+            <Route
+              exact
+              path="/teams"
+              render={props => (
+                <Teams {...props} appthat={this} onRefresh={this.dataArrived} />
+              )}
+            />
             <Route path="/project/:id" component={ProjectDetails} />
             <Route path="/match_form/:id" component={TeamDetails} />
             <Route path="/signin" component={SignIn} />
@@ -53,6 +59,7 @@ class App extends Component {
             />
             <Route path="/pit-scouting" component={CreateProject} />
             <Route path="/form" component={Form} />
+            <Route path="/create-event" component={InitTeams} />
           </Switch>
         </div>
       </BrowserRouter>
