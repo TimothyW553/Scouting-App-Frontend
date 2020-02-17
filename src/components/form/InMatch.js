@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
-const field_size = 7;
+const field_size = 5.5;
 const CompetingTeams_Array = [
   { label: "R 1: 610", value: 1 },
   { label: "R 2: 690", value: 2 },
@@ -384,7 +384,12 @@ class Form extends Component {
     console.log(this.state);
   };
 
+  useEffect = () => {
+    window.scrollTo(0, 0);
+  };
+
   showInMatch = e => {
+    this.useEffect();
     e.preventDefault();
     this.setState({ inMatchView: 2, preloads: this.state.preloads });
     starting_time = new Date().getTime();
