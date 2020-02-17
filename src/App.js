@@ -31,7 +31,12 @@ class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <div className="App">
+        <div
+          className="App"
+          style={{
+            marginBottom: "1000px"
+          }}
+        >
           <GetFirebase that={this} onRefresh={this.dataArrived} />
           <Navbar />
           <Switch>

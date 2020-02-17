@@ -198,6 +198,7 @@ class Form extends Component {
     super(props);
     this.state = {
       team_num: 0,
+      field_size: field_size,
       cycle_time: [],
       auto_cycle_time: [],
       match_start_time: 0.0,
@@ -294,6 +295,7 @@ class Form extends Component {
                   .getElementById("match_field_image")
                   .getBoundingClientRect().top -
                 props.circle_size / 2 +
+                window.scrollY +
                 "px"
             }}
           ></img>
@@ -303,7 +305,8 @@ class Form extends Component {
         return circle(index.index);
       });
       return <React.Fragment>{circles}</React.Fragment>;
-    } catch {
+    } catch (error) {
+      console.log(error);
       return null;
     }
   }
@@ -401,7 +404,12 @@ class Form extends Component {
   };
 
   showEndMatch = e => {
-    this.state.shooting_pos.splice(0, this.state.shooting_pos_auto.length);
+    this.state.shooting_pos.splice(
+      0,
+      // this.state.shooting_pos_auto.length == this.state.shooting_pos.length
+      // ? 0:
+      this.state.shooting_pos_auto.length
+    );
     e.preventDefault();
     this.setState({ inMatchView: 3 });
     this.setState({
@@ -475,7 +483,12 @@ class Form extends Component {
       if (new Date().getTime() - this.state.match_start_time < 20000) {
         this.setState({ shooting_pos_auto: shooting_pos_copy });
       }
-      console.log(this.state);
+      // console.log([
+      //   document.getElementById("match_field_image").getBoundingClientRect()
+      //     .left,
+      //   document.getElementById("match_field_image").getBoundingClientRect()
+      //     .top + window.scrollY
+      // ]);
     }
   };
 

@@ -7,6 +7,8 @@ import { Redirect } from "react-router-dom";
 import Chart from "react-google-charts";
 
 let json = [];
+const field = "./field.png";
+const circle = `./circle.png`;
 
 const fetchAndLog = async () => {
   const response = await fetch(
@@ -21,7 +23,7 @@ const fetchAndLog = async () => {
   for (let i = 0; i < json_temp.length; i++) {
     json.push(json_temp[i].team_number);
   }
-  console.log(json);
+  // console.log(json);
 };
 
 fetchAndLog();
@@ -29,7 +31,7 @@ fetchAndLog();
 class Teams extends Component {
   constructor(props) {
     super(props);
-    this.state = { charts_shown: [] };
+    this.state = { charts_shown: [], refresh: false };
   }
 
   buttons = json.map(x => {
@@ -45,7 +47,12 @@ class Teams extends Component {
           onClick={() => {
             let chartscopy = [...this.state.charts_shown];
             if (chartscopy.includes(x)) {
-              chartscopy.pop(x);
+              for (let item = 0; item < chartscopy.length; item++) {
+                if (chartscopy[item] == x) {
+                  chartscopy.splice(item, 1);
+                  break;
+                }
+              }
             } else {
               chartscopy.push(x);
             }
@@ -65,114 +72,54 @@ class Teams extends Component {
     let rawData = that.state.rawData;
     let jsonData = that.state.json;
 
+    let refresh = function() {
+      this.setState({ refresh: !this.state.refresh });
+    };
+
     if (rawData && jsonData) {
       let charts = [];
+      let allmaps = [];
       for (let team = 0; team < this.state.charts_shown.length; team++) {
         charts.push([]);
-        let data1 = [["Match", "High", "Low", "Miss"]];
+        let data1 = [["Match", "Auton", "Teleop"]];
         for (let i = 0; i < rawData.length; i++) {
-          if (rawData[i].team_num === this.state.charts_shown[team]) {
+          if (rawData[i].team_num == this.state.charts_shown[team]) {
             let rawDatai = rawData[i];
             data1.push([
-              "M " + rawDatai.match_num,
-              +rawDatai["top"],
-              +rawDatai["bot"],
-              +rawDatai["miss"]
+              "Match " + rawDatai.match_num,
+              +rawDatai["bot"] + +rawDatai["top"],
+              +rawDatai["tele_bot"] + +rawDatai["tele_top"]
             ]);
           }
         }
-        console.log(data1);
-
-        let data2 = [["Match", "High", "Low", "Miss"]];
+        let data2 = [["Match", "Cycle", "Defence", "Climb"]];
         for (let i = 0; i < rawData.length; i++) {
-          if (rawData[i].team_num === this.state.charts_shown[team]) {
+          if (rawData[i].team_num == this.state.charts_shown[team]) {
             let rawDatai = rawData[i];
             data2.push([
-              "M " + rawDatai.match_num,
-              +rawDatai["tele_top"],
-              +rawDatai["tele_bot"],
-              +rawDatai["tele_miss"]
+              "Match " + rawDatai.match_num,
+              +rawDatai["average_cycle_time"],
+              +rawDatai["defence_time"],
+              +rawDatai["climb_time"]
             ]);
           }
         }
-        console.log(data2);
-
-        let data3 = [["Match", "Auto", "Teleop"]];
-        for (let i = 0; i < rawData.length; i++) {
-          if (rawData[i].team_num === this.state.charts_shown[team]) {
-            let rawDatai = rawData[i];
-            data3.push([
-              "M " + rawDatai.match_num,
-              +rawDatai["average_auto_cycle_time"],
-              +rawDatai["average_cycle_time"]
-            ]);
-          }
-        }
-        console.log(data3);
-
-        let data4 = [["Match", "Climb Time"]];
-        for (let i = 0; i < rawData.length; i++) {
-          if (rawData[i].team_num === this.state.charts_shown[team]) {
-            let rawDatai = rawData[i];
-            data4.push(["M " + rawDatai.match_num, +rawDatai["climb_time"]]);
-          }
-        }
-        console.log(data4);
-
-        let data5 = [
-          [
-            "Stat",
-            "Avg. Teleop Cycle Time",
-            "Avg. Auto Cycle Time",
-
-            "Avg. Auto Balls Upper",
-            "Avg. Auto Balls Lower",
-            "Avg. Auto Balls Missed",
-
-            "Avg. Teleop Balls Upper",
-            "Avg. Teleop Balls Lower",
-            "Avg. Teleop Balls Missed",
-
-            "Avg. Climb Time",
-            "Avg. Defence Time"
-          ]
-        ];
+        let data3 = [["Stat", "Auton", "Teleop", "Cycle", "Defence", "Climb"]];
         for (let i = 0; i < jsonData.length; i++) {
-          if (jsonData[i].TeamNumber === this.state.charts_shown[team]) {
+          if (jsonData[i].TeamNumber == this.state.charts_shown[team]) {
             let jsonDatai = jsonData[i];
-            data5.push([
-              "Team " + jsonDatai.TeamNumber,
-              +jsonDatai["Tele Cycle Time"],
-              +jsonDatai["Auto Cycle Time"],
-              +jsonDatai["Auto Balls Upper"],
-              +jsonDatai["Auto Balls Lower"],
-              +jsonDatai["Auto Balls Missed"],
-              +jsonDatai["Teleop Balls Upper"],
-              +jsonDatai["Teleop Balls Lower"],
-              +jsonDatai["Teleop Balls Missed"],
-              +jsonDatai["Climb Time"],
-              +jsonDatai["Defence Time"]
+            data3.push([
+              "Team " + jsonDatai.team_num,
+              +jsonDatai["Balls Lower"] + jsonDatai["Balls Upper"],
+              +jsonDatai["Teleop Balls Lower"] +
+                jsonDatai["Teleop Balls Upper"],
+              +jsonDatai["Cycle Time"],
+              +jsonDatai["Defence Time"],
+              +jsonDatai["Climb Time"]
             ]);
           }
         }
 
-        console.log(data5);
-
-        // let data_3 = [["Stat", "Auton", "Teleop", "Cycle", "Defence", "Climb"]];
-        // for (let i = 0; i < jsonData.length; i++) {
-        //   if (jsonData[i].TeamNumber == this.state.charts_shown[team]) {
-        //     let jsonDatai = jsonData[i];
-        //     data3.push([
-        //       "Team " + jsonDatai.team_num,
-        //       +jsonDatai["Balls Lower"] + jsonDatai["Balls Upper"],
-        //       +jsonDatai["Teleop Balls Lower"] +
-        //         jsonDatai["Teleop Balls Upper"],
-        //       +jsonDatai["Cycle Time"],
-        //       +jsonDatai["Defence Time"],
-        //       +jsonDatai["Climb Time"]
-        //     ]);
-        //   }
-        // }
         // console.log(data3);
         let c1 =
           data1.length - 1 ? (
@@ -188,13 +135,13 @@ class Teams extends Component {
                 width={(window.screen.width - 300) / 3}
                 height={"300px"}
                 chartType="Bar"
-                loader={<div>Loading Chart...</div>}
+                loader={<div id="chartstillloading">Loading Chart</div>}
                 data={data1}
                 options={{
+                  isStacked: true,
                   // Material design options
                   chart: {
-                    title:
-                      "Team " + this.state.charts_shown[team] + " Auto Shots"
+                    title: "Team " + this.state.charts_shown[team] + " Shots"
                   }
                 }}
               />
@@ -213,13 +160,13 @@ class Teams extends Component {
                 width={(window.screen.width - 300) / 3}
                 height={"300px"}
                 chartType="Bar"
-                loader={<div>Loading Chart...</div>}
+                loader={<div id="chartstillloading">Loading Chart</div>}
                 data={data2}
                 options={{
+                  isStacked: true,
                   // Material design options
                   chart: {
-                    title:
-                      "Team " + this.state.charts_shown[team] + " Tele Shots"
+                    title: "Team " + this.state.charts_shown[team] + " Times"
                   }
                 }}
               />
@@ -234,163 +181,155 @@ class Teams extends Component {
                 width: (window.screen.width - 300) / 3 + 50
               }}
             >
-              <Chart
-                width={(window.screen.width - 300) / 3}
-                height={"300px"}
-                chartType="Bar"
-                loader={<div>Loading Chart...</div>}
-                data={data3}
-                options={{
-                  // Material design options
-                  chart: {
-                    title:
-                      "Team " +
-                      this.state.charts_shown[team] +
-                      " Average Cycle Time"
-                  }
-                }}
-              />
-            </div>
-          ) : null;
-        let c5 =
-          data4.length - 1 ? (
-            <div
-              key={"3" + team}
-              style={{
-                display: "inline-block",
-                width: (window.screen.width - 300) / 3 + 50
-              }}
-            >
-              <Chart
-                width={(window.screen.width - 300) / 3}
-                height={"300px"}
-                chartType="Bar"
-                loader={<div>Loading Chart...</div>}
-                data={data4}
-                options={{
-                  // Material design options
-                  chart: {
-                    title:
-                      "Team " + this.state.charts_shown[team] + " Climb Time"
-                  }
-                }}
-              />
-            </div>
-          ) : null;
-        let c4 =
-          data5.length - 1 ? (
-            <div
-              key={"4" + team}
-              style={{
-                display: "inline-block",
-                width: (window.screen.width - 300) / 3 + 50
-              }}
-            >
               <table>
                 <tbody>
                   <tr>
                     <td>
-                      {data5[0][1] +
+                      {data3[0][1] +
                         ": " +
-                        (typeof +data5[1][1] == "number" && !isNaN(data5[1][1])
-                          ? data5[1][1]
+                        (typeof +data3[1][1] == "number" && !isNaN(data3[1][1])
+                          ? data3[1][1]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data5[0][2] +
+                      {data3[0][2] +
                         ": " +
-                        (typeof +data5[1][2] == "number" && !isNaN(data5[1][2])
-                          ? data5[1][2]
+                        (typeof +data3[1][2] == "number" && !isNaN(data3[1][2])
+                          ? data3[1][2]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data5[0][3] +
+                      {data3[0][3] +
                         ": " +
-                        (typeof +data5[1][3] == "number" && !isNaN(data5[1][3])
-                          ? data5[1][3]
+                        (typeof +data3[1][3] == "number" && !isNaN(data3[1][3])
+                          ? data3[1][3]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data5[0][4] +
+                      {data3[0][4] +
                         ": " +
-                        (typeof +data5[1][4] == "number" && !isNaN(data5[1][4])
-                          ? data5[1][4]
+                        (typeof +data3[1][4] == "number" && !isNaN(data3[1][4])
+                          ? data3[1][4]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data5[0][5] +
+                      {data3[0][5] +
                         ": " +
-                        (typeof +data5[1][5] == "number" && !isNaN(data5[1][5])
-                          ? data5[1][5]
-                          : "No data")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      {data5[0][6] +
-                        ": " +
-                        (typeof +data5[1][6] == "number" && !isNaN(data5[1][6])
-                          ? data5[1][6]
-                          : "No data")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      {data5[0][7] +
-                        ": " +
-                        (typeof +data5[1][7] == "number" && !isNaN(data5[1][7])
-                          ? data5[1][7]
-                          : "No data")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      {data5[0][8] +
-                        ": " +
-                        (typeof +data5[1][8] == "number" && !isNaN(data5[1][8])
-                          ? data5[1][8]
-                          : "No data")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      {data5[0][9] +
-                        ": " +
-                        (typeof +data5[1][9] == "number" && !isNaN(data5[1][9])
-                          ? data5[1][9]
-                          : "No data")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      {data5[0][10] +
-                        ": " +
-                        (typeof +data5[1][10] == "number" &&
-                        !isNaN(data5[1][10])
-                          ? data5[1][10]
+                        (typeof +data3[1][5] == "number" && !isNaN(data3[1][5])
+                          ? data3[1][5]
                           : "No data")}
                     </td>
                   </tr>
                 </tbody>
               </table>
+              {/* <Chart
+                width={(window.screen.width - 300) / 3}
+                height={"300px"}
+                chartType="Bar"
+                loader={<div>Loading Chart</div>}
+                data={data3}
+                options={{
+                  isStacked: true,
+                  // Material design options
+                  chart: {
+                    title: "Team " + this.state.charts_shown[team] + " Averages"
+                  }
+                }}
+              /> */}
             </div>
           ) : null;
-        charts[charts.length - 1].push(c3);
+
+        function heatmap(team) {
+          let shot_list = [];
+          let teamcount = 0;
+          // console.log(rawData);
+          rawData.map(state => {
+            if (state.team_num == team) {
+              state.shooting_pos_auto.forEach(ashot => {
+                shot_list.push([ashot.x, ashot.y]);
+              });
+              state.shooting_pos.forEach(ashot => {
+                shot_list.push([ashot.x, ashot.y]);
+              });
+              teamcount += 1;
+            }
+          });
+
+          let display = (
+            <div>
+              <img
+                src={require(`${field}`)}
+                id={"match_field_image" + team}
+                style={{ width: (window.screen.width - 300) / 3 }}
+              />
+              {shot_list.map(coords => {
+                try {
+                  //console.log(coords[1] / rawData[0].field_size / 62);
+                  return (
+                    <img
+                      src={require(`${circle}`)}
+                      width={rawData[0].circle_size / 2}
+                      height={rawData[0].circle_size / 2}
+                      style={{
+                        opacity: teamcount == 1 ? 100 : 100 / teamcount + 30,
+                        position: "absolute",
+                        left:
+                          (coords[0] / rawData[0].field_size / 98.8) *
+                            ((window.screen.width - 300) / 3) +
+                          document
+                            .getElementById("match_field_image" + team)
+                            .getBoundingClientRect().left -
+                          rawData[0].circle_size / 4 +
+                          "px",
+                        top:
+                          ((coords[1] / rawData[0].field_size / 62) *
+                            ((window.screen.width - 300) / 3) *
+                            462) /
+                            887 +
+                          document
+                            .getElementById("match_field_image" + team)
+                            .getBoundingClientRect().top -
+                          rawData[0].circle_size / 4 +
+                          "px"
+                      }}
+                    />
+                  );
+                } catch (error) {
+                  console.log(error);
+                  return null;
+                }
+              })}
+            </div>
+          );
+          // console.log(shot_list);
+          return display;
+        }
+
+        allmaps.push(heatmap(this.state.charts_shown[team]));
         charts[charts.length - 1].push(c1);
         charts[charts.length - 1].push(c2);
-        charts[charts.length - 1].push(c5);
-        charts[charts.length - 1].push(c4);
+        charts[charts.length - 1].push(c3);
       }
       return (
         <div>
+          <br />
+          <button
+            style={{ width: "100%" }}
+            className="btn btn-danger grey darken-3"
+            onClick={() => {
+              this.setState({ refresh: !this.state.refresh });
+            }}
+          >
+            Load Images
+          </button>
           {this.buttons}
           <table>
             <tbody>
@@ -409,16 +348,7 @@ class Teams extends Component {
                   return <td style={{ border: "1px solid black" }}>{x[2]}</td>;
                 })}
               </tr>
-              <tr>
-                {charts.map(x => {
-                  return <td style={{ border: "1px solid black" }}>{x[3]}</td>;
-                })}
-              </tr>
-              <tr>
-                {charts.map(x => {
-                  return <td style={{ border: "1px solid black" }}>{x[4]}</td>;
-                })}
-              </tr>
+              <tr>{allmaps}</tr>
             </tbody>
           </table>
         </div>
