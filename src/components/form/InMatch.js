@@ -6,7 +6,7 @@ import "./style.css";
 import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const red_field = "./red-field.jpg";
+const red_field = "./field.png";
 const blue_field = "./blue-field.jpg";
 const circleimg = "./circle.png";
 const field_size = 5.5;
@@ -611,7 +611,7 @@ class Form extends Component {
     let matchField = (
       <img
         src={require(`${red_field}`)}
-        width={76 * 1.3 * field_size}
+        width={86 * 1.3 * field_size}
         height={47 * 1.3 * field_size}
         onClick={this.field_onClick}
         id="match_field_image"
