@@ -81,22 +81,37 @@ class Teams extends Component {
       let allmaps = [];
       for (let team = 0; team < this.state.charts_shown.length; team++) {
         charts.push([]);
-        let data1 = [["Match", "Auton", "Teleop"]];
+        let data1 = [["Match", "Upper", "Lower", "Missed"]];
         for (let i = 0; i < rawData.length; i++) {
           if (rawData[i].team_num == this.state.charts_shown[team]) {
             let rawDatai = rawData[i];
             data1.push([
               "Match " + rawDatai.match_num,
-              +rawDatai["bot"] + +rawDatai["top"],
-              +rawDatai["tele_bot"] + +rawDatai["tele_top"]
+              +rawDatai["top"],
+              +rawDatai["bot"],
+              +rawDatai["miss"]
             ]);
           }
         }
-        let data2 = [["Match", "Cycle", "Defence", "Climb"]];
+
+        let data2 = [["Match", "Upper", "Lower", "Missed"]];
+        for (let i = 0; i < rawData.length; i++) {
+          if (rawData[i].team_num === this.state.charts_shown[team]) {
+            let rawDatai = rawData[i];
+            data2.push([
+              "Match " + rawDatai.match_num,
+              +rawDatai["tele_top"],
+              +rawDatai["tele_bot"],
+              +rawDatai["tele_miss"]
+            ]);
+          }
+        }
+
+        let data3 = [["Match", "Cycle", "Defence", "Climb"]];
         for (let i = 0; i < rawData.length; i++) {
           if (rawData[i].team_num == this.state.charts_shown[team]) {
             let rawDatai = rawData[i];
-            data2.push([
+            data3.push([
               "Match " + rawDatai.match_num,
               +rawDatai["average_cycle_time"],
               +rawDatai["defence_time"],
@@ -104,23 +119,45 @@ class Teams extends Component {
             ]);
           }
         }
-        let data3 = [["Stat", "Auton", "Teleop", "Cycle", "Defence", "Climb"]];
+
+        let overall = [
+          [
+            "Stat",
+            "Teleop Cycle Time",
+            "Auto Cycle Time",
+            "Auto Balls Upper",
+            "Auto Balls Lower",
+            "Auto Balls Missed",
+            "Teleop Balls Upper",
+            "Teleop Balls Lower",
+            "Teleop Balls Missed",
+            "Climb Time",
+            "Defence",
+            "Stage 2 Prob",
+            "Stage 3 Prob"
+          ]
+        ];
         for (let i = 0; i < jsonData.length; i++) {
-          if (jsonData[i].TeamNumber == this.state.charts_shown[team]) {
+          if (jsonData[i].TeamNumber === this.state.charts_shown[team]) {
             let jsonDatai = jsonData[i];
-            data3.push([
+            overall.push([
               "Team " + jsonDatai.team_num,
-              +jsonDatai["Balls Lower"] + jsonDatai["Balls Upper"],
-              +jsonDatai["Teleop Balls Lower"] +
-                jsonDatai["Teleop Balls Upper"],
-              +jsonDatai["Cycle Time"],
+              +jsonDatai["Tele Cycle Time"],
+              +jsonDatai["Auto Cycle Time"],
+              +jsonDatai["Auto Balls Upper"],
+              +jsonDatai["Auto Balls Lower"],
+              +jsonDatai["Auto Balls Missed"],
+              +jsonDatai["Teleop Balls Upper"],
+              +jsonDatai["Teleop Balls Lower"],
+              +jsonDatai["Teleop Balls Missed"],
+              +jsonDatai["Climb Time"],
               +jsonDatai["Defence Time"],
-              +jsonDatai["Climb Time"]
+              +jsonDatai["Stage 2 Prob."],
+              +jsonDatai["Stage 3 Prob."]
             ]);
           }
         }
-
-        // console.log(data3);
+        console.log(overall);
         let c1 =
           data1.length - 1 ? (
             <div
@@ -141,14 +178,42 @@ class Teams extends Component {
                   isStacked: true,
                   // Material design options
                   chart: {
-                    title: "Team " + this.state.charts_shown[team] + " Shots"
+                    title:
+                      "Team " + this.state.charts_shown[team] + " Teleop Shots"
+                  }
+                }}
+              />
+            </div>
+          ) : null;
+        let c4 =
+          data2.length - 1 ? (
+            <div
+              key={"0" + team}
+              style={{
+                display: "inline-block",
+                width: (window.screen.width - 300) / 3 + 50
+              }}
+            >
+              <Chart
+                style={{ display: "inline-block" }}
+                width={(window.screen.width - 300) / 3}
+                height={"300px"}
+                chartType="Bar"
+                loader={<div id="chartstillloading">Loading Chart</div>}
+                data={data2}
+                options={{
+                  isStacked: true,
+                  // Material design options
+                  chart: {
+                    title:
+                      "Team " + this.state.charts_shown[team] + " Auto Shots"
                   }
                 }}
               />
             </div>
           ) : null;
         let c2 =
-          data2.length - 1 ? (
+          data3.length - 1 ? (
             <div
               key={"1" + team}
               style={{
@@ -161,7 +226,7 @@ class Teams extends Component {
                 height={"300px"}
                 chartType="Bar"
                 loader={<div id="chartstillloading">Loading Chart</div>}
-                data={data2}
+                data={data3}
                 options={{
                   isStacked: true,
                   // Material design options
@@ -173,7 +238,7 @@ class Teams extends Component {
             </div>
           ) : null;
         let c3 =
-          data3.length - 1 ? (
+          overall.length - 1 ? (
             <div
               key={"2" + team}
               style={{
@@ -185,65 +250,136 @@ class Teams extends Component {
                 <tbody>
                   <tr>
                     <td>
-                      {data3[0][1] +
+                      {overall[0][1] +
                         ": " +
-                        (typeof +data3[1][1] == "number" && !isNaN(data3[1][1])
-                          ? data3[1][1]
+                        (typeof +overall[1][1] == "number" &&
+                        !isNaN(overall[1][1])
+                          ? overall[1][1]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data3[0][2] +
+                      {overall[0][2] +
                         ": " +
-                        (typeof +data3[1][2] == "number" && !isNaN(data3[1][2])
-                          ? data3[1][2]
+                        (typeof +overall[1][2] == "number" &&
+                        !isNaN(overall[1][2])
+                          ? overall[1][2]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data3[0][3] +
+                      {overall[0][3] +
                         ": " +
-                        (typeof +data3[1][3] == "number" && !isNaN(data3[1][3])
-                          ? data3[1][3]
+                        (typeof +overall[1][3] == "number" &&
+                        !isNaN(overall[1][3])
+                          ? overall[1][3]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data3[0][4] +
+                      {overall[0][4] +
                         ": " +
-                        (typeof +data3[1][4] == "number" && !isNaN(data3[1][4])
-                          ? data3[1][4]
+                        (typeof +overall[1][4] == "number" &&
+                        !isNaN(overall[1][4])
+                          ? overall[1][4]
                           : "No data")}
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      {data3[0][5] +
+                      {overall[0][5] +
                         ": " +
-                        (typeof +data3[1][5] == "number" && !isNaN(data3[1][5])
-                          ? data3[1][5]
+                        (typeof +overall[1][5] == "number" &&
+                        !isNaN(overall[1][5])
+                          ? overall[1][5]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][5] +
+                        ": " +
+                        (typeof +overall[1][5] == "number" &&
+                        !isNaN(overall[1][5])
+                          ? overall[1][5]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][6] +
+                        ": " +
+                        (typeof +overall[1][6] == "number" &&
+                        !isNaN(overall[1][6])
+                          ? overall[1][6]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][7] +
+                        ": " +
+                        (typeof +overall[1][7] == "number" &&
+                        !isNaN(overall[1][7])
+                          ? overall[1][7]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][8] +
+                        ": " +
+                        (typeof +overall[1][8] == "number" &&
+                        !isNaN(overall[1][8])
+                          ? overall[1][8]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][9] +
+                        ": " +
+                        (typeof +overall[1][9] == "number" &&
+                        !isNaN(overall[1][9])
+                          ? overall[1][9]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][10] +
+                        ": " +
+                        (typeof +overall[1][10] == "number" &&
+                        !isNaN(overall[1][10])
+                          ? overall[1][10]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][11] +
+                        ": " +
+                        (typeof +overall[1][11] == "number" &&
+                        !isNaN(overall[1][11])
+                          ? overall[1][11]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][12] +
+                        ": " +
+                        (typeof +overall[1][12] == "number" &&
+                        !isNaN(overall[1][12])
+                          ? overall[1][12]
                           : "No data")}
                     </td>
                   </tr>
                 </tbody>
               </table>
-              {/* <Chart
-                width={(window.screen.width - 300) / 3}
-                height={"300px"}
-                chartType="Bar"
-                loader={<div>Loading Chart</div>}
-                data={data3}
-                options={{
-                  isStacked: true,
-                  // Material design options
-                  chart: {
-                    title: "Team " + this.state.charts_shown[team] + " Averages"
-                  }
-                }}
-              /> */}
             </div>
           ) : null;
 
@@ -315,6 +451,7 @@ class Teams extends Component {
 
         allmaps.push(heatmap(this.state.charts_shown[team]));
         charts[charts.length - 1].push(c1);
+        charts[charts.length - 1].push(c4);
         charts[charts.length - 1].push(c2);
         charts[charts.length - 1].push(c3);
       }
