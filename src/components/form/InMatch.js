@@ -1,10 +1,12 @@
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { createMatchForm } from "../../store/actions/matchFormActions";
 import { Redirect, withRouter } from "react-router-dom";
 import "./style.css";
 import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { reactReduxFirebase } from "react-redux-firebase";
 
 const red_field = "./red-field.jpg";
 const blue_field = "./blue-field.jpg";
@@ -130,18 +132,20 @@ class Timer extends Component {
     let that = this.props.this;
     // this.props.state.name=this.state.timer;
     let stopTimer = () => {
-      if (!this.state.timer_running) {
-        this.setState({ timer_running: new Date().getTime() });
-      } else {
-        this.setState({
-          timer_running: null,
-          timer:
-            this.state.timer + new Date().getTime() - this.state.timer_running
-        });
-        this.state.timer =
-          this.state.timer + new Date().getTime() - this.state.timer_running;
+      if (new Date().getTime() - that.state.match_start_time > 15000) {
+        if (!this.state.timer_running) {
+          this.setState({ timer_running: new Date().getTime() });
+        } else {
+          this.setState({
+            timer_running: null,
+            timer:
+              this.state.timer + new Date().getTime() - this.state.timer_running
+          });
+          this.state.timer =
+            this.state.timer + new Date().getTime() - this.state.timer_running;
+        }
+        that.setState({ [this.props.id]: this.state.timer });
       }
-      that.setState({ [this.props.id]: this.state.timer });
     };
     return (
       <button
@@ -517,7 +521,13 @@ class Form extends Component {
     if (!auth.uid) return <Redirect to="/signin" />;
     let newMatchForm =
       this.state.inMatchView === 0 ? (
-        <form className="white" onSubmit={this.showPreMatch}>
+        <form
+          className="white"
+          onSubmit={this.showPreMatch}
+          style={{
+            marginTop: "0px"
+          }}
+        >
           <div className="input-field" style={{ marginBottom: "0px" }}>
             <p style={{ fontWeight: "bold", fontSize: 25 }}>
               Enter the current match number:
@@ -530,7 +540,11 @@ class Form extends Component {
             />
           </div>
           <div className="input-field">
-            <button className="btn pink lighten-1" id="button1">
+            <button
+              className="btn pink lighten-1"
+              id="button1"
+              style={{ opacity: +this.state.match_num ? 100 : 0 }}
+            >
               Next
             </button>
           </div>
@@ -720,6 +734,11 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td style={{ width: "200px" }}>
+                  <p>
+                    {new Date().getTime() - this.state.match_start_time > 15000
+                      ? "Auton"
+                      : "Teleop"}
+                  </p>
                   <Timer
                     this={this}
                     name={this.state.defence_time}
@@ -768,6 +787,9 @@ class Form extends Component {
   }
   componentDidMount() {
     document.getElementById("button1").focus();
+    // ReactDOM.unmountComponentAtNode(
+    //   document.getElementsByClassName("nav-wrapper grey darken-3")
+    // );
   }
 
   componentDidUpdate(prevProps, prevState) {
