@@ -735,7 +735,7 @@ class Form extends Component {
               <tr>
                 <td style={{ width: "200px" }}>
                   <p>
-                    {new Date().getTime() - this.state.match_start_time > 15000
+                    {new Date().getTime() - this.state.match_start_time < 15000
                       ? "Auton"
                       : "Teleop"}
                   </p>
