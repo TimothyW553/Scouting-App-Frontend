@@ -9,9 +9,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { reactReduxFirebase } from "react-redux-firebase";
 
 const red_field = "./field.png";
-const blue_field = "./blue-field.jpg";
+const blue_field = "./field.png";
 const circleimg = "./circle.png";
-const field_size = 5.5;
+const field_size = 6.5;
 const CompetingTeams_Array = [
   { label: "R 1: 610", value: 1 },
   { label: "R 2: 690", value: 2 },
@@ -758,7 +758,7 @@ class Form extends Component {
               </tr>
             </tbody>
           </table>
-          {showncircle}   
+          {showncircle}
           <div className="input-field">
             <button
               className="btn pink lighten-1"

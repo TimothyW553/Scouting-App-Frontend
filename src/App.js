@@ -40,6 +40,9 @@ class App extends Component {
       <BrowserRouter>
         <div
           className="App"
+          // style={{
+          //   marginBottom: "10px"
+          // }}
         >
           <GetFirebase that={this} onRefresh={this.dataArrived} />
           {navbar}
