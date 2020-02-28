@@ -16,9 +16,9 @@ const SignedInLinks = props => {
         <li>
           <NavLink to="/form">Form</NavLink>
         </li>
-        <li>
+        {/* <li>
           <NavLink to="/overall">Overall</NavLink>
-        </li>
+        </li> */}
         <li>
           <NavLink to="/teams">Teams</NavLink>
         </li>

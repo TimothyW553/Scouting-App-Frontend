@@ -485,6 +485,11 @@ class Teams extends Component {
                   return <td style={{ border: "1px solid black" }}>{x[2]}</td>;
                 })}
               </tr>
+              <tr>
+                {charts.map(x => {
+                  return <td style={{ border: "1px solid black" }}>{x[3]}</td>;
+                })}
+              </tr>
               <tr>{allmaps}</tr>
             </tbody>
           </table>

@@ -29,13 +29,13 @@ class App extends Component {
   };
 
   render() {
-    let navbar =
-      window.location.href.substring(
-        window.location.href.length - 4,
-        window.location.href.length
-      ) != "form" ? (
-        <Navbar />
-      ) : null;
+    // let navbar =
+    //   window.location.href.substring(
+    //     window.location.href.length - 4,
+    //     window.location.href.length
+    //   ) != "form" ? (
+    //     <Navbar />
+    //   ) : null;
     return (
       <BrowserRouter>
         <div
@@ -44,8 +44,9 @@ class App extends Component {
           //   marginBottom: "10px"
           // }}
         >
+          <Navbar />
           <GetFirebase that={this} onRefresh={this.dataArrived} />
-          {navbar}
+          {/* {navbar} */}
           <Switch>
             <Route exact path="/home" component={Dashboard} />
             <Route

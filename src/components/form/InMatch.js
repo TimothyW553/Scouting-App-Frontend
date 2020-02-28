@@ -11,7 +11,7 @@ import { reactReduxFirebase } from "react-redux-firebase";
 const red_field = "./field.png";
 const blue_field = "./field.png";
 const circleimg = "./circle.png";
-const field_size = 6.5;
+const field_size = 5.7;
 const CompetingTeams_Array = [
   { label: "R 1: 610", value: 1 },
   { label: "R 2: 690", value: 2 },
@@ -120,6 +120,32 @@ function Shot(props) {
   );
 }
 
+class MatchType extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      time: 0,
+      match_type: "AUTON"
+    };
+  }
+
+  displayTime = () => {
+    if (new Date().getTime() - starting_time < 20000) {
+      this.setState({
+        match_type: "auton"
+      });
+    } else {
+      this.setState({
+        match_type: "teleop"
+      });
+    }
+  };
+
+  render() {
+    return <p>{this.displayTime()}</p>;
+  }
+}
+
 class Timer extends Component {
   constructor(props) {
     super(props);
@@ -219,6 +245,7 @@ class Form extends Component {
       trench: false,
       climb: false,
       preloads: 0,
+      match_view: "AUTON",
       shooting_pos: [],
       shooting_pos_auto: [],
       time: 0,
@@ -268,7 +295,8 @@ class Form extends Component {
       tele_bot: 0,
       tele_miss: 0,
       teamSelected: null,
-      dc: false
+      dc: false,
+      replay: false
     };
   }
 
@@ -404,6 +432,7 @@ class Form extends Component {
     this.setState({
       team_num: this.state.teamSelected
     });
+    this.showMatchType();
     console.log(this.state);
   };
 
@@ -514,6 +543,17 @@ class Form extends Component {
     this.setState({
       preloads: 0
     });
+  };
+
+  showMatchType = e => {
+    this.interval = setInterval(
+      () => this.setState({ match_view: "TELEOP" }),
+      20000
+    );
+  };
+
+  clearMatchType = e => {
+    clearInterval(this.interval);
   };
 
   render() {
@@ -640,7 +680,8 @@ class Form extends Component {
         ["Stage 2 Activated - Turn Table Light", "stage2_activate"],
         ["Stage 3 Activated - Turn Table Light", "stage3_activate"],
         ["Did Go Under Trench", "trench"],
-        ["Did They D/C", "dc"]
+        ["Did They D/C", "dc"],
+        ["Match is a replay", "replay"]
       ];
       return boolCheckMapList.map(index => (
         <Checkbox
@@ -734,11 +775,7 @@ class Form extends Component {
             <tbody>
               <tr>
                 <td style={{ width: "200px" }}>
-                  <p>
-                    {new Date().getTime() - this.state.match_start_time < 15000
-                      ? "Auton"
-                      : "Teleop"}
-                  </p>
+                  <h1>{this.state.match_view}</h1>
                   <Timer
                     this={this}
                     name={this.state.defence_time}
