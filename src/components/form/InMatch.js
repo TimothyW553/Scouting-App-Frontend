@@ -8,19 +8,100 @@ import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { reactReduxFirebase } from "react-redux-firebase";
 
+const qm_blue = [[0, 0, 0]];
+const qm_red = [[0, 0, 0]];
+const qm = [
+  [
+    { label: "R 1: 0", value: 1 },
+    { label: "R 2: 0", value: 2 },
+    { label: "R 3: 0", value: 3 },
+    { label: "B 1: 0", value: 4 },
+    { label: "B 2: 0", value: 5 },
+    { label: "B 3: 0", value: 6 }
+  ]
+];
+
+const loadMatchesAndTeams = async () => {
+  const response = await fetch(
+    `https://www.thebluealliance.com/api/v3/event/2020onosh/matches/simple`,
+    {
+      headers: {
+        "X-TBA-Auth-Key": `rVSoi1uFgP4KkYnjXvjtFdakv662U7rCi3wtFZ1jwNcQTiphjrlveXAo6fYG7mt7`
+      }
+    }
+  );
+  const json_temp = await response.json();
+  for (let i = 0; i < json_temp.length; i++) {
+    if (json_temp[i].comp_level === "qm") {
+      qm_blue.push([
+        parseInt(json_temp[i].alliances.blue.team_keys[0].substring(3)),
+        parseInt(json_temp[i].alliances.blue.team_keys[1].substring(3)),
+        parseInt(json_temp[i].alliances.blue.team_keys[2].substring(3))
+      ]);
+
+      qm_red.push([
+        parseInt(json_temp[i].alliances.red.team_keys[0].substring(3)),
+        parseInt(json_temp[i].alliances.red.team_keys[1].substring(3)),
+        parseInt(json_temp[i].alliances.red.team_keys[2].substring(3))
+      ]);
+
+      qm.push([
+        {
+          label:
+            "R 1: " +
+            parseInt(json_temp[i].alliances.red.team_keys[0].substring(3)),
+          value: 1
+        },
+        {
+          label:
+            "R 2: " +
+            parseInt(json_temp[i].alliances.red.team_keys[1].substring(3)),
+          value: 2
+        },
+        {
+          label:
+            "R 3: " +
+            parseInt(json_temp[i].alliances.red.team_keys[2].substring(3)),
+          value: 3
+        },
+        {
+          label:
+            "B 1: " +
+            parseInt(json_temp[i].alliances.blue.team_keys[0].substring(3)),
+          value: 4
+        },
+        {
+          label:
+            "B 2: " +
+            parseInt(json_temp[i].alliances.blue.team_keys[1].substring(3)),
+          value: 5
+        },
+        {
+          label:
+            "B 3: " +
+            parseInt(json_temp[i].alliances.blue.team_keys[2].substring(3)),
+          value: 6
+        }
+      ]);
+    }
+  }
+  console.log(json_temp);
+  console.log(qm_red);
+  console.log(qm_blue);
+  console.log(qm);
+  // const json_temp = await response.json();
+  // for (let i = 0; i < json_temp.length; i++) {
+  //   json.push(json_temp[i].team_number);
+  // }
+  // console.log(json);
+};
+
+loadMatchesAndTeams();
+
 const red_field = "./field.png";
 const blue_field = "./field.png";
 const circleimg = "./circle.png";
 const field_size = 5.7;
-const CompetingTeams_Array = [
-  { label: "R 1: 610", value: 1 },
-  { label: "R 2: 690", value: 2 },
-  { label: "R 3: 420", value: 3 },
-  { label: "B 1: 1111", value: 4 },
-  { label: "B 2: 6969", value: 5 },
-  { label: "B 3: 4200", value: 6 }
-];
-
 let starting_time;
 let tele_start_time;
 
@@ -347,7 +428,7 @@ class Form extends Component {
     this.setState({ match_start_time: new Date().getTime() });
     try {
       this.setState({
-        teamSelected: +document
+        team_num: +document
           .getElementsByClassName("  css-1uccc91-singleValue")[0]
           .innerText.slice(5)
       });
@@ -604,10 +685,11 @@ class Form extends Component {
               <div onClick={this.updateTeamChange} id="teamSelect2">
                 <Select
                   isSearchable={false}
-                  options={CompetingTeams_Array}
+                  options={qm[this.state.match_num]}
                   id="teamSelect"
                   ref="teamselect"
                 />
+                {console.log()}
               </div>
             </div>
             <div className="col-md-4"></div>
