@@ -8,6 +8,8 @@ import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { reactReduxFirebase } from "react-redux-firebase";
 
+const tele_time =
+  window.location.href.substring(7, 16) != "localhost:" ? 5000 : 20000;
 const qm_blue = [[0, 0, 0]];
 const qm_red = [[0, 0, 0]];
 const qm = [
@@ -101,7 +103,8 @@ loadMatchesAndTeams();
 
 const red_field = "./field.png";
 const blue_field = "./field.png";
-const circleimg = "./circle.png";
+const circlered = "./circlered.png";
+const circleblue = "./circleblue.png";
 const field_size = 5.7;
 let starting_time;
 let tele_start_time;
@@ -212,7 +215,7 @@ class MatchType extends Component {
   }
 
   displayTime = () => {
-    if (new Date().getTime() - starting_time < 20000) {
+    if (new Date().getTime() - starting_time < tele_time) {
       this.setState({
         match_type: "auton"
       });
@@ -309,7 +312,7 @@ class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      team_num: 0,
+      team_num: -1,
       field_size: field_size,
       cycle_time: [],
       auto_cycle_time: [],
@@ -331,6 +334,7 @@ class Form extends Component {
       match_view: "AUTON",
       shooting_pos: [],
       shooting_pos_auto: [],
+      // shooting_pos_teleop: [],
       time: 0,
       isOn: false,
       start: 0,
@@ -385,11 +389,11 @@ class Form extends Component {
 
   Circle(props) {
     try {
-      let circle = index => {
+      let circle = (index, isRed) => {
         return (
           <img
             key={props.shooting_pos[index].index}
-            src={require(`${circleimg}`)}
+            src={isRed ? require(`${circlered}`) : require(`${circleblue}`)}
             width={props.circle_size}
             height={props.circle_size}
             onClick={() => {
@@ -416,9 +420,16 @@ class Form extends Component {
           ></img>
         );
       };
-      let circles = props.shooting_pos.map(index => {
-        return circle(index.index);
-      });
+      let circles = [
+        props.shooting_pos_auto.map(index => {
+          return circle(index.index, false);
+        }),
+        props.shooting_pos
+          .slice(props.shooting_pos_auto.length, props.shooting_pos.length)
+          .map(index => {
+            return circle(index.index, true);
+          })
+      ];
       return <React.Fragment>{circles}</React.Fragment>;
     } catch (error) {
       console.log(error);
@@ -512,7 +523,7 @@ class Form extends Component {
     starting_time = new Date().getTime();
     tele_start_time = new Date().getTime() + 20 * 1000;
     this.setState({
-      team_num: this.state.teamSelected
+      team_num: this.state.teamSelected === null ? -1 : this.state.teamSelected
     });
     this.showMatchType();
     console.log(this.state);
@@ -595,7 +606,7 @@ class Form extends Component {
         index: this.state.shooting_pos.length
       });
       this.setState({ shooting_pos: shooting_pos_copy });
-      if (new Date().getTime() - this.state.match_start_time < 20000) {
+      if (new Date().getTime() - this.state.match_start_time < tele_time) {
         this.setState({ shooting_pos_auto: shooting_pos_copy });
       }
       // console.log([
@@ -630,7 +641,7 @@ class Form extends Component {
   showMatchType = e => {
     this.interval = setInterval(
       () => this.setState({ match_view: "TELEOP" }),
-      20000
+      window.location.href.substring(7, 16) != "localhost:" ? 5000 : tele_time
     );
   };
 
