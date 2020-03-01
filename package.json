@@ -6,6 +6,7 @@
     "bootstrap": "^4.4.1",
     "bootstrap-table": "^1.15.5",
     "classnames": "^2.2.6",
+    "create-react-class": "^15.6.3",
     "firebase": "^5.3.0",
     "mdbreact": "^4.24.0",
     "moment": "^2.22.2",

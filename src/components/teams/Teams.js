@@ -134,7 +134,8 @@ class Teams extends Component {
             "Climb Time",
             "Defence",
             "Stage 2 Prob",
-            "Stage 3 Prob"
+            "Stage 3 Prob",
+            "Climb Prob."
           ]
         ];
         for (let i = 0; i < jsonData.length; i++) {
@@ -153,7 +154,8 @@ class Teams extends Component {
               +jsonDatai["Climb Time"],
               +jsonDatai["Defence Time"],
               +jsonDatai["Stage 2 Prob."],
-              +jsonDatai["Stage 3 Prob."]
+              +jsonDatai["Stage 3 Prob."],
+              +jsonDatai["Climb Prob."]
             ]);
           }
         }
@@ -179,7 +181,9 @@ class Teams extends Component {
                   // Material design options
                   chart: {
                     title:
-                      "Team " + this.state.charts_shown[team] + " Teleop Shots"
+                      "Team " + this.state.charts_shown[team] + " Auto Shots",
+
+                    legend: "none"
                   }
                 }}
               />
@@ -205,8 +209,9 @@ class Teams extends Component {
                   isStacked: true,
                   // Material design options
                   chart: {
+                    legend: "none",
                     title:
-                      "Team " + this.state.charts_shown[team] + " Auto Shots"
+                      "Team " + this.state.charts_shown[team] + " Teleop Shots"
                   }
                 }}
               />
@@ -231,6 +236,7 @@ class Teams extends Component {
                   isStacked: true,
                   // Material design options
                   chart: {
+                    legend: "none",
                     title: "Team " + this.state.charts_shown[team] + " Times"
                   }
                 }}
@@ -375,6 +381,16 @@ class Teams extends Component {
                         (typeof +overall[1][12] == "number" &&
                         !isNaN(overall[1][12])
                           ? overall[1][12]
+                          : "No data")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {overall[0][13] +
+                        ": " +
+                        (typeof +overall[1][13] == "number" &&
+                        !isNaN(overall[1][13])
+                          ? overall[1][13]
                           : "No data")}
                     </td>
                   </tr>

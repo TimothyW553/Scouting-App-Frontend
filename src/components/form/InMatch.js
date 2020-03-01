@@ -44,8 +44,9 @@ const loadMatchesAndTeams = async () => {
         parseInt(json_temp[i].alliances.red.team_keys[1].substring(3)),
         parseInt(json_temp[i].alliances.red.team_keys[2].substring(3))
       ]);
+      qm.push([]);
 
-      qm.push([
+      qm[json_temp[i].match_number] = [
         {
           label:
             "R 1: " +
@@ -82,7 +83,7 @@ const loadMatchesAndTeams = async () => {
             parseInt(json_temp[i].alliances.blue.team_keys[2].substring(3)),
           value: 6
         }
-      ]);
+      ];
     }
   }
   console.log(json_temp);
@@ -316,6 +317,7 @@ class Form extends Component {
       ind_cycle_time: [],
       average: 0,
       climb_time: 0.0,
+      noshow: false,
       defence_time: 0.0,
       balls_scored: 0,
       auto_balls_scored: 0,
@@ -428,9 +430,12 @@ class Form extends Component {
     this.setState({ match_start_time: new Date().getTime() });
     try {
       this.setState({
-        team_num: +document
+        teamSelected: +document
           .getElementsByClassName("  css-1uccc91-singleValue")[0]
           .innerText.slice(5)
+      });
+      this.setState({
+        team_num: this.state.teamSelected
       });
     } catch {}
   };
@@ -441,11 +446,7 @@ class Form extends Component {
       if (index === 0 || index === 1) {
         this.state.auto_balls_scored += delta;
       }
-      if (
-        (this.state.auto_shots[0].score + this.state.auto_shots[1].score) %
-          5 ===
-        0
-      ) {
+      if (this.state.auto_balls_scored % 5 === 0) {
         if (auto_cycles[this.state.auto_balls_scored / 5 - 1] === false) {
           auto_cycles[this.state.auto_balls_scored / 5 - 1] = true;
           this.state.auto_cycle_time.push(
@@ -460,7 +461,7 @@ class Form extends Component {
       if (index === 0 || index === 1) {
         this.state.balls_scored += delta;
       }
-      if ((this.state.shots[0].score + this.state.shots[1].score) % 5 === 0) {
+      if (this.state.balls_scored % 5 === 0) {
         if (tele_cycles[this.state.balls_scored / 5 - 1] === false) {
           tele_cycles[this.state.balls_scored / 5 - 1] = true;
           this.state.cycle_time.push(
@@ -763,7 +764,8 @@ class Form extends Component {
         ["Stage 3 Activated - Turn Table Light", "stage3_activate"],
         ["Did Go Under Trench", "trench"],
         ["Did They D/C", "dc"],
-        ["Match is a replay", "replay"]
+        ["Match is a replay", "replay"],
+        ["Robot was a no show", "noshow"]
       ];
       return boolCheckMapList.map(index => (
         <Checkbox

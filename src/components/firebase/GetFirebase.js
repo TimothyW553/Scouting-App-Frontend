@@ -19,19 +19,17 @@ class GetFirebase extends Component {
       ["tele_top", "Teleop Balls Upper"],
       ["tele_bot", "Teleop Balls Lower"],
       ["tele_miss", "Teleop Balls Missed"],
+      ["climbs", "Number of Climbs"],
       ["climb_time", "Climb Time"],
       ["defence_time", "Defence Time"],
       ["stage2_activate", "Stage 2 Prob."],
-      ["stage3_activate", "Stage 3 Prob."]
-      // ["trench", "Trench Prob."],
-      // ["preloads", "Preloads Prob."],
-      // ["floor_pickup", "Floor Pickup Prob."],
-      // ["station_pickup", "Station Pickup Prob."]
+      ["stage3_activate", "Stage 3 Prob."],
+      ["climb", "Climb Prob."]
     ]; //
 
     let func_list = [];
     // return original
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 11; i++) {
       func_list.push(x => {
         try {
           let y = +x;
@@ -44,7 +42,7 @@ class GetFirebase extends Component {
       });
     }
     // return 1 or 0: true or false
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
       func_list.push(x => {
         try {
           let y = x ? 1 : 0;
