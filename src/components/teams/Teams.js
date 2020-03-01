@@ -45,7 +45,7 @@ fetchAndLog();
   /* */
 }
 
-json.unshift(-1);
+// json.unshift(-1);
 
 {
   /* */
