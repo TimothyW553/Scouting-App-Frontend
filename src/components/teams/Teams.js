@@ -8,7 +8,8 @@ import Chart from "react-google-charts";
 
 let json = [];
 const field = "./field.png";
-const circle = `./circle.png`;
+const circlered = "./circlered.png";
+const circleblue = "./circleblue.png";
 
 const fetchAndLog = async () => {
   const response = await fetch(
@@ -27,6 +28,10 @@ const fetchAndLog = async () => {
 };
 
 fetchAndLog();
+
+if (window.location.href.substring(7, 16) == "localhost") {
+  json.unshift(99999);
+}
 
 class Teams extends Component {
   constructor(props) {
@@ -53,7 +58,7 @@ class Teams extends Component {
                   break;
                 }
               }
-            } else {
+            } else if (chartscopy.length < 3) {
               chartscopy.push(x);
             }
             this.setState({ charts_shown: chartscopy });
@@ -62,7 +67,8 @@ class Teams extends Component {
           {x}
         </button>
       );
-    } catch {
+    } catch (err) {
+      console.log(err);
       return null;
     }
   });
@@ -401,16 +407,19 @@ class Teams extends Component {
 
         function heatmap(team) {
           let shot_list = [];
+          let shot_list_auto = [];
           let teamcount = 0;
           // console.log(rawData);
           rawData.map(state => {
             if (state.team_num == team) {
               state.shooting_pos_auto.forEach(ashot => {
-                shot_list.push([ashot.x, ashot.y]);
+                shot_list_auto.push([ashot.x, ashot.y]);
               });
-              state.shooting_pos.forEach(ashot => {
-                shot_list.push([ashot.x, ashot.y]);
-              });
+              state.shooting_pos
+                // .splice(shot_list_auto.length, state.shooting_pos.length)
+                .forEach(ashot => {
+                  shot_list.push([ashot.x, ashot.y]);
+                });
               teamcount += 1;
             }
           });
@@ -422,35 +431,68 @@ class Teams extends Component {
                 id={"match_field_image" + team}
                 style={{ width: (window.screen.width - 300) / 3 }}
               />
-              {shot_list.map(coords => {
+              {shot_list_auto.map(coords => {
                 try {
                   //console.log(coords[1] / rawData[0].field_size / 62);
                   return (
                     <img
-                      src={require(`${circle}`)}
+                      src={require(`${circleblue}`)}
                       width={rawData[0].circle_size / 2}
                       height={rawData[0].circle_size / 2}
                       style={{
                         opacity: teamcount == 1 ? 100 : 100 / teamcount + 30,
                         position: "absolute",
                         left:
-                          (coords[0] / rawData[0].field_size / 98.8) *
-                            ((window.screen.width - 300) / 3) +
+                          ((coords[0] / rawData[0].field_size) *
+                            ((window.screen.width - 300) / 3)) /
+                            112 + // magic const1
                           document
                             .getElementById("match_field_image" + team)
                             .getBoundingClientRect().left -
-                          rawData[0].circle_size / 4 +
-                          "px",
+                          rawData[0].circle_size / 4,
                         top:
-                          ((coords[1] / rawData[0].field_size / 62) *
-                            ((window.screen.width - 300) / 3) *
-                            462) /
-                            887 +
+                          ((coords[1] / rawData[0].field_size) *
+                            ((window.screen.width - 300) / 3)) /
+                            117 + // magic const2
                           document
                             .getElementById("match_field_image" + team)
                             .getBoundingClientRect().top -
-                          rawData[0].circle_size / 4 +
-                          "px"
+                          rawData[0].circle_size / 4
+                      }}
+                    />
+                  );
+                } catch (error) {
+                  console.log(error);
+                  return null;
+                }
+              })}
+              {shot_list.map(coords => {
+                try {
+                  //console.log(coords[1] / rawData[0].field_size / 62);
+                  return (
+                    <img
+                      src={require(`${circlered}`)}
+                      width={rawData[0].circle_size / 2}
+                      height={rawData[0].circle_size / 2}
+                      style={{
+                        opacity: teamcount == 1 ? 100 : 100 / teamcount + 30,
+                        position: "absolute",
+                        left:
+                          ((coords[0] / rawData[0].field_size) *
+                            ((window.screen.width - 300) / 3)) /
+                            112 + // magic const1
+                          document
+                            .getElementById("match_field_image" + team)
+                            .getBoundingClientRect().left -
+                          rawData[0].circle_size / 4,
+                        top:
+                          ((coords[1] / rawData[0].field_size) *
+                            ((window.screen.width - 300) / 3)) /
+                            117 + // magic const2
+                          document
+                            .getElementById("match_field_image" + team)
+                            .getBoundingClientRect().top -
+                          rawData[0].circle_size / 4
                       }}
                     />
                   );
@@ -506,7 +548,11 @@ class Teams extends Component {
                   return <td style={{ border: "1px solid black" }}>{x[3]}</td>;
                 })}
               </tr>
-              <tr>{allmaps}</tr>
+              <tr>
+                {allmaps.map(x => {
+                  return <td style={{ border: "1px solid black" }}>{x}</td>;
+                })}
+              </tr>
             </tbody>
           </table>
         </div>
