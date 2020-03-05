@@ -58,7 +58,7 @@ class Teams extends Component {
                   break;
                 }
               }
-            } else {
+            } else if (chartscopy.length < 3) {
               chartscopy.push(x);
             }
             this.setState({ charts_shown: chartscopy });
@@ -67,7 +67,8 @@ class Teams extends Component {
           {x}
         </button>
       );
-    } catch {
+    } catch (err) {
+      console.log(err);
       return null;
     }
   });
