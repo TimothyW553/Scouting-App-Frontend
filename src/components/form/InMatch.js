@@ -641,7 +641,7 @@ class Form extends Component {
   showMatchType = e => {
     this.interval = setInterval(
       () => this.setState({ match_view: "TELEOP" }),
-      window.location.href.substring(7, 16) != "localhost:" ? 5000 : tele_time
+      window.location.href.substring(7, 16) == "localhost" ? 5000 : tele_time
     );
   };
 

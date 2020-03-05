@@ -29,38 +29,8 @@ const fetchAndLog = async () => {
 
 fetchAndLog();
 
-{
-  /* */
-}
-
-{
-  /* */
-}
-
-{
-  /* */
-}
-
-{
-  /* */
-}
-
-// json.unshift(-1);
-
-{
-  /* */
-}
-
-{
-  /* */
-}
-
-{
-  /* */
-}
-
-{
-  /* */
+if (window.location.href.substring(7, 16) == "localhost") {
+  json.unshift(99999);
 }
 
 class Teams extends Component {
@@ -474,12 +444,11 @@ class Teams extends Component {
                         left:
                           ((coords[0] / rawData[0].field_size) *
                             ((window.screen.width - 300) / 3)) /
-                            110 + // magic const1
+                            112 + // magic const1
                           document
                             .getElementById("match_field_image" + team)
                             .getBoundingClientRect().left -
-                          rawData[0].circle_size / 4 +
-                          "px",
+                          rawData[0].circle_size / 4,
                         top:
                           ((coords[1] / rawData[0].field_size) *
                             ((window.screen.width - 300) / 3)) /
@@ -487,8 +456,7 @@ class Teams extends Component {
                           document
                             .getElementById("match_field_image" + team)
                             .getBoundingClientRect().top -
-                          rawData[0].circle_size / 4 +
-                          "px"
+                          rawData[0].circle_size / 4
                       }}
                     />
                   );
@@ -511,12 +479,11 @@ class Teams extends Component {
                         left:
                           ((coords[0] / rawData[0].field_size) *
                             ((window.screen.width - 300) / 3)) /
-                            110 + // magic const1
+                            112 + // magic const1
                           document
                             .getElementById("match_field_image" + team)
                             .getBoundingClientRect().left -
-                          rawData[0].circle_size / 4 +
-                          "px",
+                          rawData[0].circle_size / 4,
                         top:
                           ((coords[1] / rawData[0].field_size) *
                             ((window.screen.width - 300) / 3)) /
@@ -524,8 +491,7 @@ class Teams extends Component {
                           document
                             .getElementById("match_field_image" + team)
                             .getBoundingClientRect().top -
-                          rawData[0].circle_size / 4 +
-                          "px"
+                          rawData[0].circle_size / 4
                       }}
                     />
                   );
