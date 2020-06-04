@@ -29,6 +29,7 @@ const fetchAndLog = async () => {
 
 fetchAndLog();
 
+// for testing
 if (window.location.href.substring(7, 16) == "localhost") {
   json.unshift(99999);
 }
@@ -39,6 +40,7 @@ class Teams extends Component {
     this.state = { charts_shown: [], refresh: false };
   }
 
+  // maps each unique team to a button
   buttons = json.map(x => {
     try {
       return (
@@ -73,11 +75,16 @@ class Teams extends Component {
     }
   });
 
+
   render() {
+    // appthat passed from props is the app's 'this', which already has information about each team
+    // using appthat, we do not need to refetch the json for the both the teams and overall page
     let that = this.props.appthat;
     let rawData = that.state.rawData;
     let jsonData = that.state.json;
 
+    //json data should be the one with the nice formatting that is displayed, raw data is the one that can be used as a name
+    
     let refresh = function() {
       this.setState({ refresh: !this.state.refresh });
     };
@@ -85,6 +92,8 @@ class Teams extends Component {
     if (rawData && jsonData) {
       let charts = [];
       let allmaps = [];
+      
+      // grab and organize the data in a way that the charts can display them
       for (let team = 0; team < this.state.charts_shown.length; team++) {
         charts.push([]);
         let data1 = [["Match", "Upper", "Lower", "Missed"]];
@@ -166,6 +175,8 @@ class Teams extends Component {
           }
         }
         console.log(overall);
+        
+        // make the charts
         let c1 =
           data1.length - 1 ? (
             <div
@@ -404,6 +415,8 @@ class Teams extends Component {
               </table>
             </div>
           ) : null;
+
+        //make the maps
 
         function heatmap(team) {
           let shot_list = [];
